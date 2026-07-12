@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ویرایش محصول | <%= iteam.iteamName %></title>
+    <link href="/css/bootstrap.rtl.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/icons-1.13.1/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        :root {
+            --bg-gradient-1: #FAF7F2;
+            --bg-gradient-2: #F0EAE0;
+            --bg-gradient-3: #FFFFFF;
+            --glass-bg: rgba(255, 255, 255, 0.45);
+            --glass-border: rgba(184, 134, 11, 0.15);
+            --glass-shadow: rgba(80, 50, 10, 0.05);
+            --text-main: #1A1208;
+            --text-muted: #6B5230;
+            --input-bg: rgba(255, 255, 255, 0.7);
+            --input-focus: rgba(255, 255, 255, 0.95);
+            --accent-color: #B8860B;
+            --accent-hover: #D4A843;
+            --option-bg: #FFFFFF;
+        }
+        [data-theme="dark"] {
+            --bg-gradient-1: #120C05;
+            --bg-gradient-2: #1A1208;
+            --bg-gradient-3: #1F160B;
+            --glass-bg: rgba(26, 18, 8, 0.55);
+            --glass-border: rgba(184, 134, 11, 0.2);
+            --glass-shadow: rgba(0, 0, 0, 0.5);
+            --text-main: #FAF7F2;
+            --text-muted: #D4A843;
+            --input-bg: rgba(18, 12, 5, 0.5);
+            --input-focus: rgba(18, 12, 5, 0.8);
+            --accent-color: #D4A843;
+            --accent-hover: #B8860B;
+            --option-bg: #1A1208;
+        }
+        body {
+            background: linear-gradient(-45deg, var(--bg-gradient-1), var(--bg-gradient-2), var(--bg-gradient-3));
+            color: var(--text-main);
+            font-family: 'Vazirmatn', Tahoma, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1.5rem;
+        }
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            box-shadow: 0 8px 32px var(--glass-shadow);
+            width: 100%;
+            max-width: 650px;
+            padding: 2.5rem;
+        }
+        .glass-input, .glass-select, .glass-textarea {
+            background: var(--input-bg) !important;
+            border: 1px solid var(--glass-border) !important;
+            color: var(--text-main) !important;
+            border-radius: 14px;
+            padding: 0.75rem 1rem;
+            transition: all 0.3s ease;
+        }
+        .glass-input:focus, .glass-select:focus, .glass-textarea:focus {
+            box-shadow: 0 0 0 3px rgba(184, 134, 11, 0.2) !important;
+            border-color: var(--accent-color) !important;
+            background: var(--input-focus) !important;
+        }
+        option {
+            background-color: var(--option-bg);
+            color: var(--text-main);
+        }
+        .btn-accent {
+            background: linear-gradient(135deg, var(--accent-color), var(--accent-hover));
+            color: #1A1208 !important;
+            border: none;
+            border-radius: 14px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        [data-theme="dark"] .btn-accent {
+            color: #120C05 !important;
+        }
+        .btn-accent:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(184, 134, 11, 0.3);
+        }
+        .btn-glass {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            color: var(--text-main);
+            border-radius: 14px;
+            padding: 0.75rem 1.5rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+        .btn-glass:hover {
+            background: rgba(255, 255, 255, 0.15);
+            color: var(--text-main);
+        }
+        .preview-img {
+            width: 90px;
+            height: 90px;
+            object-fit: cover;
+            border-radius: 16px;
+            border: 2px solid var(--glass-border);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        /* مرورگرهای مدرن (Chrome, Firefox, Safari, Edge) */
+ input::placeholder,
+ textarea::placeholder {
+  color: var(--text-main) !important;
+  opacity: 1; /* برای فیکس کردن رنگ سفید خالص در فایرفاکس */
+}
+
+/* مرورگر Internet Explorer 10-11 */
+ input:-ms-input-placeholder,
+textarea:-ms-input-placeholder {
+  color: var(--text-main) !important;
+}
+
+/* نسخه قدیمی مرورگر Edge */
+ input::-ms-input-placeholder,
+textarea::-ms-input-placeholder {
+  color: var(--text-main) !important;
+}
+    </style>
+</head>
+<body>
+
+<div class="glass-card">
+    <h5 class="fw-bold mb-4 text-center d-flex align-items-center justify-content-center gap-2">
+        <i class="bi bi-pencil-square text-accent"></i>
+        ویرایش اطلاعات محصول منو
+    </h5>
+    
+    <form action="/admin/update/<%= iteam._id %>" method="POST" enctype="multipart/form-data" class="row g-4">
+        <div class="col-md-6">
+            <label class="form-label fw-medium text-muted">نام محصول</label>
+            <input type="text" name="iteamName" class="form-control glass-input" value="<%= iteam.iteamName %>" required>
+        </div>
+        <div class="col-md-6">
+            <label class="form-label fw-medium text-muted">قیمت (تومان)</label>
+            <input type="number" name="iteamPrice" class="form-control glass-input" value="<%= iteam.iteamPrice %>" required>
+        </div>
+        <div class="col-md-12">
+            <label class="form-label fw-medium text-muted">دسته‌بندی</label>
+            <select name="category" class="form-select glass-select" required>
+                <% if (typeof categories !== 'undefined') { %>
+                    <% categories.forEach(cat => { %>
+                        <option value="<%= cat.name %>" <%= iteam.category === cat.name ? 'selected' : '' %>><%= cat.name %></option>
+                    <% }) %>
+                <% } %>
+            </select>
+        </div>
+        <div class="col-12">
+            <label class="form-label fw-medium text-muted">توضیحات محصول</label>
+            <textarea name="description" class="form-control glass-textarea" rows="3"><%= iteam.description %></textarea>
+        </div>
+        <div class="col-12">
+            <label class="form-label fw-medium text-muted d-block">تصویر محصول</label>
+            <div class="d-flex align-items-center gap-3">
+                <% if(iteam.imageUrl) { %>
+                    <img src="<%= iteam.imageUrl %>" id="imgPreview" class="preview-img">
+                <% } else { %>
+                    <div id="imgPreviewPlace" class="d-flex align-items-center justify-content-center bg-secondary-subtle rounded-3" style="width: 90px; height: 90px; border: 2px dashed var(--glass-border);">
+                        <i class="bi bi-image text-muted fs-3"></i>
+                    </div>
+                <% } %>
+                <div class="flex-grow-1">
+                    <input type="file" name="imageUrl" id="imageInput" class="form-control glass-input" accept="image/*" onchange="previewFile()">
+                    <span class="text-muted small mt-1 d-block">در صورت عدم تمایل به تغییر تصویر، این فیلد را خالی بگذارید.</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 mt-4 d-flex gap-2 justify-content-end">
+            <button type="submit" class="btn btn-accent px-4">ذخیره تغییرات محصول</button>
+            <a href="/admin#productList" class="btn btn-glass px-4">انصراف</a>
+        </div>
+    </form>
+</div>
+
+<script>
+    function previewFile() {
+        const preview = document.getElementById('imgPreview') || document.getElementById('imgPreviewPlace');
+        const file = document.getElementById('imageInput').files[0];
+        const reader = new FileReader();
+
+        reader.addEventListener("load", function () {
+            if (preview.tagName === 'IMG') {
+                preview.src = reader.result;
+            } else {
+                const img = document.createElement('img');
+                img.id = 'imgPreview';
+                img.className = 'preview-img';
+                img.src = reader.result;
+                preview.replaceWith(img);
+            }
+        }, false);
+
+        if (file) {
+            reader.readAsDataURL(file);
+        }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+        const savedTheme = localStorage.getItem('admin_theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+    });
+</script>
+</body>
+</html>

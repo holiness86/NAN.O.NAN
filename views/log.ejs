@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ورود به مدیریت رستوران</title>
+    <link href="/css/bootstrap.rtl.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/icons-1.13.1/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        :root {
+            --bg-gradient-1: #FAF7F2;
+            --bg-gradient-2: #F0EAE0;
+            --bg-gradient-3: #FFFFFF;
+            --glass-bg: rgba(255, 255, 255, 0.45);
+            --glass-border: rgba(184, 134, 11, 0.15);
+            --glass-shadow: rgba(80, 50, 10, 0.05);
+            --text-main: #1A1208;
+            --text-muted: #6B5230;
+            --input-bg: rgba(255, 255, 255, 0.7);
+            --input-focus: rgba(255, 255, 255, 0.95);
+            --accent-color: #B8860B;
+            --accent-hover: #D4A843;
+        }
+        [data-theme="dark"] {
+            --bg-gradient-1: #120C05;
+            --bg-gradient-2: #1A1208;
+            --bg-gradient-3: #1F160B;
+            --glass-bg: rgba(26, 18, 8, 0.55);
+            --glass-border: rgba(184, 134, 11, 0.2);
+            --glass-shadow: rgba(0, 0, 0, 0.5);
+            --text-main: #FAF7F2;
+            --text-muted: #D4A843;
+            --input-bg: rgba(18, 12, 5, 0.5);
+            --input-focus: rgba(18, 12, 5, 0.8);
+            --accent-color: #D4A843;
+            --accent-hover: #B8860B;
+        }
+        body {
+            background: linear-gradient(-45deg, var(--bg-gradient-1), var(--bg-gradient-2), var(--bg-gradient-3));
+            background-size: 400% 400%;
+            animation: gradientBG 10s ease infinite;
+            color: var(--text-main);
+            font-family: 'Vazirmatn', Tahoma, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+        }
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .login-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            box-shadow: 0 12px 40px var(--glass-shadow);
+            width: 100%;
+            max-width: 440px;
+            padding: 3rem 2.5rem;
+        }
+        .brand-icon-wrapper {
+            width: 75px;
+            height: 75px;
+            border-radius: 50%;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            color: var(--accent-color);
+            font-size: 2rem;
+            box-shadow: 0 4px 15px var(--glass-shadow);
+        }
+        .glass-input {
+            background: var(--input-bg) !important;
+            border: 1px solid var(--glass-border) !important;
+            color: var(--text-main) !important;
+            border-radius: 14px;
+            padding: 0.8rem 1.2rem;
+            transition: all 0.3s ease;
+        }
+        .glass-input:focus {
+            box-shadow: 0 0 0 3px rgba(184, 134, 11, 0.2) !important;
+            border-color: var(--accent-color) !important;
+            background: var(--input-focus) !important;
+        }
+        .btn-accent {
+            background: linear-gradient(135deg, var(--accent-color), var(--accent-hover));
+            color: #1A1208 !important;
+            border: none;
+            border-radius: 14px;
+            padding: 0.8rem 1.5rem;
+            font-weight: 600;
+            width: 100%;
+            box-shadow: 0 4px 15px rgba(184, 134, 11, 0.2);
+            transition: all 0.3s ease;
+        }
+        [data-theme="dark"] .btn-accent {
+            color: #120C05 !important;
+        }
+        .btn-accent:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(184, 134, 11, 0.3);
+        }
+        .password-toggle {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: var(--text-muted);
+            background: none;
+            border: none;
+            padding: 0;
+            z-index: 5;
+        }
+        .text-muted{
+            color: var(--text-muted) !important;
+        }
+        .input-password-wrap {
+            position: relative;
+        }
+        .input-password-wrap .glass-input {
+            padding-left: 44px;
+        }
+
+        /* مرورگرهای مدرن (Chrome, Firefox, Safari, Edge) */
+ input::placeholder,
+ textarea::placeholder {
+  color: var(--text-main) !important;
+  opacity: 1; /* برای فیکس کردن رنگ سفید خالص در فایرفاکس */
+}
+
+/* مرورگر Internet Explorer 10-11 */
+ input:-ms-input-placeholder,
+textarea:-ms-input-placeholder {
+  color: var(--text-main) !important;
+}
+
+/* نسخه قدیمی مرورگر Edge */
+ input::-ms-input-placeholder,
+textarea::-ms-input-placeholder {
+  color: var(--text-main) !important;
+}
+    </style>
+</head>
+<body>
+
+<div class="login-card">
+    <div class="brand-icon-wrapper">
+        <i class="bi bi-shield-lock-fill"></i>
+    </div>
+    <h4 class="fw-bold text-center mb-2">Trattoria Bella</h4>
+    <p class="text-center text-muted small mb-4">پنل مدیریت هوشمند منو کافه رستوران</p>
+    
+    <form action="/log" method="POST" class="row g-3">
+        <div class="col-12">
+            <label class="form-label small fw-medium text-muted">نام کاربری</label>
+            <input type="text" name="username" class="form-control glass-input" placeholder="Username" required autocomplete="username">
+        </div>
+        <div class="col-12">
+            <label class="form-label small fw-medium text-muted">رمز عبور</label>
+            <div class="input-password-wrap">
+                <input type="password" name="password" id="passwordInput" class="form-control glass-input" placeholder="Password" required autocomplete="current-password">
+                <button type="button" class="password-toggle" id="togglePasswordBtn">
+                    <i class="bi bi-eye-fill" id="passwordIcon"></i>
+                </button>
+            </div>
+        </div>
+        <div class="col-12 mt-4">
+            <button type="submit" class="btn btn-accent py-3">ورود به پنل مدیریت</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    const togglePasswordBtn = document.getElementById('togglePasswordBtn');
+    const passwordInput = document.getElementById('passwordInput');
+    const passwordIcon = document.getElementById('passwordIcon');
+
+    togglePasswordBtn.addEventListener('click', function () {
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            passwordIcon.classList.replace('bi-eye-fill', 'bi-eye-slash-fill');
+        } else {
+            passwordInput.type = 'password';
+            passwordIcon.classList.replace('bi-eye-slash-fill', 'bi-eye-fill');
+        }
+    });
+
+    window.addEventListener('DOMContentLoaded', () => {
+        const savedTheme = localStorage.getItem('admin_theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+    });
+</script>
+</body>
+</html>

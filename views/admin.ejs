@@ -1,0 +1,1505 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>پنل مدیریت | Trattoria Bella</title>
+
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.0.0/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
+    <link href="/css/bootstrap.rtl.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/icons-1.13.1/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+
+    <style>
+        /* =========================================================
+           پنل مدیریت Trattoria Bella — توکن‌های طراحی (هماهنگ با سایت)
+        ========================================================= */
+        :root {
+            --bg-grad-1: #FFF8EC;
+            --bg-grad-2: #F3E3BE;
+            --bg-grad-3: #FBEFDD;
+            --glass-bg: rgba(255, 252, 245, 0.55);
+            --glass-border: rgba(184, 134, 11, 0.22);
+            --glass-shadow: rgba(120, 80, 20, 0.12);
+            --glass-hover: rgba(184, 134, 11, 0.10);
+            --text-main: #2A1F10;
+            --text-muted: #7A6644;
+            --input-bg: rgba(255, 255, 255, 0.55);
+            --input-focus: rgba(255, 255, 255, 0.85);
+            --btn-bg: rgba(255, 255, 255, 0.65);
+            --btn-hover: rgba(255, 255, 255, 0.9);
+            --accent-color: #B8860B;
+            --accent-light: #D4A843;
+            --accent-hover: #96700A;
+            --danger-color: #D6453B;
+            --danger-hover: #C13A31;
+            --success-color: #2E8A50;
+            --option-bg: #ffffff;
+            --sidebar-width: 280px;
+            --topbar-height: 72px;
+
+            --sw-0: linear-gradient(135deg,#e8c88a 0%,#c49a3c 100%);
+            --sw-1: linear-gradient(135deg,#f29a82 0%,#c94f30 100%);
+            --sw-2: linear-gradient(135deg,#b5d4a8 0%,#4a8a38 100%);
+            --sw-3: linear-gradient(135deg,#a8d8b0 0%,#2e8a50 100%);
+            --sw-4: linear-gradient(135deg,#f0b8c8 0%,#c83860 100%);
+            --sw-5: linear-gradient(135deg,#a8cce8 0%,#2e6aa8 100%);
+            --sw-6: linear-gradient(135deg,#f4b87e 0%,#d47230 100%);
+            --sw-7: linear-gradient(135deg,#d8b8e8 0%,#8a3ec4 100%);
+            --sw-8: linear-gradient(135deg,#a0e0d0 0%,#1e9a82 100%);
+            --sw-9: linear-gradient(135deg,#d8a878 0%,#8a5a28 100%);
+        }
+
+        [data-theme="dark"] {
+            --bg-grad-1: #130D06;
+            --bg-grad-2: #211609;
+            --bg-grad-3: #2C1C0C;
+            --glass-bg: rgba(24, 17, 9, 0.55);
+            --glass-border: rgba(212, 168, 67, 0.16);
+            --glass-shadow: rgba(0, 0, 0, 0.45);
+            --glass-hover: rgba(212, 168, 67, 0.10);
+            --text-main: #F5EDD8;
+            --text-muted: #B79A6B;
+            --input-bg: rgba(0, 0, 0, 0.28);
+            --input-focus: rgba(0, 0, 0, 0.45);
+            --btn-bg: rgba(255, 255, 255, 0.08);
+            --btn-hover: rgba(255, 255, 255, 0.16);
+            --accent-color: #D4A843;
+            --accent-light: #F0C860;
+            --accent-hover: #E8BD52;
+            --danger-color: #E8716A;
+            --danger-hover: #F08983;
+            --success-color: #4FBE7A;
+            --option-bg: #1C140A;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        * { font-family: 'Vazirmatn', Tahoma, Arial, sans-serif; }
+
+        body {
+            overflow-x: hidden;
+            background: linear-gradient(-45deg, var(--bg-grad-1), var(--bg-grad-2), var(--bg-grad-3));
+            background-size: 400% 400%;
+            animation: gradientBG 18s ease infinite;
+            color: var(--text-main);
+            min-height: 100vh;
+            transition: background-color 0.4s ease, color 0.4s ease;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .admin-layout { display: flex; min-height: 100vh; }
+
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(18px) saturate(160%);
+            -webkit-backdrop-filter: blur(18px) saturate(160%);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 8px 32px var(--glass-shadow);
+            transition: all 0.3s ease;
+        }
+
+        /* ---------- Sidebar ---------- */
+        .sidebar {
+            width: var(--sidebar-width);
+            position: fixed;
+            top: 0; right: 0;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 1050;
+            border-left: 1px solid var(--glass-border);
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px) saturate(160%);
+            -webkit-backdrop-filter: blur(20px) saturate(160%);
+            box-shadow: 4px 0 32px var(--glass-shadow);
+            transition: transform 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+        .sidebar::-webkit-scrollbar { width: 5px; }
+        .sidebar::-webkit-scrollbar-thumb { background: var(--glass-border); border-radius: 5px; }
+
+        .sidebar-brand {
+            height: var(--topbar-height);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0 1.5rem;
+            border-bottom: 1px solid var(--glass-border);
+            flex-shrink: 0;
+        }
+        .sidebar-brand .brand-mark {
+            width: 42px; height: 42px;
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            background: linear-gradient(135deg, var(--accent-light), var(--accent-color));
+            color: #fff;
+            font-size: 1.25rem;
+            box-shadow: 0 4px 14px rgba(184,134,11,0.35);
+            flex-shrink: 0;
+        }
+        .sidebar-brand .brand-text { line-height: 1.25; min-width: 0; }
+        .sidebar-brand .brand-text strong { display: block; font-size: 0.98rem; font-weight: 800; }
+        .sidebar-brand .brand-text span { font-size: 0.7rem; color: var(--text-muted); }
+
+        .sidebar-section-label {
+            font-size: 0.68rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            padding: 0.4rem 1.5rem;
+            margin-top: 0.6rem;
+            font-weight: 700;
+        }
+
+        .sidebar .nav-link {
+            border-radius: 13px;
+            margin: 0.18rem 1rem;
+            padding: 0.7rem 1rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.92rem;
+            transition: all 0.25s ease;
+            position: relative;
+        }
+        .sidebar .nav-link .nav-ico {
+            width: 34px; height: 34px;
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            background: var(--glass-hover);
+            font-size: 1rem;
+            flex-shrink: 0;
+            transition: all 0.25s ease;
+        }
+        .sidebar .nav-link .nav-badge {
+            margin-right: auto;
+            background: var(--glass-hover);
+            color: var(--text-muted);
+            font-size: 0.68rem;
+            font-weight: 700;
+            padding: 0.15rem 0.5rem;
+            border-radius: 50rem;
+        }
+        .sidebar .nav-link:hover {
+            background-color: var(--glass-hover);
+            color: var(--text-main);
+            transform: translateX(-4px);
+        }
+        .sidebar .nav-link.active {
+            background: linear-gradient(135deg, var(--accent-light), var(--accent-color));
+            color: #1A1208;
+            font-weight: 700;
+            box-shadow: 0 6px 18px rgba(184,134,11,0.30);
+        }
+        [data-theme="dark"] .sidebar .nav-link.active { color: #1A1208; }
+        .sidebar .nav-link.active .nav-ico { background: rgba(255,255,255,0.25); }
+        .sidebar .nav-link.active .nav-badge { background: rgba(255,255,255,0.3); color: #1A1208; }
+
+        .sidebar-footer {
+            margin-top: auto;
+            padding: 1rem 1.25rem 1.4rem;
+            border-top: 1px solid var(--glass-border);
+        }
+        .sidebar-clock {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.65rem 0.9rem;
+            border-radius: 13px;
+            background: var(--glass-hover);
+            border: 1px solid var(--glass-border);
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            margin-bottom: 0.6rem;
+        }
+        .sidebar-footer .logout-link {
+            display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+            font-size: 0.82rem; font-weight: 700;
+            color: var(--danger-color);
+            text-decoration: none;
+            padding: 0.55rem;
+            border-radius: 12px;
+            border: 1px solid var(--glass-border);
+            transition: all 0.25s ease;
+        }
+        .sidebar-footer .logout-link:hover { background: rgba(214,69,59,0.12); }
+
+        /* ---------- Main / Topbar ---------- */
+        .main-content { flex: 1; margin-right: var(--sidebar-width); min-width: 0; transition: margin 0.3s ease; }
+        .content-wrapper { padding: 1.5rem; padding-top: calc(var(--topbar-height) + 1.5rem); max-width: 1400px; }
+
+        .topbar {
+            height: var(--topbar-height);
+            position: fixed;
+            top: 0; right: var(--sidebar-width); left: 0;
+            z-index: 1040;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 1.5rem;
+            border-bottom: 1px solid var(--glass-border);
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px) saturate(160%);
+            -webkit-backdrop-filter: blur(20px) saturate(160%);
+            box-shadow: 0 4px 24px var(--glass-shadow);
+            transition: right 0.3s ease;
+        }
+        .topbar-title { font-weight: 800; font-size: 1.02rem; display: flex; align-items: center; gap: 0.6rem; }
+        .topbar-title .topbar-sub { font-size: 0.72rem; color: var(--text-muted); font-weight: 500; display: block; }
+        .sidebar-toggle-btn { display: none; }
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
+            z-index: 1045;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        @media (max-width: 991.98px) {
+            .sidebar { transform: translateX(100%); }
+            .sidebar.show { transform: translateX(0); }
+            .main-content { margin-right: 0; }
+            .topbar { right: 0; padding: 0 1rem; }
+            .sidebar-overlay.show { display: block; opacity: 1; }
+            .sidebar-toggle-btn { display: flex; }
+        }
+
+        /* ---------- Cards / Inputs / Buttons ---------- */
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px) saturate(160%);
+            -webkit-backdrop-filter: blur(16px) saturate(160%);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px var(--glass-shadow);
+            padding: 1.6rem;
+            transition: transform 0.3s ease, background 0.4s ease;
+        }
+        .glass-card:hover { transform: translateY(-2px); }
+
+        .glass-input, .glass-select, .glass-textarea {
+            background: var(--input-bg) !important;
+            border: 1px solid var(--glass-border) !important;
+            color: var(--text-main) !important;
+            border-radius: 13px !important;
+            box-shadow: none !important;
+        }
+        .glass-input:focus, .glass-select:focus, .glass-textarea:focus {
+            box-shadow: 0 0 0 3px rgba(184, 134, 11, 0.20) !important;
+            border-color: var(--accent-color) !important;
+            background: var(--input-focus) !important;
+        }
+        option { background-color: var(--option-bg); color: var(--text-main); }
+
+        .table { color: var(--text-main); margin-bottom: 0; }
+        .table th, .table td {
+            background-color: transparent !important;
+            border-bottom: 1px solid var(--glass-border) !important;
+            vertical-align: middle;
+            padding: 1.1rem 1rem;
+            color: var(--text-main);
+        }
+        .table thead th {
+            border-bottom: 2px solid var(--glass-border) !important;
+            color: var(--text-muted);
+            font-weight: 700;
+            font-size: 0.82rem;
+        }
+        .table-hover tbody tr { transition: background-color 0.25s ease; }
+        .table-hover tbody tr:hover { background-color: var(--glass-hover) !important; }
+
+        .theme-butn {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            color: var(--accent-color);
+            width: 44px; height: 44px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            font-size: 1.05rem;
+        }
+        .theme-butn:hover { transform: rotate(18deg) scale(1.08); background: var(--btn-hover); }
+
+        .btn-accent {
+            background: linear-gradient(135deg, var(--accent-light), var(--accent-color));
+            color: #1A1208 !important;
+            border: none;
+            border-radius: 14px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 700;
+            box-shadow: 0 4px 16px rgba(184, 134, 11, 0.28);
+            transition: all 0.25s ease;
+        }
+        .btn-accent:hover { transform: translateY(-2px); box-shadow: 0 6px 22px rgba(184, 134, 11, 0.38); }
+        .btn-accent:disabled { opacity: 0.6; transform: none; }
+
+        .btn-glass {
+            background: var(--btn-bg);
+            border: 1px solid var(--glass-border);
+            color: var(--text-main);
+            border-radius: 14px;
+            padding: 0.7rem 1.4rem;
+            font-weight: 600;
+            transition: all 0.25s ease;
+        }
+        .btn-glass:hover { background: var(--btn-hover); color: var(--text-main); }
+
+        .text-accent { color: var(--accent-color) !important; }
+        .text-muted-custom { color: var(--text-muted) !important; opacity: 0.9; }
+        .border-glass { border-color: var(--glass-border) !important; }
+
+        .content-section { display: none; }
+        .content-section.active-section { display: block; animation: fadeIn 0.4s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .password-toggle {
+            position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+            cursor: pointer; color: var(--text-muted); background: none; border: none; padding: 0; z-index: 5;
+        }
+        .input-password-wrap { position: relative; }
+        .input-password-wrap .glass-input { padding-left: 44px; }
+
+        input::placeholder, textarea::placeholder { color: var(--text-muted) !important; opacity: 0.8; }
+
+        /* ---------- Stat Cards ---------- */
+        .stat-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px) saturate(160%);
+            border: 1px solid var(--glass-border);
+            border-radius: 18px;
+            box-shadow: 0 8px 28px var(--glass-shadow);
+            padding: 1.3rem 1.4rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+            height: 100%;
+            transition: transform 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .stat-card:hover { transform: translateY(-4px); }
+        .stat-card .stat-icon {
+            width: 54px; height: 54px;
+            border-radius: 16px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.4rem;
+            color: #fff;
+            flex-shrink: 0;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+        }
+        .stat-card h3 { font-size: 1.5rem; letter-spacing: -0.02em; }
+        .stat-trend { font-size: 0.68rem; font-weight: 700; padding: 0.15rem 0.5rem; border-radius: 50rem; }
+
+        /* ---------- Category breakdown ---------- */
+        .cat-bar-row { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.85rem; }
+        .cat-bar-dot { width: 34px; height: 34px; border-radius: 10px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 0.95rem; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
+        .cat-bar-track { flex: 1; height: 8px; border-radius: 50rem; background: var(--glass-hover); overflow: hidden; margin-top: 4px; }
+        .cat-bar-fill { height: 100%; border-radius: 50rem; transition: width 0.6s ease; }
+
+        /* ---------- Icon swatches (shared with picker) ---------- */
+        .icon-swatch-0 { background: var(--sw-0); } .icon-swatch-1 { background: var(--sw-1); }
+        .icon-swatch-2 { background: var(--sw-2); } .icon-swatch-3 { background: var(--sw-3); }
+        .icon-swatch-4 { background: var(--sw-4); } .icon-swatch-5 { background: var(--sw-5); }
+        .icon-swatch-6 { background: var(--sw-6); } .icon-swatch-7 { background: var(--sw-7); }
+        .icon-swatch-8 { background: var(--sw-8); } .icon-swatch-9 { background: var(--sw-9); }
+
+        /* ---------- Icon Picker ---------- */
+        .icon-picker-preview {
+            display: flex; align-items: center; gap: 1rem;
+            padding: 0.9rem 1rem; border-radius: 16px;
+            background: var(--glass-hover); border: 1px solid var(--glass-border);
+            margin-bottom: 0.9rem;
+        }
+        .icon-picker-preview .ipv-box {
+            width: 54px; height: 54px; border-radius: 15px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.55rem; color: #fff;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.2);
+            flex-shrink: 0;
+        }
+        .icon-picker-groups { max-height: 280px; overflow-y: auto; border-radius: 16px; background: var(--input-bg); border: 1px solid var(--glass-border); padding: 0.9rem; }
+        .icon-picker-groups::-webkit-scrollbar { width: 5px; }
+        .icon-picker-groups::-webkit-scrollbar-thumb { background: var(--glass-border); border-radius: 5px; }
+        .icon-group-title { font-size: 0.72rem; font-weight: 700; color: var(--text-muted); margin: 0.7rem 0 0.5rem; text-transform: uppercase; letter-spacing: 0.04em; display: flex; align-items: center; gap: 0.4rem; }
+        .icon-group-title:first-child { margin-top: 0; }
+        .icon-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(50px, 1fr)); gap: 8px; }
+        .icon-grid-item {
+            width: 100%; aspect-ratio: 1/1; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; font-size: 1.15rem; cursor: pointer;
+            border: 2px solid transparent;
+            transition: transform 0.18s ease, box-shadow 0.18s ease;
+            position: relative;
+        }
+        .icon-grid-item:hover { transform: scale(1.12); box-shadow: 0 4px 14px rgba(0,0,0,0.25); }
+        .icon-grid-item.selected { border-color: var(--text-main); box-shadow: 0 0 0 3px var(--glass-hover), 0 4px 14px rgba(0,0,0,0.3); }
+        .icon-grid-item.selected::after {
+            content: '\F26E'; font-family: 'bootstrap-icons'; position: absolute; bottom: -4px; left: -4px;
+            background: var(--success-color); color: #fff; width: 16px; height: 16px; border-radius: 50%;
+            font-size: 0.55rem; display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+        }
+        .icon-grid-empty { text-align: center; padding: 1.5rem; color: var(--text-muted); font-size: 0.85rem; grid-column: 1/-1; }
+
+        /* ---------- Category badge in table ---------- */
+        .cat-icon-badge {
+            width: 34px; height: 34px; border-radius: 10px;
+            display: inline-flex; align-items: center; justify-content: center;
+            color: #fff; font-size: 1rem; box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+        .product-cat-pill {
+            display: inline-flex; align-items: center; gap: 0.4rem;
+            background: var(--glass-hover); border: 1px solid var(--glass-border);
+            border-radius: 50rem; padding: 0.3rem 0.7rem 0.3rem 0.9rem; font-size: 0.78rem; font-weight: 600;
+        }
+        .product-cat-pill .dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+
+        .img-thumb-ph {
+            width: 55px; height: 55px; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            background: var(--glass-hover); border: 1px solid var(--glass-border);
+            color: var(--text-muted); font-size: 1.3rem;
+        }
+
+        .upload-drop {
+            border: 1.5px dashed var(--glass-border);
+            border-radius: 16px;
+            background: var(--input-bg);
+            padding: 1.4rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+        .upload-drop:hover, .upload-drop.dragover { border-color: var(--accent-color); background: var(--glass-hover); }
+        .upload-drop i { font-size: 1.8rem; color: var(--accent-color); }
+
+        .char-counter { font-size: 0.7rem; color: var(--text-muted); text-align: left; margin-top: 0.3rem; }
+
+        .empty-state { text-align: center; padding: 3rem 1rem; color: var(--text-muted); }
+        .empty-state i { font-size: 2.6rem; color: var(--accent-color); opacity: 0.6; margin-bottom: 0.75rem; display: block; }
+
+        .badge-soft-success { background: rgba(46,138,80,0.15); color: var(--success-color); }
+        .badge-soft-danger { background: rgba(214,69,59,0.15); color: var(--danger-color); }
+
+        @media (max-width: 575.98px) {
+            .content-wrapper { padding: 1rem; padding-top: calc(var(--topbar-height) + 1rem); }
+            .glass-card { padding: 1.1rem; border-radius: 16px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="admin-layout">
+
+    <!-- ═══════════════ SIDEBAR ═══════════════ -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-brand">
+            <div class="brand-mark"><i class="bi bi-cup-hot-fill"></i></div>
+            <div class="brand-text">
+                <strong>Trattoria Bella</strong>
+                <span>پنل مدیریت رستوران</span>
+            </div>
+        </div>
+
+        <nav class="py-2" id="sidebarNav">
+            <div class="sidebar-section-label">نمای کلی</div>
+            <a class="nav-link active" href="#dashboard" onclick="setActiveTab('dashboard'); closeSidebarOnMobile();">
+                <span class="nav-ico"><i class="bi bi-speedometer2"></i></span> داشبورد
+            </a>
+
+            <div class="sidebar-section-label">مدیریت منو</div>
+            <a class="nav-link" href="#addProduct" onclick="setActiveTab('addProduct'); closeSidebarOnMobile();">
+                <span class="nav-ico"><i class="bi bi-plus-circle-fill"></i></span> افزودن محصول
+            </a>
+            <a class="nav-link" href="#productList" onclick="setActiveTab('productList'); closeSidebarOnMobile();">
+                <span class="nav-ico"><i class="bi bi-list-stars"></i></span> لیست محصولات
+                <span class="nav-badge"><%= typeof iteam !== 'undefined' ? iteam.length : 0 %></span>
+            </a>
+            <a class="nav-link" href="#categoryManage" onclick="setActiveTab('categoryManage'); closeSidebarOnMobile();">
+                <span class="nav-ico"><i class="bi bi-grid-fill"></i></span> دسته‌بندی‌ها
+                <span class="nav-badge"><%= typeof categories !== 'undefined' ? categories.length : 0 %></span>
+            </a>
+
+            <div class="sidebar-section-label">حساب کاربری</div>
+            <a class="nav-link" href="#changeCredentials" onclick="setActiveTab('changeCredentials'); closeSidebarOnMobile();">
+                <span class="nav-ico"><i class="bi bi-shield-lock-fill"></i></span> امنیت و رمز عبور
+            </a>
+            <a class="nav-link" href="/" target="_blank">
+                <span class="nav-ico"><i class="bi bi-box-arrow-up-left"></i></span> مشاهده سایت
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="sidebar-clock">
+                <span class="d-flex align-items-center gap-2"><i class="bi bi-clock-fill text-accent"></i> <span id="liveClock">--:--</span></span>
+                <span id="liveDate">----</span>
+            </div>
+            <a href="/logout" class="logout-link">
+                <i class="bi bi-box-arrow-right"></i> خروج از پنل
+            </a>
+        </div>
+    </aside>
+
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+    <!-- ═══════════════ MAIN ═══════════════ -->
+    <main class="main-content">
+
+        <header class="topbar">
+            <div class="d-flex align-items-center gap-3">
+                <button class="theme-butn sidebar-toggle-btn" onclick="toggleSidebar()" aria-label="منو">
+                    <i class="bi bi-list"></i>
+                </button>
+                <div class="topbar-title">
+                    <i class="bi bi-egg-fried text-accent fs-5"></i>
+                    <div>
+                        مدیریت رستوران
+                        <span class="topbar-sub">خوش آمدید، امروز روز خوبی برای پختن غذای خوب است 🍝</span>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                <a href="/" target="_blank" class="btn-glass d-none d-md-inline-flex align-items-center gap-2 text-decoration-none" style="font-size:0.82rem;">
+                    <i class="bi bi-eye-fill"></i> مشاهده منو
+                </a>
+                <button class="theme-butn" id="themeBtn" onclick="toggleTheme()" aria-label="تغییر تم">
+                    <i class="bi bi-sun-fill" id="themeIcon"></i>
+                </button>
+            </div>
+        </header>
+
+        <div class="content-wrapper">
+
+            <%
+                // ---------- کمک‌تابع‌های محاسباتی (بدون نیاز به فیلد جدید در دیتابیس) ----------
+                function swatchIndex(str){
+                    if(!str) return 0;
+                    var h = 0;
+                    for (var i=0;i<str.length;i++){ h = (h + str.charCodeAt(i)) % 10; }
+                    return h;
+                }
+                function fmtNum(n){
+                    if(n === undefined || n === null || n === '') return '0';
+                    return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+                }
+                var allProducts = typeof iteam !== 'undefined' ? iteam : [];
+                var allCategories = typeof categories !== 'undefined' ? categories : [];
+                var totalValue = 0, missingImg = 0;
+                allProducts.forEach(function(p){
+                    totalValue += Number(p.iteamPrice) || 0;
+                    if (!p.imageUrl) missingImg++;
+                });
+                var avgPrice = allProducts.length ? Math.round(totalValue / allProducts.length) : 0;
+                var catCounts = {};
+                allProducts.forEach(function(p){ catCounts[p.category] = (catCounts[p.category] || 0) + 1; });
+                function catByName(n){ return allCategories.find(function(c){ return c.name === n; }); }
+            %>
+
+            <!-- ══════════════ DASHBOARD ══════════════ -->
+            <section id="dashboardSection" class="content-section active-section">
+                <h5 class="fw-bold mb-4 d-flex align-items-center gap-2">
+                    <i class="bi bi-pie-chart-fill text-accent"></i>
+                    آمار و وضعیت کلی رستوران
+                </h5>
+
+                <div class="row g-3 mb-4">
+                    <div class="col-12 col-sm-6 col-xl-3">
+                        <div class="stat-card">
+                            <div>
+                                <span class="text-muted-custom d-block mb-1 fw-medium" style="font-size:0.78rem;">کل محصولات</span>
+                                <h3 class="fw-bold mb-0"><%= allProducts.length %></h3>
+                            </div>
+                            <div class="stat-icon icon-swatch-0"><i class="bi bi-box-seam-fill"></i></div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-xl-3">
+                        <div class="stat-card">
+                            <div>
+                                <span class="text-muted-custom d-block mb-1 fw-medium" style="font-size:0.78rem;">دسته‌بندی‌ها</span>
+                                <h3 class="fw-bold mb-0"><%= allCategories.length %></h3>
+                            </div>
+                            <div class="stat-icon icon-swatch-5"><i class="bi bi-tags-fill"></i></div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-xl-3">
+                        <div class="stat-card">
+                            <div>
+                                <span class="text-muted-custom d-block mb-1 fw-medium" style="font-size:0.78rem;">ارزش کل منو</span>
+                                <h3 class="fw-bold mb-0" style="font-size:1.15rem;"><%= fmtNum(totalValue) %> <small class="fw-normal text-muted-custom" style="font-size:0.7rem;">تومان</small></h3>
+                            </div>
+                            <div class="stat-icon icon-swatch-3"><i class="bi bi-cash-coin"></i></div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-xl-3">
+                        <div class="stat-card">
+                            <div>
+                                <span class="text-muted-custom d-block mb-1 fw-medium" style="font-size:0.78rem;">میانگین قیمت</span>
+                                <h3 class="fw-bold mb-0" style="font-size:1.15rem;"><%= fmtNum(avgPrice) %> <small class="fw-normal text-muted-custom" style="font-size:0.7rem;">تومان</small></h3>
+                            </div>
+                            <div class="stat-icon icon-swatch-6"><i class="bi bi-graph-up-arrow"></i></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-4">
+                    <div class="col-md-7">
+                        <div class="glass-card h-100">
+                            <h6 class="fw-bold mb-4 d-flex align-items-center gap-2">
+                                <i class="bi bi-bar-chart-fill text-accent"></i> توزیع محصولات بر اساس دسته‌بندی
+                            </h6>
+                            <% if (allCategories.length > 0) { %>
+                                <% allCategories.forEach(function(cat){
+                                    var cnt = catCounts[cat.name] || 0;
+                                    var pct = allProducts.length ? Math.round((cnt / allProducts.length) * 100) : 0;
+                                    var sIdx = swatchIndex(cat.icon || cat.name);
+                                %>
+                                <div class="cat-bar-row">
+                                    <div class="cat-bar-dot icon-swatch-<%= sIdx %>"><i class="bi <%= cat.icon || 'bi-grid' %>"></i></div>
+                                    <div class="flex-grow-1">
+                                        <div class="d-flex justify-content-between mb-1">
+                                            <span class="fw-semibold" style="font-size:0.85rem;"><%= cat.name %></span>
+                                            <span class="text-muted-custom" style="font-size:0.78rem;"><%= cnt %> محصول · <%= pct %>%</span>
+                                        </div>
+                                        <div class="cat-bar-track">
+                                            <div class="cat-bar-fill icon-swatch-<%= sIdx %>" style="width: <%= pct %>%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <% }) %>
+                            <% } else { %>
+                                <div class="empty-state py-3">
+                                    <i class="bi bi-tags"></i>
+                                    <p class="mb-0">هنوز دسته‌بندی‌ای ثبت نشده است.</p>
+                                </div>
+                            <% } %>
+                        </div>
+                    </div>
+
+                    <div class="col-md-5">
+                        <div class="glass-card h-100">
+                            <h6 class="fw-bold mb-4 d-flex align-items-center gap-2">
+                                <i class="bi bi-clipboard-check-fill text-accent"></i> وضعیت سیستم
+                            </h6>
+                            <div class="d-flex align-items-center justify-content-between p-3 rounded-3 mb-3" style="background: var(--glass-hover); border:1px solid var(--glass-border);">
+                                <span class="fw-semibold d-flex align-items-center gap-2" style="font-size:0.88rem;">
+                                    <span class="spinner-grow spinner-grow-sm text-success"></span> سرور و پنل
+                                </span>
+                                <span class="badge-soft-success rounded-pill px-3 py-2 fw-bold" style="font-size:0.72rem;">فعال و آنلاین</span>
+                            </div>
+                            <div class="d-flex align-items-center justify-content-between p-3 rounded-3 mb-3" style="background: var(--glass-hover); border:1px solid var(--glass-border);">
+                                <span class="fw-semibold" style="font-size:0.88rem;">محصولات بدون تصویر</span>
+                                <span class="<%= missingImg > 0 ? 'badge-soft-danger' : 'badge-soft-success' %> rounded-pill px-3 py-2 fw-bold" style="font-size:0.72rem;"><%= missingImg %> مورد</span>
+                            </div>
+                            <div class="d-flex align-items-center justify-content-between p-3 rounded-3" style="background: var(--glass-hover); border:1px solid var(--glass-border);">
+                                <span class="fw-semibold" style="font-size:0.88rem;">دسته‌بندی‌های خالی</span>
+                                <% var emptyCats = allCategories.filter(function(c){ return !(catCounts[c.name] > 0); }).length; %>
+                                <span class="<%= emptyCats > 0 ? 'badge-soft-danger' : 'badge-soft-success' %> rounded-pill px-3 py-2 fw-bold" style="font-size:0.72rem;"><%= emptyCats %> مورد</span>
+                            </div>
+
+                            <div class="d-flex gap-2 mt-4">
+                                <a href="#addProduct" onclick="setActiveTab('addProduct')" class="btn btn-accent flex-fill text-decoration-none text-center" style="font-size:0.85rem;">
+                                    <i class="bi bi-plus-lg"></i> محصول جدید
+                                </a>
+                                <a href="#categoryManage" onclick="setActiveTab('categoryManage')" class="btn btn-glass flex-fill text-decoration-none text-center" style="font-size:0.85rem;">
+                                    <i class="bi bi-grid"></i> دسته‌بندی جدید
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ══════════════ ADD PRODUCT ══════════════ -->
+            <section id="addProductSection" class="content-section">
+                <div class="glass-card" style="max-width: 900px;">
+                    <h5 class="fw-bold mb-4 d-flex align-items-center gap-2">
+                        <i class="bi bi-plus-circle-fill text-accent"></i>
+                        افزودن محصول جدید به منو
+                    </h5>
+
+                    <form action="/admin" method="POST" enctype="multipart/form-data" class="row g-4" id="addProductForm">
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-medium text-muted-custom">نام محصول</label>
+                            <input type="text" name="iteamName" class="form-control glass-input" required placeholder="مثال: پاستا آلفردو">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-medium text-muted-custom">قیمت (تومان)</label>
+                            <input type="text" inputmode="numeric" name="iteamPrice" class="form-control glass-input price-input" required placeholder="مثال: 185,000">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-medium text-muted-custom">دسته‌بندی</label>
+                            <select name="category" class="form-select glass-select" required>
+                                <% if (allCategories.length > 0) { %>
+                                    <% allCategories.forEach(function(cat){ %>
+                                        <option value="<%= cat.name %>"><%= cat.name %> (<%= cat.enname %>)</option>
+                                    <% }) %>
+                                <% } else { %>
+                                    <option value="">ابتدا دسته‌بندی بسازید</option>
+                                <% } %>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-medium text-muted-custom">تصویر محصول</label>
+                            <label class="upload-drop d-block" id="addUploadDrop">
+                                <i class="bi bi-cloud-arrow-up-fill d-block mb-2"></i>
+                                <span class="fw-semibold d-block" style="font-size:0.85rem;" id="addUploadLabel">برای انتخاب تصویر کلیک کنید</span>
+                                <span class="text-muted-custom" style="font-size:0.72rem;">PNG, JPG یا WEBP</span>
+                                <input type="file" name="imageUrl" id="addImageInput" accept="image/*" class="d-none" onchange="previewAddImage(event)">
+                            </label>
+                            <div id="addPreviewContainer" class="d-none mt-2 text-center">
+                                <img id="addPreview" class="rounded-3 border-glass" style="width:90px; height:90px; object-fit:cover; border:1px solid var(--glass-border);">
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label fw-medium text-muted-custom">توضیحات و ترکیبات محصول</label>
+                            <textarea name="description" class="form-control glass-textarea" rows="4" maxlength="400" id="addDescField"
+                                      placeholder="ترکیبات: فیله مرغ، قارچ، خامه، پنیر پارمسان..."></textarea>
+                            <div class="char-counter"><span id="addDescCount">0</span>/400</div>
+                        </div>
+
+                        <div class="col-12 d-flex justify-content-end gap-2 mt-3">
+                            <button type="reset" class="btn btn-glass px-4">پاک کردن فرم</button>
+                            <button type="submit" class="btn btn-accent px-5">
+                                <i class="bi bi-check-circle me-1"></i> ثبت و انتشار محصول
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+            </section>
+
+            <!-- ══════════════ PRODUCT LIST ══════════════ -->
+            <section id="productListSection" class="content-section">
+                <div class="glass-card">
+                    <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-4">
+                        <h5 class="fw-bold mb-0 d-flex align-items-center gap-2">
+                            <i class="bi bi-list-stars text-accent"></i>
+                            مدیریت و لیست محصولات منو
+                        </h5>
+                        <div class="d-flex gap-2 flex-wrap">
+                            <select class="form-select glass-select" id="categoryFilter" style="max-width:180px;" onchange="filterByCategory(this.value)">
+                                <option value="">همه دسته‌بندی‌ها</option>
+                                <% allCategories.forEach(function(cat){ %>
+                                    <option value="<%= cat.name %>"><%= cat.name %></option>
+                                <% }) %>
+                            </select>
+                            <div style="max-width: 260px; width: 100%;">
+                                <input type="text" class="form-control glass-input rounded-pill" placeholder="جستجو در نام محصولات..." id="productSearchInput" onkeyup="searchTable(this.value)">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="text-muted-custom" style="font-size:0.8rem;" id="productCountLabel">نمایش <%= allProducts.length %> از <%= allProducts.length %> محصول</span>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle" id="productTable">
+                            <thead>
+                                <tr>
+                                    <th class="ps-4">تصویر</th>
+                                    <th>نام محصول</th>
+                                    <th>قیمت</th>
+                                    <th>دسته‌بندی</th>
+                                    <th class="text-center pe-4">عملیات</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% if (allProducts.length > 0) { %>
+                                    <% allProducts.forEach(function(it){
+                                        var cat = catByName(it.category);
+                                        var sIdx = swatchIndex(cat ? (cat.icon || cat.name) : it.category);
+                                    %>
+                                        <tr data-category="<%= it.category %>">
+                                            <td class="ps-4">
+                                                <% if (it.imageUrl) { %>
+                                                    <img src="<%= it.imageUrl %>" width="55" height="55" class="rounded-3 object-fit-cover shadow-sm border-glass">
+                                                <% } else { %>
+                                                    <div class="img-thumb-ph"><i class="bi bi-image"></i></div>
+                                                <% } %>
+                                            </td>
+                                            <td class="fw-semibold"><%= it.iteamName %></td>
+                                            <td class="text-accent fw-bold"><%= fmtNum(it.iteamPrice) %> <small class="text-muted-custom fw-normal">تومان</small></td>
+                                            <td>
+                                                <span class="product-cat-pill">
+                                                    <span class="dot icon-swatch-<%= sIdx %>"></span>
+                                                    <%= it.category %>
+                                                </span>
+                                            </td>
+                                            <td class="text-center pe-4">
+                                                <div class="d-flex justify-content-center gap-2">
+                                                    <a href="/admin/edit/<%= it._id %>" class="btn btn-glass btn-sm text-accent">
+                                                        <i class="bi bi-pencil-square"></i> ویرایش
+                                                    </a>
+                                                    <button type="button" class="btn btn-glass btn-sm text-danger" data-bs-toggle="modal" data-bs-target="#deleteModal"
+                                                            data-bs-title="<%= it.iteamName %>" data-bs-id="<%= it._id %>">
+                                                        <i class="bi bi-trash"></i> حذف
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    <% }) %>
+                                <% } else { %>
+                                    <tr>
+                                        <td colspan="5">
+                                            <div class="empty-state">
+                                                <i class="bi bi-inboxes"></i>
+                                                <p class="mb-0">هیچ محصولی در سیستم یافت نشد. از تب «افزودن محصول» شروع کنید.</p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ══════════════ CATEGORY MANAGEMENT ══════════════ -->
+            <section id="categoryManageSection" class="content-section">
+                <div class="row g-4">
+                    <div class="col-lg-5">
+                        <div class="glass-card">
+                            <h5 class="fw-bold mb-4 d-flex align-items-center gap-2">
+                                <i class="bi bi-plus-square-fill text-accent"></i>
+                                ایجاد دسته‌بندی جدید
+                            </h5>
+                            <form action="/admin/category/add" method="POST" class="row g-3">
+                                <div class="col-12">
+                                    <label class="form-label fw-medium text-muted-custom">نام فارسی</label>
+                                    <input type="text" name="name" class="form-control glass-input" required placeholder="مثال: پاستا">
+                                </div>
+
+                                <div class="col-12">
+                                    <label class="form-label fw-medium text-muted-custom">نام انگلیسی</label>
+                                    <input type="text" name="enname" class="form-control glass-input" required placeholder="مثال: pasta">
+                                </div>
+
+                                <div class="col-12">
+                                    <label class="form-label fw-medium text-muted-custom">آیکون دسته‌بندی</label>
+
+                                    <div class="icon-picker-preview">
+                                        <div class="ipv-box icon-swatch-0" id="addIconPreviewBox">
+                                            <i class="bi bi-grid" id="addPreviewIcon"></i>
+                                        </div>
+                                        <div>
+                                            <span class="fw-semibold d-block" id="addPreviewName">bi-grid</span>
+                                            <span class="text-muted-custom" style="font-size:0.78rem;">آیکون انتخاب‌شده برای این دسته‌بندی</span>
+                                        </div>
+                                    </div>
+
+                                    <input type="text" id="addIconSearch" class="form-control glass-input mb-3"
+                                           placeholder="جستجو در آیکون‌ها... (مثال: قهوه، آتش، گل، ستاره)">
+
+                                    <div class="icon-picker-groups" id="addIconGrid"></div>
+
+                                    <input type="hidden" name="icon" id="addSelectedIcon" value="bi-grid">
+                                </div>
+
+                                <div class="col-12 text-end mt-2">
+                                    <button type="submit" class="btn btn-accent w-100">
+                                        <i class="bi bi-plus-lg me-1"></i> افزودن دسته‌بندی
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-7">
+                        <div class="glass-card">
+                            <h5 class="fw-bold mb-4 d-flex align-items-center gap-2">
+                                <i class="bi bi-grid-fill text-accent"></i>
+                                دسته‌بندی‌های موجود
+                            </h5>
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle">
+                                    <thead>
+                                        <tr>
+                                            <th class="ps-4">#</th>
+                                            <th>دسته‌بندی</th>
+                                            <th>نام انگلیسی</th>
+                                            <th class="text-center">تعداد محصول</th>
+                                            <th class="text-center pe-4">عملیات</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% if (allCategories.length > 0) { %>
+                                            <% allCategories.forEach(function(cat, index){
+                                                var sIdx = swatchIndex(cat.icon || cat.name);
+                                                var cnt = catCounts[cat.name] || 0;
+                                            %>
+                                                <tr>
+                                                    <td class="ps-4">
+                                                        <span class="badge rounded-circle fw-bold d-flex align-items-center justify-content-center" style="width:32px; height:32px; background: var(--glass-hover); color: var(--accent-color); border: 1px solid var(--glass-border);">
+                                                            <%= index + 1 %>
+                                                        </span>
+                                                    </td>
+                                                    <td class="fw-bold">
+                                                        <span class="cat-icon-badge icon-swatch-<%= sIdx %> me-2">
+                                                            <i class="bi <%= cat.icon || 'bi-grid' %>"></i>
+                                                        </span>
+                                                        <%= cat.name %>
+                                                    </td>
+                                                    <td class="text-muted-custom"><%= cat.enname %></td>
+                                                    <td class="text-center">
+                                                        <span class="badge rounded-pill" style="background: var(--glass-hover); color: var(--text-main); border:1px solid var(--glass-border);"><%= cnt %></span>
+                                                    </td>
+                                                    <td class="text-center pe-4">
+                                                        <div class="d-flex justify-content-center gap-2">
+                                                            <a href="/admin/category/edit/<%= cat._id %>" class="btn btn-glass btn-sm text-accent">
+                                                                <i class="bi bi-pencil-square"></i> ویرایش
+                                                            </a>
+                                                            <button type="button" class="btn btn-glass btn-sm text-danger" data-bs-toggle="modal" data-bs-target="#deleteCategoryModal"
+                                                                    data-bs-title="<%= cat.name %>" data-bs-id="<%= cat._id %>">
+                                                                <i class="bi bi-trash"></i> حذف
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            <% }) %>
+                                        <% } else { %>
+                                            <tr>
+                                                <td colspan="5">
+                                                    <div class="empty-state">
+                                                        <i class="bi bi-tags"></i>
+                                                        <p class="mb-0">هیچ دسته‌بندی ثبت نشده است.</p>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        <% } %>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ══════════════ SECURITY / CREDENTIALS ══════════════ -->
+            <section id="changeCredentialsSection" class="content-section">
+                <div class="glass-card mx-auto" style="max-width: 550px;">
+                    <h5 class="fw-bold mb-4 text-center d-flex align-items-center justify-content-center gap-2">
+                        <i class="bi bi-shield-lock-fill text-accent"></i>
+                        تنظیمات امنیتی و تغییر رمز عبور ادمین
+                    </h5>
+                    <form action="/admin/change-credentials" method="POST" id="credentialsForm" class="row g-3">
+                        <div class="col-12">
+                            <label class="form-label fw-medium text-muted-custom">نام کاربری جدید</label>
+                            <input type="text" name="username" class="form-control glass-input" required placeholder="نام کاربری جدید را وارد کنید">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-medium text-muted-custom">رمز عبور جدید</label>
+                            <div class="input-password-wrap">
+                                <input type="password" name="password" id="newPasswordInput" class="form-control glass-input" placeholder="رمز عبور قوی انتخاب کنید" autocomplete="new-password" required>
+                                <button type="button" class="password-toggle" onclick="togglePassword('newPasswordInput', 'eyeIcon1')">
+                                    <i class="bi bi-eye" id="eyeIcon1"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-medium text-muted-custom">تکرار رمز عبور جدید</label>
+                            <div class="input-password-wrap">
+                                <input type="password" name="confirmPassword" id="confirmPasswordInput" class="form-control glass-input" placeholder="رمز عبور جدید را مجدداً وارد کنید" autocomplete="new-password" required>
+                                <button type="button" class="password-toggle" onclick="togglePassword('confirmPasswordInput', 'eyeIcon2')">
+                                    <i class="bi bi-eye" id="eyeIcon2"></i>
+                                </button>
+                            </div>
+                            <div class="text-danger d-none mt-2" id="passwordMatchError" style="font-size:0.8rem;">
+                                <i class="bi bi-exclamation-circle"></i> رمزهای عبور با یکدیگر مطابقت ندارند.
+                            </div>
+                        </div>
+                        <div class="col-12 text-end mt-3">
+                            <button type="submit" class="btn btn-accent w-100 py-3">
+                                <i class="bi bi-check-circle me-1"></i> به‌روزرسانی اطلاعات امنیتی
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+        </div>
+    </main>
+</div>
+
+<!-- ═══════════════ MODALS ═══════════════ -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content glass-panel" style="border-radius: 22px;">
+            <div class="modal-body text-center p-5">
+                <div class="mb-3"><i class="bi bi-exclamation-triangle-fill text-danger" style="font-size: 2.8rem;"></i></div>
+                <h5 class="fw-bold mb-2">حذف محصول</h5>
+                <p class="text-muted-custom mb-0">آیا از حذف محصول «<strong id="modalProductName"></strong>» اطمینان دارید؟ این عملیات غیرقابل بازگشت است.</p>
+            </div>
+            <div class="modal-footer border-0 justify-content-center pt-0 pb-4 gap-2">
+                <button type="button" class="btn btn-glass rounded-pill px-4" data-bs-dismiss="modal">انصراف</button>
+                <a href="#" id="confirmDeleteBtn" class="btn rounded-pill px-4 shadow" style="background: var(--danger-color); color: white; border: none;">بله، حذف شود</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="deleteCategoryModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content glass-panel" style="border-radius: 22px;">
+            <div class="modal-body text-center p-5">
+                <div class="mb-3"><i class="bi bi-exclamation-triangle-fill text-danger" style="font-size: 2.8rem;"></i></div>
+                <h5 class="fw-bold mb-2">حذف دسته‌بندی</h5>
+                <p class="text-muted-custom mb-0">آیا از حذف دسته‌بندی «<strong id="modalCategoryName"></strong>» اطمینان دارید؟ محصولات این دسته ممکن است بدون دسته‌بندی باقی بمانند.</p>
+            </div>
+            <div class="modal-footer border-0 justify-content-center pt-0 pb-4 gap-2">
+                <button type="button" class="btn btn-glass rounded-pill px-4" data-bs-dismiss="modal">انصراف</button>
+                <a href="#" id="confirmDeleteCategoryBtn" class="btn rounded-pill px-4 shadow" style="background: var(--danger-color); color: white; border: none;">بله، حذف شود</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Toast -->
+<div class="toast-container position-fixed bottom-0 start-0 p-3" style="z-index: 1080;">
+    <div id="liveToast" class="toast align-items-center border-0" role="alert" aria-live="assertive" aria-atomic="true"
+         style="background: rgba(46,138,80,0.2); backdrop-filter: blur(10px); border: 1px solid rgba(46,138,80,0.3) !important; color: var(--text-main); border-radius: 15px;">
+        <div class="d-flex">
+            <div class="toast-body d-flex align-items-center gap-2 fw-bold" id="toastMessage"></div>
+            <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+</div>
+
+<script src="/js/jquery-3.7.1.min.js"></script>
+<script src="/js/bootstrap.bundle.min.js"></script>
+
+<script>
+/* =========================================================
+   داده‌های آیکون‌ها — گروه‌بندی‌شده و رنگی، مرتبط با کافه/رستوران
+========================================================= */
+const ICON_LIBRARY = [
+    { group: 'نوشیدنی گرم', icons: [
+        ['cup-hot-fill','قهوه چای گرم اسپرسو coffee tea hot'],
+        ['cup-hot','قهوه چای گرم coffee tea hot'],
+        ['cup-fill','فنجان نوشیدنی cup drink'],
+        ['cup','فنجان نوشیدنی cup drink'],
+        ['fire','گرم داغ تند fire hot spicy']
+    ]},
+    { group: 'نوشیدنی سرد', icons: [
+        ['cup-straw','نوشیدنی سرد آبمیوه اسموتی straw cold drink'],
+        ['droplet-fill','آب نوشیدنی مایع water droplet'],
+        ['droplet-half','آب نوشیدنی water droplet'],
+        ['droplet','آب نوشیدنی water droplet'],
+        ['water','آب نوشیدنی water'],
+        ['snow','یخ سرد بستنی snow ice cold'],
+        ['snow2','یخ سرد snow ice cold'],
+        ['snow3','یخ سرد snow ice cold']
+    ]},
+    { group: 'غذای اصلی', icons: [
+        ['egg-fried','تخم‌مرغ صبحانه egg fried breakfast'],
+        ['egg-fill','تخم‌مرغ egg'],
+        ['egg','تخم‌مرغ egg'],
+        ['basket-fill','سبد غذا basket food'],
+        ['basket2-fill','سبد غذا basket food'],
+        ['basket3-fill','سبد غذا basket food'],
+        ['box-seam-fill','بسته غذا پک box package'],
+        ['box2-fill','بسته غذا box package'],
+        ['box-fill','بسته غذا box'],
+        ['layers-fill','لایه لازانیا layers'],
+        ['layers','لایه layers'],
+        ['bag-fill','کیسه غذا بیرون‌بر bag takeaway']
+    ]},
+    { group: 'دسر و شیرینی', icons: [
+        ['cookie','کوکی شیرینی بیسکویت cookie sweet dessert'],
+        ['heart-fill','محبوب علاقه دسر heart favorite'],
+        ['heart','محبوب علاقه heart favorite'],
+        ['gift-fill','هدیه ویژه gift special'],
+        ['gift','هدیه gift'],
+        ['balloon-fill','جشن شیرینی balloon party'],
+        ['balloon-heart-fill','جشن شیرینی balloon party love'],
+        ['bookmark-heart-fill','محبوب bookmark heart'],
+        ['emoji-heart-eyes-fill','عاشقانه خوشمزه emoji love']
+    ]},
+    { group: 'تازه و سالم', icons: [
+        ['flower1','تازه گل سالاد flower fresh salad'],
+        ['flower2','تازه گل سالاد flower fresh'],
+        ['flower3','تازه گل flower fresh'],
+        ['tree-fill','سبزیجات گیاهی tree green vegetable'],
+        ['tree','گیاهی tree green'],
+        ['sun-fill','تابستانی تازه sun fresh summer']
+    ]},
+    { group: 'ویژه و امتیاز', icons: [
+        ['star-fill','ویژه برتر محبوب star special'],
+        ['star','ویژه star'],
+        ['award-fill','جایزه کیفیت award quality'],
+        ['award','جایزه award'],
+        ['trophy-fill','برترین قهرمان trophy best'],
+        ['trophy','برترین trophy'],
+        ['lightning-fill','سریع فوری lightning fast'],
+        ['lightning-charge-fill','سریع پرانرژی lightning energy'],
+        ['bookmark-star-fill','ویژه پیشنهاد bookmark special'],
+        ['brightness-alt-high-fill','درخشان ویژه brightness special'],
+        ['brightness-alt-high','درخشان brightness']
+    ]},
+    { group: 'عمومی و دکوری', icons: [
+        ['grid-fill','عمومی پیش‌فرض grid general'],
+        ['grid-3x3-gap-fill','عمومی شبکه grid'],
+        ['grid-1x2-fill','عمومی grid'],
+        ['circle-fill','دایره ساده circle'],
+        ['circle','دایره circle'],
+        ['square-fill','مربع ساده square'],
+        ['pie-chart-fill','پیتزا گرد pie chart pizza round'],
+        ['pie-chart','پیتزا گرد pie chart'],
+        ['moon-stars-fill','شب night moon'],
+        ['stars','ستاره stars'],
+        ['emoji-smile-fill','خوشحال emoji smile'],
+        ['emoji-laughing-fill','خوشحال emoji laugh'],
+        ['clock-fill','زمان سفارش clock time'],
+        ['calendar-heart-fill','رزرو calendar'],
+        ['tag-fill','تخفیف برچسب tag price'],
+        ['tags-fill','تخفیف برچسب tags price'],
+        ['percent','تخفیف درصد percent discount'],
+        ['cash-coin','قیمت پول cash money'],
+        ['currency-exchange','قیمت پول currency'],
+        ['palette-fill','رنگارنگ هنری palette art'],
+        ['brush-fill','هنری برس brush art'],
+        ['magic','ویژه جادویی magic special'],
+        ['rocket-fill','سریع ارسال rocket fast delivery'],
+        ['hand-thumbs-up-fill','پیشنهاد محبوب thumbs up'],
+        ['people-fill','گروهی خانوادگی people family'],
+        ['geo-alt-fill','مکان محلی geo location'],
+        ['telephone-fill','سفارش تلفنی telephone order'],
+        ['chat-heart-fill','نظرات مشتری chat'],
+        ['umbrella-fill','فضای باز تراس umbrella terrace'],
+        ['compass-fill','کاوش compass explore'],
+        ['map-fill','نقشه map'],
+        ['puzzle-fill','ترکیبی puzzle combo'],
+        ['truck','ارسال بیرون‌بر truck delivery'],
+        ['shop','فروشگاه shop'],
+        ['shop-window','ویترین shop window'],
+        ['house-heart-fill','خانگی house home'],
+        ['globe-americas','بین‌المللی globe international'],
+        ['globe2','بین‌المللی globe'],
+        ['bag-heart-fill','بیرون‌بر ویژه bag special'],
+        ['bag-check-fill','سفارش تایید‌شده bag check']
+    ]}
+];
+
+function swatchIdx(str){
+    if(!str) return 0;
+    let h = 0;
+    for (let i=0;i<str.length;i++){ h = (h + str.charCodeAt(i)) % 10; }
+    return h;
+}
+
+function initIconPicker(cfg){
+    const gridEl = document.getElementById(cfg.gridId);
+    const searchEl = document.getElementById(cfg.searchId);
+    const hiddenEl = document.getElementById(cfg.hiddenId);
+    const previewIconEl = document.getElementById(cfg.previewIconId);
+    const previewNameEl = document.getElementById(cfg.previewNameId);
+    const previewBoxEl = document.getElementById(cfg.previewBoxId);
+    if (!gridEl) return;
+
+    let current = cfg.initial || 'bi-grid';
+
+    function applyPreview(iconName){
+        const idx = swatchIdx(iconName);
+        previewIconEl.className = 'bi bi-' + iconName;
+        previewNameEl.textContent = 'bi-' + iconName;
+        previewBoxEl.className = 'ipv-box icon-swatch-' + idx;
+        hiddenEl.value = 'bi-' + iconName;
+    }
+
+    function render(filter){
+        gridEl.innerHTML = '';
+        let matched = 0;
+        ICON_LIBRARY.forEach(group => {
+            const filteredIcons = group.icons.filter(([name, keywords]) => {
+                if (!filter) return true;
+                const f = filter.toLowerCase();
+                return name.toLowerCase().includes(f) || keywords.toLowerCase().includes(f);
+            });
+            if (filteredIcons.length === 0) return;
+            matched += filteredIcons.length;
+
+            const titleEl = document.createElement('div');
+            titleEl.className = 'icon-group-title';
+            titleEl.innerHTML = '<i class="bi bi-dot"></i> ' + group.group;
+            gridEl.appendChild(titleEl);
+
+            const rowEl = document.createElement('div');
+            rowEl.className = 'icon-grid';
+            filteredIcons.forEach(([name]) => {
+                const idx = swatchIdx(name);
+                const item = document.createElement('div');
+                item.className = 'icon-grid-item icon-swatch-' + idx + (('bi-' + name) === current ? ' selected' : '');
+                item.innerHTML = '<i class="bi bi-' + name + '"></i>';
+                item.title = 'bi-' + name;
+                item.addEventListener('click', () => {
+                    current = 'bi-' + name;
+                    applyPreview(name);
+                    gridEl.querySelectorAll('.icon-grid-item.selected').forEach(el => el.classList.remove('selected'));
+                    item.classList.add('selected');
+                });
+                rowEl.appendChild(item);
+            });
+            gridEl.appendChild(rowEl);
+        });
+
+        if (matched === 0) {
+            gridEl.innerHTML = '<div class="icon-grid-empty"><i class="bi bi-search d-block mb-2" style="font-size:1.4rem;"></i>آیکونی با این عبارت پیدا نشد.</div>';
+        }
+    }
+
+    if (searchEl) {
+        searchEl.addEventListener('input', () => render(searchEl.value.trim()));
+    }
+
+    // مقدار اولیه (برای فرم ویرایش)
+    if (current && current.indexOf('bi-') === 0) {
+        applyPreview(current.replace('bi-', ''));
+    }
+    render('');
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    initIconPicker({
+        gridId: 'addIconGrid', searchId: 'addIconSearch', hiddenId: 'addSelectedIcon',
+        previewIconId: 'addPreviewIcon', previewNameId: 'addPreviewName', previewBoxId: 'addIconPreviewBox',
+        initial: 'bi-grid'
+    });
+
+    // --- Modals ---
+    const deleteModal = document.getElementById('deleteModal');
+    if (deleteModal) {
+        deleteModal.addEventListener('show.bs.modal', event => {
+            const btn = event.relatedTarget;
+            deleteModal.querySelector('#modalProductName').textContent = btn.getAttribute('data-bs-title');
+            deleteModal.querySelector('#confirmDeleteBtn').href = `/admin/delete/${btn.getAttribute('data-bs-id')}`;
+        });
+    }
+
+    const deleteCategoryModal = document.getElementById('deleteCategoryModal');
+    if (deleteCategoryModal) {
+        deleteCategoryModal.addEventListener('show.bs.modal', event => {
+            const btn = event.relatedTarget;
+            deleteCategoryModal.querySelector('#modalCategoryName').textContent = btn.getAttribute('data-bs-title');
+            deleteCategoryModal.querySelector('#confirmDeleteCategoryBtn').href = `/admin/category/delete/${btn.getAttribute('data-bs-id')}`;
+        });
+    }
+
+    // --- اعتبارسنجی فرم رمز عبور ---
+    const credForm = document.getElementById('credentialsForm');
+    if (credForm) {
+        credForm.addEventListener('submit', function (e) {
+            const pass = document.getElementById('newPasswordInput').value;
+            const confirm = document.getElementById('confirmPasswordInput').value;
+            const errorEl = document.getElementById('passwordMatchError');
+            if (pass !== confirm) {
+                e.preventDefault();
+                errorEl.classList.remove('d-none');
+                document.getElementById('confirmPasswordInput').classList.add('border-danger');
+            } else {
+                errorEl.classList.add('d-none');
+                document.getElementById('confirmPasswordInput').classList.remove('border-danger');
+            }
+        });
+        document.getElementById('confirmPasswordInput').addEventListener('input', function () {
+            document.getElementById('passwordMatchError').classList.add('d-none');
+            this.classList.remove('border-danger');
+        });
+    }
+
+    // --- تم ذخیره‌شده ---
+    const savedTheme = localStorage.getItem("admin_theme");
+    if (savedTheme) {
+        document.documentElement.setAttribute("data-theme", savedTheme);
+        updateThemeIcon(savedTheme);
+    } else {
+        updateThemeIcon("dark");
+    }
+
+    const initialHash = window.location.hash || '#dashboard';
+    setActiveTab(initialHash.substring(1));
+
+    // --- Image Preview (Add Product) ---
+    window.previewAddImage = function (event) {
+        const reader = new FileReader();
+        const container = document.getElementById("addPreviewContainer");
+        const preview = document.getElementById("addPreview");
+        const label = document.getElementById("addUploadLabel");
+        reader.onload = function () {
+            preview.src = reader.result;
+            container.classList.remove("d-none");
+        };
+        if (event.target.files[0]) {
+            label.textContent = event.target.files[0].name;
+            reader.readAsDataURL(event.target.files[0]);
+        } else {
+            container.classList.add("d-none");
+            label.textContent = "برای انتخاب تصویر کلیک کنید";
+        }
+    };
+
+    // --- شمارنده کاراکتر توضیحات ---
+    const addDescField = document.getElementById('addDescField');
+    const addDescCount = document.getElementById('addDescCount');
+    if (addDescField) {
+        addDescField.addEventListener('input', () => { addDescCount.textContent = addDescField.value.length; });
+    }
+
+    // --- فرمت‌دهی قیمت با کاما ---
+    document.querySelectorAll('.price-input').forEach(input => {
+        input.addEventListener('input', function () {
+            let raw = this.value.replace(/[^\d]/g, '');
+            this.value = raw.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        });
+    });
+    document.querySelectorAll('form').forEach(form => {
+        form.addEventListener('submit', function () {
+            form.querySelectorAll('.price-input').forEach(input => {
+                input.value = input.value.replace(/,/g, '');
+            });
+        });
+    });
+
+    // --- جستجوی جدول محصولات ---
+    window.searchTable = function (value) {
+        applyTableFilters();
+    };
+    window.filterByCategory = function (value) {
+        applyTableFilters();
+    };
+    function applyTableFilters() {
+        const searchVal = (document.getElementById('productSearchInput')?.value || '').toLowerCase();
+        const catVal = document.getElementById('categoryFilter')?.value || '';
+        const rows = document.querySelectorAll("#productTable tbody tr");
+        let visibleCount = 0, totalCount = 0;
+        rows.forEach(row => {
+            if (row.querySelector('td')?.colSpan === 5) return;
+            totalCount++;
+            const matchesSearch = row.innerText.toLowerCase().includes(searchVal);
+            const matchesCat = !catVal || row.getAttribute('data-category') === catVal;
+            const show = matchesSearch && matchesCat;
+            row.style.display = show ? "" : "none";
+            if (show) visibleCount++;
+        });
+        const label = document.getElementById('productCountLabel');
+        if (label) label.textContent = `نمایش ${visibleCount} از ${totalCount} محصول`;
+    }
+
+    // --- ساعت و تاریخ سایدبار ---
+    function updateClock() {
+        const now = new Date();
+        const clockEl = document.getElementById('liveClock');
+        const dateEl = document.getElementById('liveDate');
+        if (clockEl) clockEl.textContent = now.toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' });
+        if (dateEl) dateEl.textContent = now.toLocaleDateString('fa-IR', { day: 'numeric', month: 'short' });
+    }
+    updateClock();
+    setInterval(updateClock, 30000);
+});
+
+// --- نمایش/پنهان رمز عبور ---
+function togglePassword(inputId, iconId) {
+    const input = document.getElementById(inputId);
+    const icon = document.getElementById(iconId);
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.replace('bi-eye', 'bi-eye-slash');
+    } else {
+        input.type = 'password';
+        icon.classList.replace('bi-eye-slash', 'bi-eye');
+    }
+}
+
+// --- Toast ---
+function showToast(message, type = 'success') {
+    const toastEl = document.getElementById('liveToast');
+    const toastMessage = document.getElementById('toastMessage');
+    const toast = new bootstrap.Toast(toastEl);
+    const isSuccess = type === 'success';
+    toastEl.style.background = isSuccess ? 'rgba(46,138,80,0.2)' : 'rgba(214,69,59,0.2)';
+    toastEl.style.borderColor = isSuccess ? 'rgba(46,138,80,0.4)' : 'rgba(214,69,59,0.4)';
+    toastMessage.innerHTML = `<i class="bi ${isSuccess ? 'bi-check-circle-fill text-success' : 'bi-x-circle-fill text-danger'} fs-5"></i> <span>${message}</span>`;
+    toast.show();
+}
+
+// --- Sidebar ---
+function toggleSidebar() {
+    document.getElementById("sidebar").classList.toggle("show");
+    document.getElementById("sidebarOverlay").classList.toggle("show");
+}
+function closeSidebarOnMobile() {
+    if (window.innerWidth < 992) {
+        document.getElementById("sidebar").classList.remove("show");
+        document.getElementById("sidebarOverlay").classList.remove("show");
+    }
+}
+
+// --- Theme ---
+function toggleTheme() {
+    const html = document.documentElement;
+    const newTheme = html.getAttribute("data-theme") === "dark" ? "light" : "dark";
+    html.setAttribute("data-theme", newTheme);
+    localStorage.setItem("admin_theme", newTheme);
+    updateThemeIcon(newTheme);
+}
+function updateThemeIcon(theme) {
+    const icon = document.getElementById("themeIcon");
+    if (!icon) return;
+    if (theme === "light") {
+        icon.classList.replace("bi-moon-stars-fill", "bi-sun-fill");
+    } else {
+        icon.classList.replace("bi-sun-fill", "bi-moon-stars-fill");
+    }
+}
+
+// --- Tab Switching ---
+function setActiveTab(targetId) {
+    document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active-section'));
+    const target = document.getElementById(targetId + 'Section');
+    if (target) target.classList.add('active-section');
+    document.querySelectorAll('#sidebarNav .nav-link').forEach(link => {
+        link.classList.toggle('active', link.getAttribute('href') === `#${targetId}`);
+    });
+    history.replaceState(null, '', `#${targetId}`);
+}
+
+// --- AJAX وضعیت سفارش (در صورت وجود فرم در صفحات آینده) ---
+document.querySelectorAll('.update-status-form').forEach(form => {
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const orderId = form.getAttribute('data-order-id');
+        const newStatus = form.querySelector('select[name="newStatus"]').value;
+        try {
+            const response = await fetch(`/admin/order/update_status/${orderId}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ newStatus })
+            });
+            const result = await response.json();
+            if (response.ok) { showToast(result.message, 'success'); setTimeout(() => window.location.reload(), 1000); }
+            else { showToast('خطا: ' + (result.message || 'نامشخص'), 'danger'); }
+        } catch { showToast('خطای ارتباط با سرور.', 'danger'); }
+    });
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ویرایش دسته‌بندی</title>
+    <link href="/css/bootstrap.rtl.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/icons-1.13.1/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        :root {
+            --bg-gradient-1: #FAF7F2;
+            --bg-gradient-2: #F0EAE0;
+            --bg-gradient-3: #FFFFFF;
+            --glass-bg: rgba(255, 255, 255, 0.45);
+            --glass-border: rgba(184, 134, 11, 0.15);
+            --glass-shadow: rgba(80, 50, 10, 0.05);
+            --text-main: #1A1208;
+            --text-muted: #6B5230;
+            --input-bg: rgba(255, 255, 255, 0.7);
+            --input-focus: rgba(255, 255, 255, 0.95);
+            --accent-color: #B8860B;
+            --accent-hover: #D4A843;
+        }
+        [data-theme="dark"] {
+            --bg-gradient-1: #120C05;
+            --bg-gradient-2: #1A1208;
+            --bg-gradient-3: #1F160B;
+            --glass-bg: rgba(26, 18, 8, 0.55);
+            --glass-border: rgba(184, 134, 11, 0.2);
+            --glass-shadow: rgba(0, 0, 0, 0.5);
+            --text-main: #FAF7F2;
+            --text-muted: #D4A843;
+            --input-bg: rgba(18, 12, 5, 0.5);
+            --input-focus: rgba(18, 12, 5, 0.8);
+            --accent-color: #D4A843;
+            --accent-hover: #B8860B;
+        }
+        body {
+            background: linear-gradient(-45deg, var(--bg-gradient-1), var(--bg-gradient-2), var(--bg-gradient-3));
+            color: var(--text-main);
+            font-family: 'Vazirmatn', Tahoma, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+        }
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            box-shadow: 0 8px 32px var(--glass-shadow);
+            width: 100%;
+            max-width: 500px;
+            padding: 2.5rem;
+        }
+        .glass-input {
+            background: var(--input-bg) !important;
+            border: 1px solid var(--glass-border) !important;
+            color: var(--text-main) !important;
+            border-radius: 14px;
+            padding: 0.75rem 1rem;
+            transition: all 0.3s ease;
+        }
+        .glass-input:focus {
+            box-shadow: 0 0 0 3px rgba(184, 134, 11, 0.2) !important;
+            border-color: var(--accent-color) !important;
+            background: var(--input-focus) !important;
+        }
+        .btn-accent {
+            background: linear-gradient(135deg, var(--accent-color), var(--accent-hover));
+            color: #1A1208 !important;
+            border: none;
+            border-radius: 14px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+        [data-theme="dark"] .btn-accent {
+            color: #120C05 !important;
+        }
+        .btn-accent:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(184, 134, 11, 0.3);
+        }
+        .btn-glass {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            color: var(--text-main);
+            border-radius: 14px;
+            padding: 0.75rem 1.5rem;
+            width: 100%;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+        .btn-glass:hover {
+            background: var(--glass-hover);
+            color: var(--text-main);
+        }
+        /* مرورگرهای مدرن (Chrome, Firefox, Safari, Edge) */
+ input::placeholder,
+ textarea::placeholder {
+  color: var(--text-main) !important;
+  opacity: 1; /* برای فیکس کردن رنگ سفید خالص در فایرفاکس */
+}
+
+/* مرورگر Internet Explorer 10-11 */
+ input:-ms-input-placeholder,
+textarea:-ms-input-placeholder {
+  color: var(--text-main) !important;
+}
+
+/* نسخه قدیمی مرورگر Edge */
+ input::-ms-input-placeholder,
+textarea::-ms-input-placeholder {
+  color: var(--text-main) !important;
+}
+    </style>
+</head>
+<body>
+
+<div class="glass-card">
+    <h5 class="fw-bold mb-4 text-center d-flex align-items-center justify-content-center gap-2">
+        <i class="bi bi-tags-fill text-accent"></i>
+        ویرایش اطلاعات دسته‌بندی
+    </h5>
+<form action="/admin/category/update/<%= category._id %>" method="POST" class="row g-3">
+    <div class="col-12">
+        <label class="form-label fw-medium text-muted">نام فارسی</label>
+        <input type="text" name="nameFa" class="form-control glass-input"
+               value="<%= category.name %>" required>
+    </div>
+    <div class="col-12">
+        <label class="form-label fw-medium text-muted">نام انگلیسی</label>
+        <input type="text" name="nameEn" class="form-control glass-input"
+               value="<%= category.enname %>" required>
+    </div>
+
+    <!-- آیکون -->
+    <div class="col-12">
+        <label class="form-label fw-medium text-muted">آیکون دسته‌بندی</label>
+
+        <!-- پیش‌نمایش -->
+        <div class="d-flex align-items-center gap-3 mb-3 p-3 rounded-3"
+             style="background: rgba(184,134,11,0.08); border: 1px solid var(--glass-border);">
+            <div id="iconPreview"
+                 style="width:48px; height:48px; border-radius:14px;
+                        background: var(--glass-bg); border: 1px solid var(--glass-border);
+                        display:flex; align-items:center; justify-content:center;
+                        font-size:1.4rem; color: var(--accent-color);">
+                <i class="bi <%= category.icon || 'bi-grid' %>" id="previewIcon"></i>
+            </div>
+            <div>
+                <span class="fw-medium d-block" id="previewName"><%= category.icon || 'bi-grid' %></span>
+                <span style="font-size:0.8rem; color: var(--text-muted);">آیکون انتخاب‌شده</span>
+            </div>
+        </div>
+
+        <!-- جستجو -->
+        <input type="text" id="iconSearch" class="form-control glass-input mb-3"
+               placeholder="جستجو... (مثال: cup, fire, heart)">
+
+        <!-- گرید آیکون‌ها -->
+        <div id="iconGrid"
+             style="display:grid; grid-template-columns: repeat(auto-fill, minmax(52px,1fr));
+                    gap:8px; max-height:220px; overflow-y:auto;
+                    padding:10px; border-radius:14px;
+                    background: var(--input-bg); border: 1px solid var(--glass-border);">
+        </div>
+
+        <!-- مقدار نهایی -->
+        <input type="hidden" name="icon" id="selectedIcon" value="<%= category.icon || 'bi-grid' %>">
+    </div>
+
+    <div class="col-12 mt-4 d-flex gap-2">
+        <button type="submit" class="btn btn-accent">ذخیره تغییرات</button>
+        <a href="/admin" class="btn btn-glass">انصراف</a>
+    </div>
+</form>
+</div>
+
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        const savedTheme = localStorage.getItem('admin_theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+    });
+
+
+    const ICONS = [
+  'bi-grid','bi-cup-hot','bi-cup-hot-fill','bi-cup-straw',
+  'bi-egg-fried','bi-egg-fill','bi-fire','bi-flower1','bi-flower2',
+  'bi-pie-chart-fill','bi-heart-fill','bi-star-fill','bi-star',
+  'bi-droplet-fill','bi-droplet','bi-water','bi-snow2','bi-snow3',
+  'bi-brightness-alt-high','bi-layers-fill','bi-circle-fill',
+  'bi-grid-fill','bi-grid-3x3-gap-fill','bi-box-seam-fill',
+  'bi-bag-fill','bi-cart-fill','bi-basket-fill',
+  'bi-cup','bi-cup-fill','bi-thermometer-half',
+  'bi-lightning-fill','bi-moon-stars-fill','bi-sun-fill',
+  'bi-leaf','bi-tree','bi-award-fill','bi-bookmark-fill',
+  'bi-clock-fill','bi-gem','bi-globe','bi-house-fill',
+  'bi-music-note-beamed','bi-palette-fill','bi-percent',
+  'bi-pin-map-fill','bi-shop','bi-shop-window','bi-tag-fill',
+  'bi-tags-fill','bi-truck','bi-emoji-smile-fill',
+  'bi-hexagon-fill','bi-people-fill','bi-person-fill',
+  'bi-trophy-fill','bi-umbrella-fill','bi-wrench-adjustable',
+  'bi-puzzle-fill','bi-robot','bi-send-fill','bi-sliders2',
+  'bi-speedometer2','bi-table','bi-zoom-in'
+];
+
+let filteredIcons = [...ICONS];
+
+function renderIconGrid(list) {
+    const grid = document.getElementById('iconGrid');
+    const current = document.getElementById('selectedIcon').value;
+    grid.innerHTML = '';
+
+    list.forEach(icon => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.title = icon;
+        const isActive = current === icon;
+        btn.style.cssText = `
+            width:52px; height:52px; border-radius:12px;
+            background: ${isActive ? 'rgba(184,134,11,0.2)' : 'var(--glass-bg)'};
+            border: 1px solid ${isActive ? 'var(--accent-color)' : 'var(--glass-border)'};
+            display:flex; align-items:center; justify-content:center;
+            font-size:1.25rem;
+            color: ${isActive ? 'var(--accent-color)' : 'var(--text-main)'};
+            cursor:pointer; transition: all .2s ease;
+        `;
+        btn.innerHTML = `<i class="bi ${icon}"></i>`;
+
+        btn.addEventListener('mouseenter', () => {
+            btn.style.background = 'rgba(184,134,11,0.15)';
+            btn.style.borderColor = 'var(--accent-color)';
+            btn.style.color = 'var(--accent-color)';
+            btn.style.transform = 'scale(1.12)';
+        });
+        btn.addEventListener('mouseleave', () => {
+            const sel = document.getElementById('selectedIcon').value;
+            const active = sel === icon;
+            btn.style.background  = active ? 'rgba(184,134,11,0.2)' : 'var(--glass-bg)';
+            btn.style.borderColor = active ? 'var(--accent-color)' : 'var(--glass-border)';
+            btn.style.color       = active ? 'var(--accent-color)' : 'var(--text-main)';
+            btn.style.transform   = 'scale(1)';
+        });
+
+        btn.addEventListener('click', () => {
+            document.getElementById('selectedIcon').value = icon;
+            document.getElementById('previewIcon').className = `bi ${icon}`;
+            document.getElementById('previewName').textContent = icon;
+            renderIconGrid(filteredIcons); // رفرش برای هایلایت
+        });
+
+        grid.appendChild(btn);
+    });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    renderIconGrid(ICONS);
+
+    document.getElementById('iconSearch').addEventListener('input', function () {
+        const q = this.value.toLowerCase().trim();
+        filteredIcons = q ? ICONS.filter(i => i.includes(q)) : [...ICONS];
+        renderIconGrid(filteredIcons);
+    });
+});
+</script>
+</body>
+</html>
