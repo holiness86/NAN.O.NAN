@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Trattoria Bella — منوی رستوران</title>
+  <title>نان و نان — منو</title>
 
   <!-- جلوگیری از فلاش تم اشتباه قبل از رندر اول صفحه -->
   <script>
     (function () {
       try {
-        var t = localStorage.getItem('trattoria-theme');
+        var t = localStorage.getItem('nanonan-theme');
         if (!t) t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
         document.documentElement.setAttribute('data-bs-theme', t);
       } catch (e) {}
@@ -25,27 +25,30 @@
 </head>
 <body>
 
-  <!-- ─── PRELOADER (خوش‌آمدگویی اول ورود) ─────── -->
+  <!-- ─── LOADING SCREEN — لوگوی مرکزی + ذرات شناور لوگو ── -->
   <div class="preloader" id="preloader">
-    <div class="preloader-inner">
-      <div class="hero-flag">
-        <div class="flag-stripe green"></div>
-        <div class="flag-stripe white"></div>
-        <div class="flag-stripe red"></div>
-      </div>
+    <!-- ذرات کوچک لوگو که به آرومی دور لوگوی اصلی شناورن -->
+    <span class="preloader-particle" style="--p-size:22px; --p-x:100px;  --p-y:-70px; --p-dur:5.2s; --p-delay:0ms;"><i class="bi bi-cup-hot-fill"></i></span>
+    <span class="preloader-particle" style="--p-size:18px; --p-x:-110px; --p-y:-50px; --p-dur:6.1s; --p-delay:300ms;"><i class="bi bi-egg-fried"></i></span>
+    <span class="preloader-particle" style="--p-size:26px; --p-x:120px;  --p-y:60px;  --p-dur:5.8s; --p-delay:600ms;"><i class="bi bi-cake2-fill"></i></span>
+    <span class="preloader-particle" style="--p-size:20px; --p-x:-100px; --p-y:80px;  --p-dur:5.4s; --p-delay:900ms;"><i class="bi bi-cup-straw"></i></span>
+    <span class="preloader-particle" style="--p-size:16px; --p-x:0px;    --p-y:-110px;--p-dur:6.4s; --p-delay:200ms;"><i class="bi bi-flower1"></i></span>
+    <span class="preloader-particle" style="--p-size:16px; --p-x:0px;    --p-y:110px; --p-dur:5.6s; --p-delay:500ms;"><i class="bi bi-basket2-fill"></i></span>
+    <span class="preloader-particle" style="--p-size:14px; --p-x:150px;  --p-y:-10px; --p-dur:6.8s; --p-delay:800ms;"><i class="bi bi-cup-hot-fill"></i></span>
+    <span class="preloader-particle" style="--p-size:14px; --p-x:-150px; --p-y:10px;  --p-dur:6.2s; --p-delay:1100ms;"><i class="bi bi-egg-fried"></i></span>
+
+    <div class="preloader-core">
       <div class="preloader-ring">
-        <i class="bi bi-brightness-alt-high"></i>
+        <i class="bi bi-cup-hot-fill"></i>
       </div>
-      <div class="preloader-brand">Trattoria <span>Bella</span></div>
-      <p class="preloader-tagline">خوش آمدید، در حال آماده‌سازی منو...</p>
+      <div class="preloader-brand">نان <span>و نان</span></div>
+      <p class="preloader-tagline">در حال آماده‌سازی منو...</p>
       <div class="preloader-dots"><span></span><span></span><span></span></div>
     </div>
   </div>
 
   <%
     // هش ساده‌ی نام/آیکون دسته‌بندی برای انتخاب رنگ ثابت از پالت
-    // icon-swatch-0..9 — دقیقا همان منطق پنل ادمین، تا رنگ هر
-    // دسته‌بندی همیشه با پنل ادمین یکی باشد.
     function swatchIndex(str){
       if(!str) return 0;
       var h = 0;
@@ -54,130 +57,163 @@
     }
   %>
 
-  <!-- ─── HERO ─────────────────────────────────── -->
-  <section class="hero">
-    <div class="hero-toolbar">
-      <button class="theme-btn" id="themeBtn" aria-label="تغییر تم">
-        <i class="bi bi-moon-stars-fill" id="themeIcon"></i>
-      </button>
-    </div>
-    <div class="hero-inner">
-      <div class="hero-flag">
-        <div class="flag-stripe green"></div>
-        <div class="flag-stripe white"></div>
-        <div class="flag-stripe red"></div>
+  <!-- ─── TOP BAR — بسیار جمع‌وجور: فقط لوگو + دکمه تم ─────── -->
+  <header class="top-bar">
+    <div class="brand-mini">
+      <div class="brand-mini-logo"><i class="bi bi-cup-hot-fill"></i></div>
+      <div>
+        <div class="brand-mini-name">نان <span>و نان</span></div>
+        <p class="brand-mini-tagline">Café &amp; Bakery</p>
       </div>
-      <div class="hero-logo-ring">
-        <i class="bi bi-brightness-alt-high"></i>
-      </div>
-      <h1 class="hero-name">Trattoria <span>Bella</span></h1>
-      <div class="hero-divider"></div>
-      <p class="hero-tagline">Autentica cucina italiana — طعم اصیل ایتالیا</p>
     </div>
-  </section>
+    <button class="theme-btn" id="themeBtn" aria-label="تغییر تم">
+      <i class="bi bi-moon-stars-fill" id="themeIcon"></i>
+    </button>
+  </header>
 
-<!-- ─── CATEGORY NAV (STICKY) ───────────────── -->
-<div class="cat-nav-sentinel" id="catNavSentinel"></div>
-<div class="cat-nav-wrapper" id="catNav">
-  <nav class="cat-nav" aria-label="دسته‌بندی منو">
-
-    <% categoriesWithItems.forEach(function(cat, index) { %>
-      <a class="cat-pill <%= index === 0 ? 'active' : '' %>" 
-         data-target="cat-<%= cat.enname %>">
-          <span class="pill-thumb icon-swatch-<%= swatchIndex(cat.icon || cat.name) %>">
-            <i class="bi <%= cat.icon || 'bi-grid' %>"></i>
-          </span>
-        <%= cat.name %>
-      </a>
-    <% }) %>
-
-  </nav>
-</div>
+  <!-- ─── CATEGORY CARDS (STICKY, تصویری، داینامیک) ───────────────── -->
+  <div class="cat-nav-wrapper" id="catNav">
+    <nav class="cat-nav" aria-label="دسته‌بندی منو">
+      <% categoriesWithItems.forEach(function(cat, index) { %>
+        <div class="cat-card <%= index === 0 ? 'active' : '' %>"
+             role="button" tabindex="0"
+             data-target="cat-<%= cat.enname %>">
+          <div class="cat-card-thumb icon-swatch-<%= swatchIndex(cat.icon || cat.name) %>">
+            <% if (cat.imageUrl) { %>
+              <img src="<%= cat.imageUrl %>" alt="<%= cat.name %>">
+            <% } else { %>
+              <i class="bi <%= cat.icon || 'bi-grid' %>"></i>
+            <% } %>
+          </div>
+          <span class="cat-card-label"><%= cat.name %></span>
+        </div>
+      <% }) %>
+    </nav>
+  </div>
 
   <!-- ─── MENU MAIN ─────────────────────────────── -->
-<main class="menu-main container">
+  <main class="menu-main container" id="menuMain" data-view="grid">
 
-  <% categoriesWithItems.forEach(function(cat, index) { %>
-    <section class="cat-section" id="cat-<%= cat.enname %>">
-      
-      <div class="cat-section-header">
-        <div class="cat-thumb icon-swatch-<%= swatchIndex(cat.icon || cat.name) %>">
-          <i class="bi <%= cat.icon || 'bi-grid' %>"></i>
-        </div>
-        <div class="cat-section-texts">
-          <h2 class="cat-section-title"><%= cat.enname %></h2>
-          <p class="cat-section-sub"><%= cat.name %></p>
-        </div>
-        <div class="cat-section-line"></div>
+    <div class="view-switcher">
+      <div class="view-switcher-track">
+        <button type="button" class="view-btn active" id="viewGridBtn" aria-label="نمایش کارتی">
+          <i class="bi bi-grid-3x3-gap-fill"></i>
+        </button>
+        <button type="button" class="view-btn" id="viewListBtn" aria-label="نمایش لیستی">
+          <i class="bi bi-list-ul"></i>
+        </button>
       </div>
+    </div>
 
-      <div class="menu-grid">
-        <% if (cat.items.length === 0) { %>
-          <p class="text-muted">محصولی در این دسته‌بندی وجود ندارد.</p>
-        <% } %>
+    <% categoriesWithItems.forEach(function(cat, index) { %>
+      <section class="cat-panel <%= index === 0 ? 'active' : '' %>" id="cat-<%= cat.enname %>" data-cat-panel>
 
-        <% cat.items.forEach(function(item) { %>
-          <div class="menu-card reveal"
-               role="button"
-               tabindex="0"
-               data-name="<%= item.iteamName %>"
-               data-price="<%= item.iteamPrice %>"
-               data-desc="<%= item.description %>"
-               data-img="<%= item.imageUrl || '' %>"
-               data-cat="<%= cat.name %>"
-               data-cat-icon="<%= cat.icon || 'bi-grid' %>"
-               data-swatch="<%= swatchIndex(cat.icon || cat.name) %>">
-            <div class="menu-card-img">
-              <% if (item.imageUrl) { %>
-                <img src="<%= item.imageUrl %>" 
-                     alt="<%= item.iteamName %>" 
-                     style="width:100%;height:100%;object-fit:cover;">
-              <% } else { %>
-                <div class="menu-card-placeholder">
-                  <i class="bi bi-image"></i>
-                </div>
-              <% } %>
-            </div>
-            <div class="menu-card-info">
-              <p class="menu-card-name"><%= item.iteamName %></p>
-              <p class="menu-card-desc"><%= item.description %></p>
-              <div class="menu-card-footer">
-                <div class="menu-card-price">
-                  <%= Number(item.iteamPrice).toLocaleString('fa-IR') %> 
-                  <small>تومان</small>
+        <div class="cat-section-header">
+          <div class="cat-thumb icon-swatch-<%= swatchIndex(cat.icon || cat.name) %>">
+            <i class="bi <%= cat.icon || 'bi-grid' %>"></i>
+          </div>
+          <div class="cat-section-texts">
+            <h2 class="cat-section-title"><%= cat.enname %></h2>
+            <p class="cat-section-sub"><%= cat.name %></p>
+          </div>
+        </div>
+
+        <!-- حالت کارتی -->
+        <div class="menu-grid">
+          <% if (cat.items.length === 0) { %>
+            <p class="text-muted">محصولی در این دسته‌بندی وجود ندارد.</p>
+          <% } %>
+          <% cat.items.forEach(function(item) { %>
+            <div class="menu-card"
+                 role="button"
+                 tabindex="0"
+                 data-name="<%= item.iteamName %>"
+                 data-price="<%= item.iteamPrice %>"
+                 data-desc="<%= item.description %>"
+                 data-img="<%= item.imageUrl || '' %>"
+                 data-cat="<%= cat.name %>"
+                 data-cat-icon="<%= cat.icon || 'bi-grid' %>"
+                 data-swatch="<%= swatchIndex(cat.icon || cat.name) %>">
+              <div class="menu-card-img">
+                <% if (item.imageUrl) { %>
+                  <img src="<%= item.imageUrl %>" alt="<%= item.iteamName %>">
+                <% } else { %>
+                  <div class="menu-card-placeholder"><i class="bi bi-image"></i></div>
+                <% } %>
+              </div>
+              <div class="menu-card-info">
+                <p class="menu-card-name"><%= item.iteamName %></p>
+                <p class="menu-card-desc"><%= item.description %></p>
+                <div class="menu-card-footer">
+                  <div class="menu-card-price">
+                    <%= Number(item.iteamPrice).toLocaleString('fa-IR') %>
+                    <small>تومان</small>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        <% }) %>
-      </div>
+          <% }) %>
+        </div>
 
-    </section>
-  <% }) %>
+        <!-- حالت لیستی (همون آیتم‌ها، چیدمان افقی) -->
+        <div class="menu-list">
+          <% cat.items.forEach(function(item) { %>
+            <div class="menu-card"
+                 role="button"
+                 tabindex="0"
+                 data-name="<%= item.iteamName %>"
+                 data-price="<%= item.iteamPrice %>"
+                 data-desc="<%= item.description %>"
+                 data-img="<%= item.imageUrl || '' %>"
+                 data-cat="<%= cat.name %>"
+                 data-cat-icon="<%= cat.icon || 'bi-grid' %>"
+                 data-swatch="<%= swatchIndex(cat.icon || cat.name) %>">
+              <div class="menu-card-img">
+                <% if (item.imageUrl) { %>
+                  <img src="<%= item.imageUrl %>" alt="<%= item.iteamName %>">
+                <% } else { %>
+                  <div class="menu-card-placeholder"><i class="bi bi-image"></i></div>
+                <% } %>
+              </div>
+              <div class="menu-card-info">
+                <p class="menu-card-name"><%= item.iteamName %></p>
+                <p class="menu-card-desc"><%= item.description %></p>
+                <div class="menu-card-footer">
+                  <div class="menu-card-price">
+                    <%= Number(item.iteamPrice).toLocaleString('fa-IR') %>
+                    <small>تومان</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          <% }) %>
+        </div>
 
-</main>
+      </section>
+    <% }) %>
+
+  </main>
 
   <!-- ─── FOOTER ─────────────────────────────── -->
- <footer class="menu-footer">
-  <div class="footer-brand">Trattoria Bella</div>
-  <p class="footer-text">Via Roma 12, Milano · رزرو: 021-123-4567</p>
+  <footer class="menu-footer">
+    <div class="footer-brand">نان و نان</div>
+    <p class="footer-text">آدرس نمونه · رزرو: 021-123-4567</p>
 
-  <div class="footer-socials">
-    <a href="#" class="social-dot" aria-label="اینستاگرام"><i class="bi bi-instagram"></i></a>
-    <a href="#" class="social-dot" aria-label="تلگرام"><i class="bi bi-telegram"></i></a>
-    <a href="#" class="social-dot" aria-label="واتس‌اپ"><i class="bi bi-whatsapp"></i></a>
-    <a href="#" class="social-dot" aria-label="تلفن"><i class="bi bi-telephone-fill"></i></a>
-  </div>
+    <div class="footer-socials">
+      <a href="#" class="social-dot" aria-label="اینستاگرام"><i class="bi bi-instagram"></i></a>
+      <a href="#" class="social-dot" aria-label="تلگرام"><i class="bi bi-telegram"></i></a>
+      <a href="#" class="social-dot" aria-label="واتس‌اپ"><i class="bi bi-whatsapp"></i></a>
+      <a href="#" class="social-dot" aria-label="تلفن"><i class="bi bi-telephone-fill"></i></a>
+    </div>
 
-  <p class="footer-text mt-3" style="font-size:0.72rem;opacity:0.45;">
-    © 2026 حس خاص — رستوران ایتالیایی
-  </p>
-
-  <p class="footer-text" style="font-size:0.72rem;opacity:0.45;">
-    طراحی و توسعه توسط 
-    <a href="http://SoulWeb.ir" target="_blank" rel="noopener noreferrer" class="text-link">سُل وب</a>
-  </p>
-</footer>
+    <p class="footer-text mt-3" style="font-size:0.72rem;opacity:0.7;">
+      © 2026 نان و نان
+    </p>
+    <p class="footer-text" style="font-size:0.72rem;opacity:0.7;">
+      طراحی و توسعه توسط
+      <a href="http://SoulWeb.ir" target="_blank" rel="noopener noreferrer" class="text-link">سُل وب</a>
+    </p>
+  </footer>
 
   <!-- ─── PRODUCT DETAIL SHEET (پاپ‌آپ از پایین) ── -->
   <div class="sheet-backdrop" id="sheetBackdrop"></div>
@@ -209,344 +245,336 @@
   </div>
 
   <!-- Bootstrap JS -->
- <script src="js/jquery-3.7.1.min.js"></script>
-<script src="js/bootstrap.bundle.min.js"></script>
+  <script src="js/jquery-3.7.1.min.js"></script>
+  <script src="js/bootstrap.bundle.min.js"></script>
 
-<script>
-(function () {
-  'use strict';
+  <script>
+  (function () {
+    'use strict';
 
-  const html = document.documentElement;
+    const html = document.documentElement;
 
-  /* ═══════════════════════════════════════════
-     SCROLL LOCK (پری‌لودر و پاپ‌آپ محصول از اون استفاده می‌کنن)
-  ═══════════════════════════════════════════ */
-  var lockCount = 0;
-  function lockScroll() {
-    lockCount++;
-    html.classList.add('scroll-locked');
-  }
-  function unlockScroll() {
-    lockCount = Math.max(0, lockCount - 1);
-    if (lockCount === 0) html.classList.remove('scroll-locked');
-  }
+    /* ═══════════════════════════════════════════
+       SCROLL LOCK
+    ═══════════════════════════════════════════ */
+    var lockCount = 0;
+    function lockScroll() { lockCount++; html.classList.add('scroll-locked'); }
+    function unlockScroll() { lockCount = Math.max(0, lockCount - 1); if (lockCount === 0) html.classList.remove('scroll-locked'); }
 
-  /* ═══════════════════════════════════════════
-     PRELOADER — خوش‌آمدگویی اول ورود
-  ═══════════════════════════════════════════ */
-  var preloader = document.getElementById('preloader');
-  if (preloader) {
-    lockScroll();
-    var MIN_VISIBLE_MS  = 700;   // حداقل زمان نمایش، حتی روی اینترنت پرسرعت
-    var HARD_TIMEOUT_MS = 4500;  // سقف ایمنی، اگه عکسی هیچ‌وقت لود نشه
-    var startedAt = Date.now();
-    var preloaderHidden = false;
+    /* ═══════════════════════════════════════════
+       LOADING SCREEN — دقیقا ۲ ثانیه بعد از لود کامل باقی می‌مونه،
+       بعد با افکت بابل‌اسکیل (scale-up + fade) محو می‌شه.
+    ═══════════════════════════════════════════ */
+    var preloader = document.getElementById('preloader');
+    if (preloader) {
+      lockScroll();
+      var HOLD_AFTER_LOAD_MS = 2000; // دقیقاً ۲ ثانیه بعد از لود کامل
+      var HARD_TIMEOUT_MS    = 6000; // سقف ایمنی برای اتصال‌های خیلی کند
 
-    function hidePreloader() {
-      if (preloaderHidden) return;
-      preloaderHidden = true;
-      preloader.classList.add('is-hidden');
-      unlockScroll();
-      setTimeout(function () {
-        if (preloader.parentNode) preloader.parentNode.removeChild(preloader);
-      }, 650);
+      function hidePreloader() {
+        if (!preloader || !preloader.parentNode) return;
+        preloader.classList.add('is-hidden');
+        unlockScroll();
+        setTimeout(function () {
+          if (preloader.parentNode) preloader.parentNode.removeChild(preloader);
+        }, 680);
+      }
+
+      function startHoldTimer() { setTimeout(hidePreloader, HOLD_AFTER_LOAD_MS); }
+
+      if (document.readyState === 'complete') startHoldTimer();
+      else window.addEventListener('load', startHoldTimer);
+
+      setTimeout(hidePreloader, HARD_TIMEOUT_MS);
     }
 
-    function readyToHide() {
-      var remaining = MIN_VISIBLE_MS - (Date.now() - startedAt);
-      if (remaining > 0) setTimeout(hidePreloader, remaining);
-      else hidePreloader();
+    /* ═══════════════════════════════════════════
+       THEME TOGGLE — انیمیشن حبابی/مایع از محل کلیک
+    ═══════════════════════════════════════════ */
+    const themeBtn  = document.getElementById('themeBtn');
+    const themeIcon = document.getElementById('themeIcon');
+
+    function syncThemeIcon(mode) {
+      themeIcon.className = mode === 'dark' ? 'bi bi-sun-fill' : 'bi bi-moon-stars-fill';
+    }
+    syncThemeIcon(html.getAttribute('data-bs-theme'));
+
+    var themeSwitching = false;
+
+    function targetCream(mode) {
+      // مقادیر پس‌زمینه‌ی هر تم، برای رنگ حباب هم‌رنگ با تم مقصد
+      return mode === 'dark' ? '#1B120C' : '#F6ECE5';
     }
 
-    if (document.readyState === 'complete') {
-      readyToHide();
-    } else {
-      window.addEventListener('load', readyToHide);
-    }
-    setTimeout(hidePreloader, HARD_TIMEOUT_MS);
-  }
+    themeBtn.addEventListener('click', function (e) {
+      if (themeSwitching) return;
+      themeSwitching = true;
 
-  /* ═══════════════════════════════════════════
-     THEME TOGGLE
-     (data-bs-theme از قبل توسط اسکریپت <head> ست شده تا فلاش
-     نداشته باشیم؛ اینجا فقط آیکون رو سینک می‌کنیم و کلیک رو هندل می‌کنیم)
-  ═══════════════════════════════════════════ */
-  const themeBtn  = document.getElementById('themeBtn');
-  const themeIcon = document.getElementById('themeIcon');
+      var rect = themeBtn.getBoundingClientRect();
+      var x = rect.left + rect.width / 2;
+      var y = rect.top + rect.height / 2;
+      var next = html.getAttribute('data-bs-theme') === 'dark' ? 'light' : 'dark';
 
-  function syncThemeIcon(mode) {
-    themeIcon.className = mode === 'dark' ? 'bi bi-sun-fill' : 'bi bi-moon-stars-fill';
-    themeIcon.style.color = mode === 'dark' ? '#D4A843' : '';
-  }
-  syncThemeIcon(html.getAttribute('data-bs-theme'));
+      var bubble = document.createElement('div');
+      bubble.className = 'theme-bubble';
+      bubble.style.setProperty('--bubble-x', x + 'px');
+      bubble.style.setProperty('--bubble-y', y + 'px');
+      bubble.style.setProperty('--bubble-color', targetCream(next));
+      document.body.appendChild(bubble);
 
-  themeBtn.addEventListener('click', function () {
-    var next = html.getAttribute('data-bs-theme') === 'dark' ? 'light' : 'dark';
-    html.setAttribute('data-bs-theme', next);
-    try { localStorage.setItem('trattoria-theme', next); } catch (e) {}
-    syncThemeIcon(next);
-    themeBtn.classList.remove('spinning');
-    void themeBtn.offsetWidth; // ریست انیمیشن
-    themeBtn.classList.add('spinning');
-  });
-
-  /* ═══════════════════════════════════════════
-     NAV / SCROLL CORE
-  ═══════════════════════════════════════════ */
-  const navWrap     = document.getElementById('catNav');        // ولپر استیکی
-  const navInner    = navWrap.querySelector('.cat-nav');         // نوار قابل اسکرول افقی
-  const navSentinel = document.getElementById('catNavSentinel');
-  const pills       = Array.prototype.slice.call(document.querySelectorAll('.cat-pill'));
-  const sections    = Array.prototype.slice.call(document.querySelectorAll('.cat-section'));
-  const TOP_GAP     = 24; // فاصلهٔ نفس‌کشی بین نوار استیکی و عنوان دسته‌بندی
-  const STUCK_GAP   = 10; // باید با مقدار top در .cat-nav-wrapper.is-stuck (style.css) یکی باشه
-
-  function navOffset() {
-    var stuckExtra = navWrap.classList.contains('is-stuck') ? STUCK_GAP : 0;
-    return stuckExtra + navWrap.offsetHeight + TOP_GAP;
-  }
-
-  function setScrollPadding() {
-    html.style.scrollPaddingTop = navOffset() + 'px';
-  }
-  setScrollPadding();
-
-  // تشخیص لحظه‌ی واقعی «چسبیدن» نوار دسته‌بندی، تا کلاس شناورشدنش
-  // (فاصله از بالا/کنار + بردر-ردیوس) دقیقا همون موقع فعال شه
-  if (navSentinel && 'IntersectionObserver' in window) {
-    var stuckObs = new IntersectionObserver(function (entries) {
-      entries.forEach(function (entry) {
-        navWrap.classList.toggle('is-stuck', !entry.isIntersecting);
-        setScrollPadding();
+      requestAnimationFrame(function () {
+        bubble.classList.add('expanding');
       });
-    }, { threshold: 0 });
-    stuckObs.observe(navSentinel);
-  }
 
-  function markActivePill(id) {
-    pills.forEach(function (p) {
-      p.classList.toggle('active', p.getAttribute('data-target') === id);
+      bubble.addEventListener('animationend', function onExpandEnd() {
+        bubble.removeEventListener('animationend', onExpandEnd);
+
+        // در اوج پوشش صفحه توسط حباب، تم رو عوض می‌کنیم تا سوییچ زیر حباب مخفی باشه
+        html.setAttribute('data-bs-theme', next);
+        try { localStorage.setItem('nanonan-theme', next); } catch (err) {}
+        syncThemeIcon(next);
+        themeBtn.classList.remove('spinning');
+        void themeBtn.offsetWidth;
+        themeBtn.classList.add('spinning');
+
+        bubble.classList.remove('expanding');
+        bubble.classList.add('retreating');
+
+        bubble.addEventListener('animationend', function onRetreatEnd() {
+          bubble.removeEventListener('animationend', onRetreatEnd);
+          bubble.remove();
+          themeSwitching = false;
+        }, { once: true });
+      }, { once: true });
     });
-  }
 
-  // فقط scrollLeft خود نوار دسته‌بندی رو تغییر می‌ده؛ به اسکرول
-  // عمودی صفحه دست نمی‌زنه (پس نمی‌تونه با window.scrollTo تصادم کنه)
-  function centerPill(id) {
-    if (!navInner) return;
-    var pill = pills.filter(function (p) {
-      return p.getAttribute('data-target') === id;
-    })[0];
-    if (!pill) return;
+    /* ═══════════════════════════════════════════
+       DYNAMIC CATEGORY CARDS → FILTERING
+       خروج: افتادن فیزیکی به پایین + محو (stagger)
+       ورود: بارش از بالا به پایین + ظهور (stagger)
+    ═══════════════════════════════════════════ */
+    const navInner = document.querySelector('.cat-nav');
+    const catCards  = Array.prototype.slice.call(document.querySelectorAll('.cat-card'));
+    const panels    = Array.prototype.slice.call(document.querySelectorAll('[data-cat-panel]'));
+    var switching = false;
+    var STAGGER_MS = 45;
 
-    var pillRect = pill.getBoundingClientRect();
-    var navRect  = navInner.getBoundingClientRect();
-    var delta    = (pillRect.left + pillRect.width / 2) - (navRect.left + navRect.width / 2);
-
-    if (Math.abs(delta) > 1) {
-      navInner.scrollBy({ left: delta, behavior: 'smooth' });
+    function centerCard(card) {
+      if (!navInner || !card) return;
+      var r  = card.getBoundingClientRect();
+      var nr = navInner.getBoundingClientRect();
+      var delta = (r.left + r.width / 2) - (nr.left + nr.width / 2);
+      if (Math.abs(delta) > 1) navInner.scrollBy({ left: delta, behavior: 'smooth' });
     }
-  }
 
-  function setActive(id) {
-    markActivePill(id);
-    centerPill(id);
-  }
+    function visibleCardsOf(panel) {
+      var view = document.getElementById('menuMain').getAttribute('data-view');
+      var container = panel.querySelector(view === 'list' ? '.menu-list' : '.menu-grid');
+      if (!container) return [];
+      return Array.prototype.slice.call(container.querySelectorAll('.menu-card'));
+    }
 
-  /* ═══════════════════════════════════════════
-     CLICK روی دسته‌بندی → اسکرول به بخش مربوطه
-  ═══════════════════════════════════════════ */
-  var isProgrammaticScroll = false;
-  var scrollEndTimer       = null;
+    function activateCategory(targetId, card) {
+      if (switching) return;
+      var currentPanel = panels.filter(function (p) { return p.classList.contains('active'); })[0];
+      var nextPanel     = document.getElementById(targetId);
+      if (!nextPanel || nextPanel === currentPanel) return;
 
-  function scrollToSection(id) {
-    var section = document.getElementById(id);
-    if (!section) return;
+      switching = true;
+      catCards.forEach(function (c) { c.classList.toggle('active', c === card); });
+      centerCard(card);
 
-    var targetTop = section.getBoundingClientRect().top + window.pageYOffset - navOffset();
-    var maxTop    = document.documentElement.scrollHeight - window.innerHeight;
-    targetTop     = Math.max(0, Math.min(targetTop, maxTop));
+      function playCascadeIn() {
+        nextPanel.classList.add('active');
+        var cards = visibleCardsOf(nextPanel);
+        cards.forEach(function (el, i) {
+          el.style.setProperty('--cascade-delay', Math.min(i, 10) * STAGGER_MS + 'ms');
+          el.classList.add('card-cascade-in');
+        });
+        var settleAfter = Math.min(cards.length, 10) * STAGGER_MS + 560;
+        setTimeout(function () {
+          cards.forEach(function (el) { el.classList.remove('card-cascade-in'); el.style.removeProperty('--cascade-delay'); });
+          switching = false;
+        }, settleAfter);
+      }
 
-    markActivePill(id);
-    centerPill(id);
-
-    isProgrammaticScroll = true;
-    window.scrollTo({ top: targetTop, behavior: 'smooth' });
-
-    clearTimeout(scrollEndTimer);
-    scrollEndTimer = setTimeout(function () {
-      isProgrammaticScroll = false;
-    }, 900);
-  }
-
-  pills.forEach(function (pill) {
-    pill.addEventListener('click', function (e) {
-      e.preventDefault();
-      scrollToSection(pill.getAttribute('data-target'));
-    });
-  });
-
-  /* ═══════════════════════════════════════════
-     SCROLL SPY (کاملا هماهنگ با sticky nav)
-  ═══════════════════════════════════════════ */
-  var spyObserver;
-
-  function buildSpyObserver() {
-    var rootMargin = '-' + navOffset() + 'px 0px -55% 0px';
-
-    var obs = new IntersectionObserver(function (entries) {
-      if (isProgrammaticScroll) return; // در حین اسکرول کلیکی، اسپای رو نادیده بگیر
-      entries.forEach(function (entry) {
-        if (entry.isIntersecting) {
-          setActive(entry.target.id);
+      if (currentPanel) {
+        var outCards = visibleCardsOf(currentPanel);
+        if (outCards.length === 0) {
+          currentPanel.classList.remove('active');
+          playCascadeIn();
+          return;
         }
+        outCards.forEach(function (el, i) {
+          el.style.setProperty('--fall-delay', Math.min(i, 10) * (STAGGER_MS * 0.6) + 'ms');
+          el.classList.add('card-fall-out');
+        });
+        var fallTotal = Math.min(outCards.length, 10) * (STAGGER_MS * 0.6) + 420;
+        setTimeout(function () {
+          currentPanel.classList.remove('active');
+          outCards.forEach(function (el) { el.classList.remove('card-fall-out'); el.style.removeProperty('--fall-delay'); });
+          playCascadeIn();
+        }, fallTotal);
+      } else {
+        playCascadeIn();
+      }
+    }
+
+    catCards.forEach(function (card) {
+      card.addEventListener('click', function () { activateCategory(card.getAttribute('data-target'), card); });
+      card.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); activateCategory(card.getAttribute('data-target'), card); }
       });
-    }, { rootMargin: rootMargin, threshold: 0 });
-
-    sections.forEach(function (s) { obs.observe(s); });
-    return obs;
-  }
-
-  spyObserver = buildSpyObserver();
-
-  var resizeTimer;
-  window.addEventListener('resize', function () {
-    setScrollPadding();
-    clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(function () {
-      spyObserver.disconnect();
-      spyObserver = buildSpyObserver();
-    }, 250);
-  });
-
-  /* ═══════════════════════════════════════════
-     REVEAL ANIMATION
-  ═══════════════════════════════════════════ */
-  var revealObs = new IntersectionObserver(function (entries) {
-    entries.forEach(function (entry) {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
-        revealObs.unobserve(entry.target);
-      }
     });
-  }, { threshold: 0.07 });
 
-  document.querySelectorAll('.reveal').forEach(function (el) {
-    revealObs.observe(el);
-  });
+    /* ═══════════════════════════════════════════
+       GRID / LIST VIEW SWITCHER — ترنزیشن نرم
+    ═══════════════════════════════════════════ */
+    var menuMain    = document.getElementById('menuMain');
+    var viewGridBtn = document.getElementById('viewGridBtn');
+    var viewListBtn = document.getElementById('viewListBtn');
 
-  /* ═══════════════════════════════════════════
-     PRODUCT BOTTOM SHEET
-     روی هر محصول کلیک شه، یه پاپ‌آپ شبیه صفحه‌ی تکی محصول از
-     پایین صفحه میاد بالا — دقیقا همین رفتار توی موبایل و دسکتاپ
-  ═══════════════════════════════════════════ */
-  var sheetBackdrop  = document.getElementById('sheetBackdrop');
-  var sheet          = document.getElementById('productSheet');
-  var sheetScrollEl  = document.getElementById('sheetScroll');
-  var sheetCloseBtn  = document.getElementById('sheetCloseBtn');
-  var sheetDragHandle= document.getElementById('sheetDragHandle');
-  var sheetImg       = document.getElementById('sheetImg');
-  var sheetMediaPh   = document.getElementById('sheetMediaPlaceholder');
-  var sheetCatBadge  = document.getElementById('sheetCatBadge');
-  var sheetCatIcon   = document.getElementById('sheetCatIcon');
-  var sheetCatName   = document.getElementById('sheetCatName');
-  var sheetItemName  = document.getElementById('sheetItemName');
-  var sheetPrice     = document.getElementById('sheetPrice');
-  var sheetDesc      = document.getElementById('sheetDesc');
-  var lastFocusedEl  = null;
+    function setView(view, animate) {
+      var activePanel = panels.filter(function (p) { return p.classList.contains('active'); })[0];
 
-  function openSheet(data) {
-    sheetItemName.textContent = data.name || '';
-    sheetPrice.textContent    = Number(data.price || 0).toLocaleString('fa-IR');
-    sheetDesc.textContent     = (data.desc && data.desc.trim())
-      ? data.desc
-      : 'توضیحاتی برای این محصول ثبت نشده است.';
-    sheetCatName.textContent  = data.cat || '';
-    sheetCatIcon.className    = 'bi ' + (data.catIcon || 'bi-grid');
-    sheetCatBadge.className   = 'sheet-cat-badge icon-swatch-' + (data.swatch || '0');
+      function applyView() {
+        menuMain.setAttribute('data-view', view);
+        viewGridBtn.classList.toggle('active', view === 'grid');
+        viewListBtn.classList.toggle('active', view === 'list');
+        try { localStorage.setItem('nanonan-view', view); } catch (e) {}
 
-    if (data.img) {
-      sheetImg.src = data.img;
-      sheetImg.alt = data.name || '';
-      sheetImg.style.display = 'block';
-      sheetMediaPh.style.display = 'none';
-    } else {
-      sheetImg.removeAttribute('src');
-      sheetImg.style.display = 'none';
-      sheetMediaPh.style.display = 'flex';
+        if (activePanel && animate) {
+          var cards = visibleCardsOf(activePanel);
+          cards.forEach(function (el, i) {
+            el.style.setProperty('--cascade-delay', Math.min(i, 10) * 30 + 'ms');
+            el.classList.add('view-swap-in');
+          });
+          setTimeout(function () {
+            cards.forEach(function (el) { el.classList.remove('view-swap-in'); el.style.removeProperty('--cascade-delay'); });
+          }, 420);
+        }
+      }
+
+      if (activePanel && animate) {
+        var currentCards = visibleCardsOf(activePanel);
+        currentCards.forEach(function (el) { el.classList.add('view-swap-out'); });
+        setTimeout(applyView, 190);
+      } else {
+        applyView();
+      }
     }
 
-    if (sheetScrollEl) sheetScrollEl.scrollTop = 0;
+    viewGridBtn.addEventListener('click', function () { setView('grid', true); });
+    viewListBtn.addEventListener('click', function () { setView('list', true); });
+    try {
+      var savedView = localStorage.getItem('nanonan-view');
+      if (savedView === 'list' || savedView === 'grid') setView(savedView, false);
+    } catch (e) {}
 
-    lastFocusedEl = document.activeElement;
-    lockScroll();
-    sheetBackdrop.classList.add('show');
-    sheet.classList.add('show');
-    sheet.setAttribute('aria-hidden', 'false');
-    sheetCloseBtn.focus();
-  }
+    /* ═══════════════════════════════════════════
+       PRODUCT BOTTOM SHEET
+    ═══════════════════════════════════════════ */
+    var sheetBackdrop  = document.getElementById('sheetBackdrop');
+    var sheet          = document.getElementById('productSheet');
+    var sheetScrollEl  = document.getElementById('sheetScroll');
+    var sheetCloseBtn  = document.getElementById('sheetCloseBtn');
+    var sheetDragHandle= document.getElementById('sheetDragHandle');
+    var sheetImg       = document.getElementById('sheetImg');
+    var sheetMediaPh   = document.getElementById('sheetMediaPlaceholder');
+    var sheetCatBadge  = document.getElementById('sheetCatBadge');
+    var sheetCatIcon   = document.getElementById('sheetCatIcon');
+    var sheetCatName   = document.getElementById('sheetCatName');
+    var sheetItemName  = document.getElementById('sheetItemName');
+    var sheetPrice     = document.getElementById('sheetPrice');
+    var sheetDesc      = document.getElementById('sheetDesc');
+    var lastFocusedEl  = null;
 
-  function closeSheet() {
-    if (!sheet.classList.contains('show')) return;
-    sheetBackdrop.classList.remove('show');
-    sheet.classList.remove('show');
-    sheet.setAttribute('aria-hidden', 'true');
-    unlockScroll();
-    if (lastFocusedEl && typeof lastFocusedEl.focus === 'function') {
-      lastFocusedEl.focus();
+    function openSheet(data) {
+      sheetItemName.textContent = data.name || '';
+      sheetPrice.textContent    = Number(data.price || 0).toLocaleString('fa-IR');
+      sheetDesc.textContent     = (data.desc && data.desc.trim())
+        ? data.desc
+        : 'توضیحاتی برای این محصول ثبت نشده است.';
+      sheetCatName.textContent  = data.cat || '';
+      sheetCatIcon.className    = 'bi ' + (data.catIcon || 'bi-grid');
+      sheetCatBadge.className   = 'sheet-cat-badge icon-swatch-' + (data.swatch || '0');
+
+      if (data.img) {
+        sheetImg.src = data.img;
+        sheetImg.alt = data.name || '';
+        sheetImg.style.display = 'block';
+        sheetMediaPh.style.display = 'none';
+      } else {
+        sheetImg.removeAttribute('src');
+        sheetImg.style.display = 'none';
+        sheetMediaPh.style.display = 'flex';
+      }
+
+      if (sheetScrollEl) sheetScrollEl.scrollTop = 0;
+
+      lastFocusedEl = document.activeElement;
+      lockScroll();
+      sheetBackdrop.classList.add('show');
+      sheet.classList.add('show');
+      sheet.setAttribute('aria-hidden', 'false');
+      sheetCloseBtn.focus();
     }
-  }
 
-  document.querySelectorAll('.menu-card').forEach(function (card) {
-    card.addEventListener('click', function () { openSheet(card.dataset); });
-    card.addEventListener('keydown', function (e) {
+    function closeSheet() {
+      if (!sheet.classList.contains('show')) return;
+      sheetBackdrop.classList.remove('show');
+      sheet.classList.remove('show');
+      sheet.setAttribute('aria-hidden', 'true');
+      unlockScroll();
+      if (lastFocusedEl && typeof lastFocusedEl.focus === 'function') lastFocusedEl.focus();
+    }
+
+    // چون کارت‌ها با انیمیشن ورود/خروج جابه‌جا می‌شن، delegate روی document
+    document.addEventListener('click', function (e) {
+      var card = e.target.closest ? e.target.closest('.menu-card') : null;
+      if (card) openSheet(card.dataset);
+    });
+    document.addEventListener('keydown', function (e) {
       if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        openSheet(card.dataset);
+        var card = e.target.closest ? e.target.closest('.menu-card') : null;
+        if (card) { e.preventDefault(); openSheet(card.dataset); }
       }
+      if (e.key === 'Escape') closeSheet();
     });
-  });
 
-  sheetBackdrop.addEventListener('click', closeSheet);
-  sheetCloseBtn.addEventListener('click', closeSheet);
-  document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape') closeSheet();
-  });
+    sheetBackdrop.addEventListener('click', closeSheet);
+    sheetCloseBtn.addEventListener('click', closeSheet);
 
-  /* درگ-تو-دیسمیس (لمسی + ماوس) فقط از روی دستگیره‌ی بالای پاپ‌آپ،
-     تا اسکرول طبیعی محتوای داخل پاپ‌آپ خراب نشه */
-  var dragState = null;
-
-  function onDragStart(e) {
-    if (e.pointerType === 'mouse' && e.button !== 0) return;
-    dragState = { startY: e.clientY, lastY: e.clientY, startedAt: Date.now() };
-    sheet.classList.add('dragging');
-    if (sheetDragHandle.setPointerCapture) {
-      try { sheetDragHandle.setPointerCapture(e.pointerId); } catch (err) {}
+    /* درگ-تو-دیسمیس از روی دستگیره‌ی بالای پاپ‌آپ */
+    var dragState = null;
+    function onDragStart(e) {
+      if (e.pointerType === 'mouse' && e.button !== 0) return;
+      dragState = { startY: e.clientY, lastY: e.clientY, startedAt: Date.now() };
+      sheet.classList.add('dragging');
+      if (sheetDragHandle.setPointerCapture) { try { sheetDragHandle.setPointerCapture(e.pointerId); } catch (err) {} }
     }
-  }
-  function onDragMove(e) {
-    if (!dragState) return;
-    dragState.lastY = e.clientY;
-    var delta = Math.max(0, dragState.lastY - dragState.startY);
-    sheet.style.transform = 'translate(-50%,' + delta + 'px)';
-  }
-  function onDragEnd() {
-    if (!dragState) return;
-    var delta    = dragState.lastY - dragState.startY;
-    var elapsed  = Math.max(1, Date.now() - dragState.startedAt);
-    var velocity = delta / elapsed; // پیکسل بر میلی‌ثانیه
-    sheet.classList.remove('dragging');
-    sheet.style.transform = '';
-    dragState = null;
-    if (delta > 110 || velocity > 0.6) closeSheet();
-  }
+    function onDragMove(e) {
+      if (!dragState) return;
+      dragState.lastY = e.clientY;
+      var delta = Math.max(0, dragState.lastY - dragState.startY);
+      sheet.style.transform = 'translate(-50%,' + delta + 'px)';
+    }
+    function onDragEnd() {
+      if (!dragState) return;
+      var delta    = dragState.lastY - dragState.startY;
+      var elapsed  = Math.max(1, Date.now() - dragState.startedAt);
+      var velocity = delta / elapsed;
+      sheet.classList.remove('dragging');
+      sheet.style.transform = '';
+      dragState = null;
+      if (delta > 110 || velocity > 0.6) closeSheet();
+    }
+    sheetDragHandle.addEventListener('pointerdown', onDragStart);
+    sheetDragHandle.addEventListener('pointermove', onDragMove);
+    sheetDragHandle.addEventListener('pointerup', onDragEnd);
+    sheetDragHandle.addEventListener('pointercancel', onDragEnd);
 
-  sheetDragHandle.addEventListener('pointerdown', onDragStart);
-  sheetDragHandle.addEventListener('pointermove', onDragMove);
-  sheetDragHandle.addEventListener('pointerup', onDragEnd);
-  sheetDragHandle.addEventListener('pointercancel', onDragEnd);
-
-}());
-</script>
+  }());
+  </script>
 </body>
 </html>
