@@ -275,6 +275,8 @@
         if (!preloader || !preloader.parentNode) return;
         preloader.classList.add('is-hidden');
         unlockScroll();
+        // بلافاصله بعد از محو شدن لودینگ، ورود پلکانی (Staggered) بخش‌های اصلی صفحه فعال می‌شود
+        html.classList.add('app-ready');
         setTimeout(function () {
           if (preloader.parentNode) preloader.parentNode.removeChild(preloader);
         }, 680);
@@ -286,6 +288,9 @@
       else window.addEventListener('load', startHoldTimer);
 
       setTimeout(hidePreloader, HARD_TIMEOUT_MS);
+    } else {
+      // فallback ایمنی: اگر به هر دلیلی لودینگ در صفحه نبود، بخش‌های اصلی بلافاصله نمایش داده شوند
+      html.classList.add('app-ready');
     }
 
     /* ═══════════════════════════════════════════

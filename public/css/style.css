@@ -709,6 +709,40 @@ input[type="number"] { -moz-appearance: textfield; appearance: textfield; }
 }
 
 /* =========================================================
+   15.b PAGE ENTRANCE — staggered slide-in after preloader hides
+   html.app-ready triggers each block to slide in from its side
+   ========================================================= */
+.top-bar,
+.cat-nav-wrapper,
+.menu-main,
+.menu-footer {
+  opacity: 0;
+}
+html.app-ready .top-bar {
+  animation: enter-from-right 620ms var(--ease) 60ms forwards;
+}
+html.app-ready .cat-nav-wrapper {
+  animation: enter-from-left 620ms var(--ease) 180ms forwards;
+}
+html.app-ready .menu-main {
+  animation: enter-from-right 620ms var(--ease) 300ms forwards;
+}
+html.app-ready .menu-footer {
+  animation: enter-from-left 620ms var(--ease) 420ms forwards;
+}
+@keyframes enter-from-right {
+  0%   { opacity: 0; transform: translateX(38px); }
+  100% { opacity: 1; transform: translateX(0); }
+}
+@keyframes enter-from-left {
+  0%   { opacity: 0; transform: translateX(-38px); }
+  100% { opacity: 1; transform: translateX(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .top-bar, .cat-nav-wrapper, .menu-main, .menu-footer { opacity: 1 !important; animation: none !important; transform: none !important; }
+}
+
+/* =========================================================
    16. PRODUCT BOTTOM SHEET
    ========================================================= */
 .sheet-backdrop {
