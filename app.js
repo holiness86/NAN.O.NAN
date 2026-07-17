@@ -48,7 +48,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage : storage });
 
 // اتصال دیتا بیس
-const urlDB = 'mongodb://localhost:27017/YosefDB';
+const urlDB = 'mongodb://localhost:27017/NANONAN';
 mongoose.connect(urlDB)
 .then(() => {
     console.log('Connected to MongoDB');
@@ -58,7 +58,6 @@ mongoose.connect(urlDB)
 })
 .catch((err) => console.error('Could not connect to MongoDB', err));
 
-// روت صفحه اصلی (نمایش منو)
 // روت صفحه اصلی (نمایش منو)
 app.get('/', async (req, res) => {
     try {
