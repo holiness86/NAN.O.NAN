@@ -2,7 +2,14 @@
 <html lang="fa" dir="rtl" data-bs-theme="light">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="description" content="منوی آنلاین کافه و بیکری نان و نان">
+  <meta name="color-scheme" content="light dark">
+  <!-- رنگ نوار مرورگر موبایل — مقدار واقعی را اسکریپت ضدفلاش زیر، هم‌زمان با
+       تعیین تم، قبل از اولین رندر ست می‌کند و main.js بعد از هر تغییر تم آن
+       را به‌روز نگه می‌دارد (یک تگ واحد، بدون media، تنها منبع حقیقت) -->
+  <meta name="theme-color" content="#F6ECE5">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%A5%90%3C/text%3E%3C/svg%3E">
   <title>نان و نان — منو</title>
 
   <!-- جلوگیری از فلاش تم اشتباه قبل از رندر اول صفحه -->
@@ -12,6 +19,8 @@
         var t = localStorage.getItem('nanonan-theme');
         if (!t) t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
         document.documentElement.setAttribute('data-bs-theme', t);
+        var mc = document.querySelector('meta[name="theme-color"]');
+        if (mc) mc.setAttribute('content', t === 'dark' ? '#1B120C' : '#F6ECE5');
       } catch (e) {}
     })();
   </script>
@@ -20,24 +29,28 @@
   <link href="css/bootstrap.rtl.min.css" rel="stylesheet">
   <!-- Bootstrap Icons -->
   <link rel="stylesheet" href="css/icons-1.13.1/font/bootstrap-icons.min.css">
-  <!-- Custom CSS -->
+  <!-- Custom CSS (توکن‌های رنگی، فونت وزیرمتن، انیمیشن‌ها) -->
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
-  <!-- ─── LOADING SCREEN — لوگوی مرکزی + ذرات شناور لوگو ── -->
-  <div class="preloader" id="preloader">
-    <!-- ذرات کوچک لوگو که به آرومی دور لوگوی اصلی شناورن -->
-    <span class="preloader-particle" style="--p-size:22px; --p-x:100px;  --p-y:-70px; --p-dur:5.2s; --p-delay:0ms;"><i class="bi bi-cup-hot-fill"></i></span>
-    <span class="preloader-particle" style="--p-size:18px; --p-x:-110px; --p-y:-50px; --p-dur:6.1s; --p-delay:300ms;"><i class="bi bi-egg-fried"></i></span>
-    <span class="preloader-particle" style="--p-size:26px; --p-x:120px;  --p-y:60px;  --p-dur:5.8s; --p-delay:600ms;"><i class="bi bi-cake2-fill"></i></span>
-    <span class="preloader-particle" style="--p-size:20px; --p-x:-100px; --p-y:80px;  --p-dur:5.4s; --p-delay:900ms;"><i class="bi bi-cup-straw"></i></span>
-    <span class="preloader-particle" style="--p-size:16px; --p-x:0px;    --p-y:-110px;--p-dur:6.4s; --p-delay:200ms;"><i class="bi bi-flower1"></i></span>
-    <span class="preloader-particle" style="--p-size:16px; --p-x:0px;    --p-y:110px; --p-dur:5.6s; --p-delay:500ms;"><i class="bi bi-basket2-fill"></i></span>
-    <span class="preloader-particle" style="--p-size:14px; --p-x:150px;  --p-y:-10px; --p-dur:6.8s; --p-delay:800ms;"><i class="bi bi-cup-hot-fill"></i></span>
-    <span class="preloader-particle" style="--p-size:14px; --p-x:-150px; --p-y:10px;  --p-dur:6.2s; --p-delay:1100ms;"><i class="bi bi-egg-fried"></i></span>
+  <!-- تعریف فیلتر SVG «Goo» — پایه‌ی افکت حبابی/مایع محو شدن لودینگ -->
+  <svg class="visually-hidden" aria-hidden="true" focusable="false">
+    <defs>
+      <filter id="nan-goo">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="9" result="blur" />
+        <feColorMatrix in="blur" mode="matrix"
+          values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 21 -9" result="goo" />
+      </filter>
+    </defs>
+  </svg>
 
-    <div class="preloader-core">
+  <!-- ─── LOADING SCREEN — لوگو + بارش آیکون از بیرون صفحه + محو حبابی/مایع ── -->
+  <div class="preloader" id="preloader">
+    <!-- ذرات ریز که از JS، بیرونِ صفحه شروع و به‌آرومی به نقاط تصادفی می‌بارند -->
+    <div class="preloader-rain" id="preloaderRain" aria-hidden="true"></div>
+
+    <div class="preloader-core" id="preloaderCore">
       <div class="preloader-ring">
         <i class="bi bi-cup-hot-fill"></i>
       </div>
@@ -45,156 +58,145 @@
       <p class="preloader-tagline">در حال آماده‌سازی منو...</p>
       <div class="preloader-dots"><span></span><span></span><span></span></div>
     </div>
+
+    <!-- لایه‌ی محو حبابی: JS این کانتینر را با دایره‌های هم‌پوشان پر می‌کند -->
+    <div class="preloader-dissolve" id="preloaderDissolve" aria-hidden="true"></div>
   </div>
 
   <%
-    // هش ساده‌ی نام/آیکون دسته‌بندی برای انتخاب رنگ ثابت از پالت
+    // هش سادهٔ نام/آیکون دسته‌بندی برای انتخاب یک رنگ ثابت از پالت (۰ تا ۹)
     function swatchIndex(str){
       if(!str) return 0;
       var h = 0;
-      for (var i=0;i<str.length;i++){ h = (h + str.charCodeAt(i)) % 10; }
-      return h;
+      for (var i = 0; i < str.length; i++) { h = (h * 31 + str.charCodeAt(i)) >>> 0; }
+      return h % 10;
     }
+    var hasCategories = typeof categoriesWithItems !== 'undefined' && categoriesWithItems && categoriesWithItems.length > 0;
   %>
 
-  <!-- ─── TOP BAR — بسیار جمع‌وجور: فقط لوگو + دکمه تم ─────── -->
+  <!-- ─── TOP BAR — هیرو مینیمال: فقط لوگو + نام + دکمه تم ─────── -->
   <header class="top-bar">
     <div class="brand-mini">
       <div class="brand-mini-logo"><i class="bi bi-cup-hot-fill"></i></div>
-      <div>
+      <div class="brand-mini-text">
         <div class="brand-mini-name">نان <span>و نان</span></div>
         <p class="brand-mini-tagline">Café &amp; Bakery</p>
       </div>
     </div>
-    <button class="theme-btn" id="themeBtn" aria-label="تغییر تم">
+    <button type="button" class="theme-btn" id="themeBtn" aria-label="تغییر تم روشن/تاریک">
       <i class="bi bi-moon-stars-fill" id="themeIcon"></i>
     </button>
   </header>
 
-  <!-- ─── CATEGORY CARDS (STICKY, تصویری، داینامیک) ───────────────── -->
+  <!-- ─── ردیف دسته‌بندی‌ها (استیکی، تصویری/داینامیک) ───────────────── -->
   <div class="cat-nav-wrapper" id="catNav">
     <nav class="cat-nav" aria-label="دسته‌بندی منو">
-      <% categoriesWithItems.forEach(function(cat, index) { %>
-        <div class="cat-card <%= index === 0 ? 'active' : '' %>"
-             role="button" tabindex="0"
-             data-target="cat-<%= cat.enname %>">
-          <div class="cat-card-thumb icon-swatch-<%= swatchIndex(cat.icon || cat.name) %>">
-            <% if (cat.imageUrl) { %>
-              <img src="<%= cat.imageUrl %>" alt="<%= cat.name %>">
-            <% } else { %>
-              <i class="bi <%= cat.icon || 'bi-grid' %>"></i>
-            <% } %>
+      <% if (hasCategories) { %>
+        <% categoriesWithItems.forEach(function (cat, index) { %>
+          <div class="cat-card <%= index === 0 ? 'active' : '' %>"
+               role="button" tabindex="0"
+               aria-pressed="<%= index === 0 ? 'true' : 'false' %>"
+               data-target="cat-<%= cat.enname %>">
+            <div class="cat-card-thumb icon-swatch-<%= swatchIndex(cat.icon || cat.name) %>">
+              <% if (cat.imageUrl) { %>
+                <img src="<%= cat.imageUrl %>" alt="<%= cat.name %>" loading="lazy">
+              <% } else { %>
+                <i class="bi <%= cat.icon || 'bi-grid' %>"></i>
+              <% } %>
+            </div>
+            <span class="cat-card-label"><%= cat.name %></span>
           </div>
-          <span class="cat-card-label"><%= cat.name %></span>
-        </div>
-      <% }) %>
+        <% }) %>
+      <% } %>
     </nav>
   </div>
 
-  <!-- ─── MENU MAIN ─────────────────────────────── -->
+  <!-- ─── محتوای اصلی منو ─────────────────────────────── -->
   <main class="menu-main container" id="menuMain" data-view="grid">
 
-    <div class="view-switcher">
-      <div class="view-switcher-track">
-        <button type="button" class="view-btn active" id="viewGridBtn" aria-label="نمایش کارتی">
-          <i class="bi bi-grid-3x3-gap-fill"></i>
-        </button>
-        <button type="button" class="view-btn" id="viewListBtn" aria-label="نمایش لیستی">
-          <i class="bi bi-list-ul"></i>
-        </button>
+    <% if (hasCategories) { %>
+      <div class="view-switcher">
+        <div class="view-switcher-track" role="group" aria-label="نحوه نمایش محصولات">
+          <button type="button" class="view-btn active" id="viewGridBtn" aria-label="نمایش کارتی" aria-pressed="true">
+            <i class="bi bi-grid-3x3-gap-fill"></i>
+          </button>
+          <button type="button" class="view-btn" id="viewListBtn" aria-label="نمایش لیستی" aria-pressed="false">
+            <i class="bi bi-list-ul"></i>
+          </button>
+        </div>
       </div>
-    </div>
 
-    <% categoriesWithItems.forEach(function(cat, index) { %>
-      <section class="cat-panel <%= index === 0 ? 'active' : '' %>" id="cat-<%= cat.enname %>" data-cat-panel>
+      <% categoriesWithItems.forEach(function (cat, index) { %>
+        <section class="cat-panel <%= index === 0 ? 'active' : '' %>" id="cat-<%= cat.enname %>" data-cat-panel aria-label="<%= cat.name %>">
 
-        <div class="cat-section-header">
-          <div class="cat-thumb icon-swatch-<%= swatchIndex(cat.icon || cat.name) %>">
-            <i class="bi <%= cat.icon || 'bi-grid' %>"></i>
+          <div class="cat-section-header">
+            <div class="cat-thumb icon-swatch-<%= swatchIndex(cat.icon || cat.name) %>">
+              <% if (cat.imageUrl) { %>
+                <img src="<%= cat.imageUrl %>" alt="" loading="lazy">
+              <% } else { %>
+                <i class="bi <%= cat.icon || 'bi-grid' %>"></i>
+              <% } %>
+            </div>
+            <div class="cat-section-texts">
+              <h2 class="cat-section-title"><%= cat.enname %></h2>
+              <p class="cat-section-sub"><%= cat.name %></p>
+            </div>
           </div>
-          <div class="cat-section-texts">
-            <h2 class="cat-section-title"><%= cat.enname %></h2>
-            <p class="cat-section-sub"><%= cat.name %></p>
-          </div>
-        </div>
 
-        <!-- حالت کارتی -->
-        <div class="menu-grid">
-          <% if (cat.items.length === 0) { %>
-            <p class="text-muted">محصولی در این دسته‌بندی وجود ندارد.</p>
-          <% } %>
-          <% cat.items.forEach(function(item) { %>
-            <div class="menu-card"
-                 role="button"
-                 tabindex="0"
-                 data-name="<%= item.iteamName %>"
-                 data-price="<%= item.iteamPrice %>"
-                 data-desc="<%= item.description %>"
-                 data-img="<%= item.imageUrl || '' %>"
-                 data-cat="<%= cat.name %>"
-                 data-cat-icon="<%= cat.icon || 'bi-grid' %>"
-                 data-swatch="<%= swatchIndex(cat.icon || cat.name) %>">
-              <div class="menu-card-img">
-                <% if (item.imageUrl) { %>
-                  <img src="<%= item.imageUrl %>" alt="<%= item.iteamName %>">
-                <% } else { %>
-                  <div class="menu-card-placeholder"><i class="bi bi-image"></i></div>
-                <% } %>
+          <!-- یک مجموعه‌ی واحد از کارت‌ها؛ چیدمان کارتی/لیستی صرفاً با CSS
+               (بر اساس menuMain[data-view]) کنترل می‌شود — بدون دوبار رندر تصاویر -->
+          <div class="menu-items">
+            <% if (!cat.items || cat.items.length === 0) { %>
+              <div class="cat-empty">
+                <i class="bi bi-cup"></i>
+                <p>فعلاً محصولی در این دسته‌بندی ثبت نشده است.</p>
               </div>
-              <div class="menu-card-info">
-                <p class="menu-card-name"><%= item.iteamName %></p>
-                <p class="menu-card-desc"><%= item.description %></p>
-                <div class="menu-card-footer">
-                  <div class="menu-card-price">
-                    <%= Number(item.iteamPrice).toLocaleString('fa-IR') %>
-                    <small>تومان</small>
+            <% } else { %>
+              <% cat.items.forEach(function (item) { %>
+                <div class="menu-card"
+                     role="button"
+                     tabindex="0"
+                     data-name="<%= item.iteamName %>"
+                     data-price="<%= item.iteamPrice %>"
+                     data-desc="<%= item.description %>"
+                     data-img="<%= item.imageUrl || '' %>"
+                     data-cat="<%= cat.name %>"
+                     data-cat-icon="<%= cat.icon || 'bi-grid' %>"
+                     data-swatch="<%= swatchIndex(cat.icon || cat.name) %>">
+                  <div class="menu-card-img">
+                    <% if (item.imageUrl) { %>
+                      <img src="<%= item.imageUrl %>" alt="<%= item.iteamName %>" loading="lazy">
+                    <% } else { %>
+                      <div class="menu-card-placeholder"><i class="bi bi-image"></i></div>
+                    <% } %>
+                  </div>
+                  <div class="menu-card-info">
+                    <p class="menu-card-name"><%= item.iteamName %></p>
+                    <p class="menu-card-desc"><%= item.description %></p>
+                    <div class="menu-card-footer">
+                      <div class="menu-card-price">
+                        <%= Number(item.iteamPrice).toLocaleString('fa-IR') %>
+                        <small>تومان</small>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </div>
-          <% }) %>
-        </div>
+              <% }) %>
+            <% } %>
+          </div>
 
-        <!-- حالت لیستی (همون آیتم‌ها، چیدمان افقی) -->
-        <div class="menu-list">
-          <% cat.items.forEach(function(item) { %>
-            <div class="menu-card"
-                 role="button"
-                 tabindex="0"
-                 data-name="<%= item.iteamName %>"
-                 data-price="<%= item.iteamPrice %>"
-                 data-desc="<%= item.description %>"
-                 data-img="<%= item.imageUrl || '' %>"
-                 data-cat="<%= cat.name %>"
-                 data-cat-icon="<%= cat.icon || 'bi-grid' %>"
-                 data-swatch="<%= swatchIndex(cat.icon || cat.name) %>">
-              <div class="menu-card-img">
-                <% if (item.imageUrl) { %>
-                  <img src="<%= item.imageUrl %>" alt="<%= item.iteamName %>">
-                <% } else { %>
-                  <div class="menu-card-placeholder"><i class="bi bi-image"></i></div>
-                <% } %>
-              </div>
-              <div class="menu-card-info">
-                <p class="menu-card-name"><%= item.iteamName %></p>
-                <p class="menu-card-desc"><%= item.description %></p>
-                <div class="menu-card-footer">
-                  <div class="menu-card-price">
-                    <%= Number(item.iteamPrice).toLocaleString('fa-IR') %>
-                    <small>تومان</small>
-                  </div>
-                </div>
-              </div>
-            </div>
-          <% }) %>
-        </div>
-
-      </section>
-    <% }) %>
+        </section>
+      <% }) %>
+    <% } else { %>
+      <div class="cat-empty" style="padding:4rem 1rem;">
+        <i class="bi bi-basket2"></i>
+        <p>هنوز دسته‌بندی یا محصولی برای نمایش ثبت نشده است.</p>
+      </div>
+    <% } %>
 
   </main>
 
-  <!-- ─── FOOTER ─────────────────────────────── -->
+  <!-- ─── فوتر ─────────────────────────────── -->
   <footer class="menu-footer">
     <div class="footer-brand">نان و نان</div>
     <p class="footer-text">آدرس نمونه · رزرو: 021-123-4567</p>
@@ -206,23 +208,20 @@
       <a href="#" class="social-dot" aria-label="تلفن"><i class="bi bi-telephone-fill"></i></a>
     </div>
 
-    <p class="footer-text mt-3" style="font-size:0.72rem;opacity:0.7;">
-      © 2026 نان و نان
-    </p>
-    <p class="footer-text" style="font-size:0.72rem;opacity:0.7;">
+    <p class="footer-text mt-3" style="font-size:.72rem;opacity:.7;">© 2026 نان و نان</p>
+    <p class="footer-text" style="font-size:.72rem;opacity:.7;">
       طراحی و توسعه توسط
       <a href="http://SoulWeb.ir" target="_blank" rel="noopener noreferrer" class="text-link">سُل وب</a>
     </p>
   </footer>
 
-  <!-- ─── PRODUCT DETAIL SHEET (پاپ‌آپ از پایین) ── -->
-  <div class="sheet-backdrop" id="sheetBackdrop"></div>
-  <div class="product-sheet" id="productSheet" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="sheetItemName">
+  <!-- ─── پاپ‌آپ جزئیات محصول (Bottom Sheet) — روی Bootstrap Offcanvas ── -->
+  <div class="offcanvas offcanvas-bottom product-sheet" tabindex="-1" id="productSheet" aria-labelledby="sheetItemName">
     <div class="sheet-drag-handle" id="sheetDragHandle"><span></span></div>
-    <button type="button" class="sheet-close-btn" id="sheetCloseBtn" aria-label="بستن">
+    <button type="button" class="sheet-close-btn" data-bs-dismiss="offcanvas" aria-label="بستن">
       <i class="bi bi-x-lg"></i>
     </button>
-    <div class="sheet-scroll" id="sheetScroll">
+    <div class="offcanvas-body">
       <div class="sheet-media">
         <div class="sheet-media-placeholder" id="sheetMediaPlaceholder">
           <i class="bi bi-image"></i>
@@ -244,342 +243,15 @@
     </div>
   </div>
 
+  <!-- بدون جاوااسکریپت: حداقل محتوای منو دیده شود -->
+  <noscript>
+    <style>.preloader{display:none!important;} .top-bar,.cat-nav-wrapper,.menu-main,.menu-footer{opacity:1!important;}</style>
+  </noscript>
+
   <!-- Bootstrap JS -->
   <script src="js/jquery-3.7.1.min.js"></script>
   <script src="js/bootstrap.bundle.min.js"></script>
-
-  <script>
-  (function () {
-    'use strict';
-
-    const html = document.documentElement;
-
-    /* ═══════════════════════════════════════════
-       SCROLL LOCK
-    ═══════════════════════════════════════════ */
-    var lockCount = 0;
-    function lockScroll() { lockCount++; html.classList.add('scroll-locked'); }
-    function unlockScroll() { lockCount = Math.max(0, lockCount - 1); if (lockCount === 0) html.classList.remove('scroll-locked'); }
-
-    /* ═══════════════════════════════════════════
-       LOADING SCREEN — دقیقا ۲ ثانیه بعد از لود کامل باقی می‌مونه،
-       بعد با افکت بابل‌اسکیل (scale-up + fade) محو می‌شه.
-    ═══════════════════════════════════════════ */
-    var preloader = document.getElementById('preloader');
-    if (preloader) {
-      lockScroll();
-      var HOLD_AFTER_LOAD_MS = 2000; // دقیقاً ۲ ثانیه بعد از لود کامل
-      var HARD_TIMEOUT_MS    = 6000; // سقف ایمنی برای اتصال‌های خیلی کند
-
-      function hidePreloader() {
-        if (!preloader || !preloader.parentNode) return;
-        preloader.classList.add('is-hidden');
-        unlockScroll();
-        // بلافاصله بعد از محو شدن لودینگ، ورود پلکانی (Staggered) بخش‌های اصلی صفحه فعال می‌شود
-        html.classList.add('app-ready');
-        setTimeout(function () {
-          if (preloader.parentNode) preloader.parentNode.removeChild(preloader);
-        }, 680);
-      }
-
-      function startHoldTimer() { setTimeout(hidePreloader, HOLD_AFTER_LOAD_MS); }
-
-      if (document.readyState === 'complete') startHoldTimer();
-      else window.addEventListener('load', startHoldTimer);
-
-      setTimeout(hidePreloader, HARD_TIMEOUT_MS);
-    } else {
-      // فallback ایمنی: اگر به هر دلیلی لودینگ در صفحه نبود، بخش‌های اصلی بلافاصله نمایش داده شوند
-      html.classList.add('app-ready');
-    }
-
-    /* ═══════════════════════════════════════════
-       THEME TOGGLE — انیمیشن حبابی/مایع از محل کلیک
-    ═══════════════════════════════════════════ */
-    const themeBtn  = document.getElementById('themeBtn');
-    const themeIcon = document.getElementById('themeIcon');
-
-    function syncThemeIcon(mode) {
-      themeIcon.className = mode === 'dark' ? 'bi bi-sun-fill' : 'bi bi-moon-stars-fill';
-    }
-    syncThemeIcon(html.getAttribute('data-bs-theme'));
-
-    var themeSwitching = false;
-
-    function targetCream(mode) {
-      // مقادیر پس‌زمینه‌ی هر تم، برای رنگ حباب هم‌رنگ با تم مقصد
-      return mode === 'dark' ? '#1B120C' : '#F6ECE5';
-    }
-
-    themeBtn.addEventListener('click', function (e) {
-      if (themeSwitching) return;
-      themeSwitching = true;
-
-      var rect = themeBtn.getBoundingClientRect();
-      var x = rect.left + rect.width / 2;
-      var y = rect.top + rect.height / 2;
-      var next = html.getAttribute('data-bs-theme') === 'dark' ? 'light' : 'dark';
-
-      var bubble = document.createElement('div');
-      bubble.className = 'theme-bubble';
-      bubble.style.setProperty('--bubble-x', x + 'px');
-      bubble.style.setProperty('--bubble-y', y + 'px');
-      bubble.style.setProperty('--bubble-color', targetCream(next));
-      document.body.appendChild(bubble);
-
-      requestAnimationFrame(function () {
-        bubble.classList.add('expanding');
-      });
-
-      bubble.addEventListener('animationend', function onExpandEnd() {
-        bubble.removeEventListener('animationend', onExpandEnd);
-
-        // در اوج پوشش صفحه توسط حباب، تم رو عوض می‌کنیم تا سوییچ زیر حباب مخفی باشه
-        html.setAttribute('data-bs-theme', next);
-        try { localStorage.setItem('nanonan-theme', next); } catch (err) {}
-        syncThemeIcon(next);
-        themeBtn.classList.remove('spinning');
-        void themeBtn.offsetWidth;
-        themeBtn.classList.add('spinning');
-
-        bubble.classList.remove('expanding');
-        bubble.classList.add('retreating');
-
-        bubble.addEventListener('animationend', function onRetreatEnd() {
-          bubble.removeEventListener('animationend', onRetreatEnd);
-          bubble.remove();
-          themeSwitching = false;
-        }, { once: true });
-      }, { once: true });
-    });
-
-    /* ═══════════════════════════════════════════
-       DYNAMIC CATEGORY CARDS → FILTERING
-       خروج: افتادن فیزیکی به پایین + محو (stagger)
-       ورود: بارش از بالا به پایین + ظهور (stagger)
-    ═══════════════════════════════════════════ */
-    const navInner = document.querySelector('.cat-nav');
-    const catCards  = Array.prototype.slice.call(document.querySelectorAll('.cat-card'));
-    const panels    = Array.prototype.slice.call(document.querySelectorAll('[data-cat-panel]'));
-    var switching = false;
-    var STAGGER_MS = 45;
-
-    function centerCard(card) {
-      if (!navInner || !card) return;
-      var r  = card.getBoundingClientRect();
-      var nr = navInner.getBoundingClientRect();
-      var delta = (r.left + r.width / 2) - (nr.left + nr.width / 2);
-      if (Math.abs(delta) > 1) navInner.scrollBy({ left: delta, behavior: 'smooth' });
-    }
-
-    function visibleCardsOf(panel) {
-      var view = document.getElementById('menuMain').getAttribute('data-view');
-      var container = panel.querySelector(view === 'list' ? '.menu-list' : '.menu-grid');
-      if (!container) return [];
-      return Array.prototype.slice.call(container.querySelectorAll('.menu-card'));
-    }
-
-    function activateCategory(targetId, card) {
-      if (switching) return;
-      var currentPanel = panels.filter(function (p) { return p.classList.contains('active'); })[0];
-      var nextPanel     = document.getElementById(targetId);
-      if (!nextPanel || nextPanel === currentPanel) return;
-
-      switching = true;
-      catCards.forEach(function (c) { c.classList.toggle('active', c === card); });
-      centerCard(card);
-
-      function playCascadeIn() {
-        nextPanel.classList.add('active');
-        var cards = visibleCardsOf(nextPanel);
-        cards.forEach(function (el, i) {
-          el.style.setProperty('--cascade-delay', Math.min(i, 10) * STAGGER_MS + 'ms');
-          el.classList.add('card-cascade-in');
-        });
-        var settleAfter = Math.min(cards.length, 10) * STAGGER_MS + 560;
-        setTimeout(function () {
-          cards.forEach(function (el) { el.classList.remove('card-cascade-in'); el.style.removeProperty('--cascade-delay'); });
-          switching = false;
-        }, settleAfter);
-      }
-
-      if (currentPanel) {
-        var outCards = visibleCardsOf(currentPanel);
-        if (outCards.length === 0) {
-          currentPanel.classList.remove('active');
-          playCascadeIn();
-          return;
-        }
-        outCards.forEach(function (el, i) {
-          el.style.setProperty('--fall-delay', Math.min(i, 10) * (STAGGER_MS * 0.6) + 'ms');
-          el.classList.add('card-fall-out');
-        });
-        var fallTotal = Math.min(outCards.length, 10) * (STAGGER_MS * 0.6) + 420;
-        setTimeout(function () {
-          currentPanel.classList.remove('active');
-          outCards.forEach(function (el) { el.classList.remove('card-fall-out'); el.style.removeProperty('--fall-delay'); });
-          playCascadeIn();
-        }, fallTotal);
-      } else {
-        playCascadeIn();
-      }
-    }
-
-    catCards.forEach(function (card) {
-      card.addEventListener('click', function () { activateCategory(card.getAttribute('data-target'), card); });
-      card.addEventListener('keydown', function (e) {
-        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); activateCategory(card.getAttribute('data-target'), card); }
-      });
-    });
-
-    /* ═══════════════════════════════════════════
-       GRID / LIST VIEW SWITCHER — ترنزیشن نرم
-    ═══════════════════════════════════════════ */
-    var menuMain    = document.getElementById('menuMain');
-    var viewGridBtn = document.getElementById('viewGridBtn');
-    var viewListBtn = document.getElementById('viewListBtn');
-
-    function setView(view, animate) {
-      var activePanel = panels.filter(function (p) { return p.classList.contains('active'); })[0];
-
-      function applyView() {
-        menuMain.setAttribute('data-view', view);
-        viewGridBtn.classList.toggle('active', view === 'grid');
-        viewListBtn.classList.toggle('active', view === 'list');
-        try { localStorage.setItem('nanonan-view', view); } catch (e) {}
-
-        if (activePanel && animate) {
-          var cards = visibleCardsOf(activePanel);
-          cards.forEach(function (el, i) {
-            el.style.setProperty('--cascade-delay', Math.min(i, 10) * 30 + 'ms');
-            el.classList.add('view-swap-in');
-          });
-          setTimeout(function () {
-            cards.forEach(function (el) { el.classList.remove('view-swap-in'); el.style.removeProperty('--cascade-delay'); });
-          }, 420);
-        }
-      }
-
-      if (activePanel && animate) {
-        var currentCards = visibleCardsOf(activePanel);
-        currentCards.forEach(function (el) { el.classList.add('view-swap-out'); });
-        setTimeout(applyView, 190);
-      } else {
-        applyView();
-      }
-    }
-
-    viewGridBtn.addEventListener('click', function () { setView('grid', true); });
-    viewListBtn.addEventListener('click', function () { setView('list', true); });
-    try {
-      var savedView = localStorage.getItem('nanonan-view');
-      if (savedView === 'list' || savedView === 'grid') setView(savedView, false);
-    } catch (e) {}
-
-    /* ═══════════════════════════════════════════
-       PRODUCT BOTTOM SHEET
-    ═══════════════════════════════════════════ */
-    var sheetBackdrop  = document.getElementById('sheetBackdrop');
-    var sheet          = document.getElementById('productSheet');
-    var sheetScrollEl  = document.getElementById('sheetScroll');
-    var sheetCloseBtn  = document.getElementById('sheetCloseBtn');
-    var sheetDragHandle= document.getElementById('sheetDragHandle');
-    var sheetImg       = document.getElementById('sheetImg');
-    var sheetMediaPh   = document.getElementById('sheetMediaPlaceholder');
-    var sheetCatBadge  = document.getElementById('sheetCatBadge');
-    var sheetCatIcon   = document.getElementById('sheetCatIcon');
-    var sheetCatName   = document.getElementById('sheetCatName');
-    var sheetItemName  = document.getElementById('sheetItemName');
-    var sheetPrice     = document.getElementById('sheetPrice');
-    var sheetDesc      = document.getElementById('sheetDesc');
-    var lastFocusedEl  = null;
-
-    function openSheet(data) {
-      sheetItemName.textContent = data.name || '';
-      sheetPrice.textContent    = Number(data.price || 0).toLocaleString('fa-IR');
-      sheetDesc.textContent     = (data.desc && data.desc.trim())
-        ? data.desc
-        : 'توضیحاتی برای این محصول ثبت نشده است.';
-      sheetCatName.textContent  = data.cat || '';
-      sheetCatIcon.className    = 'bi ' + (data.catIcon || 'bi-grid');
-      sheetCatBadge.className   = 'sheet-cat-badge icon-swatch-' + (data.swatch || '0');
-
-      if (data.img) {
-        sheetImg.src = data.img;
-        sheetImg.alt = data.name || '';
-        sheetImg.style.display = 'block';
-        sheetMediaPh.style.display = 'none';
-      } else {
-        sheetImg.removeAttribute('src');
-        sheetImg.style.display = 'none';
-        sheetMediaPh.style.display = 'flex';
-      }
-
-      if (sheetScrollEl) sheetScrollEl.scrollTop = 0;
-
-      lastFocusedEl = document.activeElement;
-      lockScroll();
-      sheetBackdrop.classList.add('show');
-      sheet.classList.add('show');
-      sheet.setAttribute('aria-hidden', 'false');
-      sheetCloseBtn.focus();
-    }
-
-    function closeSheet() {
-      if (!sheet.classList.contains('show')) return;
-      sheetBackdrop.classList.remove('show');
-      sheet.classList.remove('show');
-      sheet.setAttribute('aria-hidden', 'true');
-      unlockScroll();
-      if (lastFocusedEl && typeof lastFocusedEl.focus === 'function') lastFocusedEl.focus();
-    }
-
-    // چون کارت‌ها با انیمیشن ورود/خروج جابه‌جا می‌شن، delegate روی document
-    document.addEventListener('click', function (e) {
-      var card = e.target.closest ? e.target.closest('.menu-card') : null;
-      if (card) openSheet(card.dataset);
-    });
-    document.addEventListener('keydown', function (e) {
-      if (e.key === 'Enter' || e.key === ' ') {
-        var card = e.target.closest ? e.target.closest('.menu-card') : null;
-        if (card) { e.preventDefault(); openSheet(card.dataset); }
-      }
-      if (e.key === 'Escape') closeSheet();
-    });
-
-    sheetBackdrop.addEventListener('click', closeSheet);
-    sheetCloseBtn.addEventListener('click', closeSheet);
-
-    /* درگ-تو-دیسمیس از روی دستگیره‌ی بالای پاپ‌آپ */
-    var dragState = null;
-    function onDragStart(e) {
-      if (e.pointerType === 'mouse' && e.button !== 0) return;
-      dragState = { startY: e.clientY, lastY: e.clientY, startedAt: Date.now() };
-      sheet.classList.add('dragging');
-      if (sheetDragHandle.setPointerCapture) { try { sheetDragHandle.setPointerCapture(e.pointerId); } catch (err) {} }
-    }
-    function onDragMove(e) {
-      if (!dragState) return;
-      dragState.lastY = e.clientY;
-      var delta = Math.max(0, dragState.lastY - dragState.startY);
-      sheet.style.transform = 'translate(-50%,' + delta + 'px)';
-    }
-    function onDragEnd() {
-      if (!dragState) return;
-      var delta    = dragState.lastY - dragState.startY;
-      var elapsed  = Math.max(1, Date.now() - dragState.startedAt);
-      var velocity = delta / elapsed;
-      sheet.classList.remove('dragging');
-      sheet.style.transform = '';
-      dragState = null;
-      if (delta > 110 || velocity > 0.6) closeSheet();
-    }
-    sheetDragHandle.addEventListener('pointerdown', onDragStart);
-    sheetDragHandle.addEventListener('pointermove', onDragMove);
-    sheetDragHandle.addEventListener('pointerup', onDragEnd);
-    sheetDragHandle.addEventListener('pointercancel', onDragEnd);
-
-  }());
-  </script>
+  <!-- منطق منو: لودینگ، سوییچ تم، دسته‌بندی، نمایش کارتی/لیستی (FLIP)، پاپ‌آپ محصول -->
+  <script src="js/main.js"></script>
 </body>
 </html>

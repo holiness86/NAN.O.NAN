@@ -1,48 +1,102 @@
-/* =========================================================
-   🥐 NAN.O.NAN — CAFÉ & BAKERY MENU — Redesign
-   Minimal · Dynamic · Bubble Transitions · Dual Theme
-   ========================================================= */
+/* =========================================================================
+   🥐 نان و نان — NAN.O.NAN — Café & Bakery Digital Menu
+   Minimal · Warm · Bubble/Liquid Motion · Dual Theme · Mobile-First
+   -------------------------------------------------------------------------
+   Contents
+     1.  Web font (self-hosted Vazirmatn variable font)
+     2.  Design tokens — Light theme
+     3.  Design tokens — Dark theme
+     4.  Reset & base
+     5.  Preloader — rain particles + goo/bubble dissolve
+     6.  Page entrance (staggered slide-in after preloader)
+     7.  Top bar (mini hero: logo + name + theme switch)
+     8.  Theme switch button + liquid bubble transition
+     9.  Category row (horizontal, image thumbnails)
+     10. View switcher (grid / list)
+     11. Category panels + section header
+     12. Product cards — shared skin (grid + list share ONE dom node)
+     13. Category-switch enter/exit choreography (fall out / rain in)
+     14. Grid ⇄ List FLIP transition
+     15. Footer
+     16. Product bottom sheet (Bootstrap Offcanvas skin + drag handle)
+     17. Scrollbar, selection, focus ring
+     18. Responsive fine-tuning
+     19. Reduced motion & print
+   ========================================================================= */
 
-/* =========================================================
-   1. DESIGN TOKENS — Light Mode ("نان و نان")
-   ========================================================= */
+/* =========================================================================
+   1. WEB FONT — Vazirmatn (self-hosted, variable weight 100–900)
+   Self-hosted on purpose: no Google Fonts / external CDN round-trip, so the
+   menu still renders correctly on slow or filtered connections.
+   License: SIL OFL 1.1 — see css/fonts/vazirmatn/LICENSE-OFL.txt
+   ========================================================================= */
+@font-face {
+  font-family: 'Vazirmatn';
+  src: url('./fonts/vazirmatn/Vazirmatn[wght].woff2') format('woff2-variations'),
+       url('./fonts/vazirmatn/Vazirmatn[wght].woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* =========================================================================
+   2. DESIGN TOKENS — always-available brand values (theme-independent)
+   These exist so JS never has to hard-code a hex value (e.g. the theme
+   switch bubble needs to know the *destination* theme's background before
+   that theme is actually applied) — everything is sourced from CSS.
+   ========================================================================= */
+:root {
+  --cream-light-value: #F6ECE5;
+  --cream-dark-value:  #1B120C;
+}
+
+/* =========================================================================
+   3. DESIGN TOKENS — Light theme (نان و نان)
+   ========================================================================= */
 :root, [data-bs-theme="light"] {
-  --brand:          #B75E3D;   /* آجری/نارنجی سوخته */
+  --brand:          #B75E3D;   /* آجری/نارنجی سوخته — brand, headings, logo */
+  --brand-rgb:      183,94,61;
   --brand-light:    #C97A5A;
-  --brand-soft:     rgba(183,94,61,0.10);
-  --brand-glow:     rgba(183,94,61,0.28);
+  --brand-soft:     rgba(183,94,61,.10);
+  --brand-glow:     rgba(183,94,61,.28);
 
-  --brand-dark:     #964323;   /* آجری تیره/شکلاتی — فوتر */
+  --brand-dark:     #964323;   /* آجری تیره/شکلاتی — footer, deep accents */
+  --brand-dark-rgb: 150,67,35;
 
-  --cream:          #F6ECE5;   /* پس‌زمینه غالب */
+  --cream:          var(--cream-light-value); /* پس‌زمینه غالب */
   --cream-deep:     #EFE1D6;
-  --powder:         #E2CEBF;   /* خطوط و کادرها */
+  --powder:         #E2CEBF;   /* خطوط و کادرهای کم‌رنگ */
+  --powder-rgb:     226,206,191;
 
-  --steel:          #598B9B;   /* رنگ مکمل — کنتراست */
-  --steel-soft:     rgba(89,139,155,0.12);
-  --steel-glow:     rgba(89,139,155,0.30);
+  --steel:          #598B9B;   /* رنگ مکمل — هاور/کنتراست */
+  --steel-rgb:      89,139,155;
+  --steel-soft:     rgba(89,139,155,.12);
+  --steel-glow:     rgba(89,139,155,.30);
 
   --ink:            #2B1D14;
+  --ink-rgb:        43,29,20;
   --ink-muted:      #7A6555;
 
   --border-warm:    var(--powder);
   --surface:        #FFFFFF;
   --surface-raised: #FBF5F0;
-  --surface-glass:  rgba(255,255,255,0.82);
-  --overlay-bg:     rgba(246,236,229,0.92);
+  --surface-glass:  rgba(255,255,255,.82);
+  --overlay-bg:     rgba(246,236,229,.92);
+  --backdrop:       rgba(43,29,20,.50);
 
-  --shadow-card:    0 2px 16px rgba(150,67,35,0.08);
-  --shadow-hover:   0 14px 36px rgba(150,67,35,0.16);
-  --shadow-sticky:  0 4px 24px rgba(150,67,35,0.10);
-  --shadow-brand:   0 4px 18px rgba(183,94,61,0.26);
+  --shadow-card:    0 2px 16px rgba(150,67,35,.08);
+  --shadow-hover:   0 14px 36px rgba(150,67,35,.16);
+  --shadow-sticky:  0 4px 24px rgba(150,67,35,.10);
+  --shadow-brand:   0 4px 18px rgba(183,94,61,.26);
 
-  --ease:           cubic-bezier(0.22,0.68,0,1.2);
-  --ease-std:       cubic-bezier(0.2,0.8,0.2,1);
-  --ease-fall:      cubic-bezier(0.55,0.06,0.68,0.19);
+  --ease:           cubic-bezier(.22,.68,0,1.2);
+  --ease-std:       cubic-bezier(.2,.8,.2,1);
+  --ease-fall:      cubic-bezier(.55,.06,.68,.19);
   --dur-fast:       160ms;
   --dur:            240ms;
   --dur-slow:       420ms;
 
+  /* Category swatch gradients — stable per-category via a name hash */
   --sw-0: linear-gradient(135deg,#e8c88a 0%,#c49a3c 100%);
   --sw-1: linear-gradient(135deg,#f29a82 0%,#c94f30 100%);
   --sw-2: linear-gradient(135deg,#b5d4a8 0%,#4a8a38 100%);
@@ -55,160 +109,248 @@
   --sw-9: linear-gradient(135deg,#d8a878 0%,#8a5a28 100%);
 }
 
-/* =========================================================
-   2. DESIGN TOKENS — Dark Mode
-   ========================================================= */
+/* =========================================================================
+   4. DESIGN TOKENS — Dark theme (شکلاتی/کافی تیره + متن کرم روشن)
+   ========================================================================= */
 [data-bs-theme="dark"] {
   --brand:          #E08A62;
+  --brand-rgb:      224,138,98;
   --brand-light:    #F0A87E;
-  --brand-soft:     rgba(224,138,98,0.14);
-  --brand-glow:     rgba(224,138,98,0.24);
+  --brand-soft:     rgba(224,138,98,.14);
+  --brand-glow:     rgba(224,138,98,.24);
 
   --brand-dark:     #C97A5A;
+  --brand-dark-rgb: 201,122,90;
 
-  --cream:          #1B120C;
+  --cream:          var(--cream-dark-value);
   --cream-deep:     #241810;
-  --powder:         rgba(226,206,191,0.16);
+  --powder:         rgba(226,206,191,.16);
+  --powder-rgb:     226,206,191;
 
   --steel:          #7FB0C0;
-  --steel-soft:     rgba(127,176,192,0.14);
-  --steel-glow:     rgba(127,176,192,0.28);
+  --steel-rgb:      127,176,192;
+  --steel-soft:     rgba(127,176,192,.14);
+  --steel-glow:     rgba(127,176,192,.28);
 
   --ink:            #F6ECE5;
+  --ink-rgb:        246,236,229;
   --ink-muted:      #C7AE9C;
 
   --border-warm:    var(--powder);
   --surface:        #221610;
   --surface-raised: #2A1B12;
-  --surface-glass:  rgba(27,18,12,0.86);
-  --overlay-bg:     rgba(20,13,9,0.94);
+  --surface-glass:  rgba(27,18,12,.86);
+  --overlay-bg:     rgba(20,13,9,.94);
+  --backdrop:       rgba(0,0,0,.65);
 
-  --shadow-card:    0 2px 16px rgba(0,0,0,0.45);
-  --shadow-hover:   0 14px 36px rgba(0,0,0,0.62);
-  --shadow-sticky:  0 4px 24px rgba(0,0,0,0.5);
-  --shadow-brand:   0 4px 18px rgba(224,138,98,0.20);
+  --shadow-card:    0 2px 16px rgba(0,0,0,.45);
+  --shadow-hover:   0 14px 36px rgba(0,0,0,.62);
+  --shadow-sticky:  0 4px 24px rgba(0,0,0,.5);
+  --shadow-brand:   0 4px 18px rgba(224,138,98,.20);
 }
 
-/* =========================================================
-   3. RESET & BASE
-   ========================================================= */
+/* =========================================================================
+   5. RESET & BASE
+   ========================================================================= */
 *, *::before, *::after { box-sizing: border-box; }
 
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
 
 body {
   background-color: var(--cream);
   color: var(--ink);
-  font-family: 'Segoe UI', Tahoma, 'Helvetica Neue', Arial, sans-serif;
+  font-family: 'Vazirmatn', Tahoma, 'Segoe UI', Arial, sans-serif;
   font-size: 15px;
   line-height: 1.6;
   min-height: 100vh;
-  transition: background-color var(--dur-slow) var(--ease-std),
-              color var(--dur-slow) var(--ease-std);
+  transition: background-color var(--dur-slow) var(--ease-std), color var(--dur-slow) var(--ease-std);
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
+  font-variant-numeric: tabular-nums;
 }
 
 ::selection { background: var(--brand); color: #fff; }
 
-html.scroll-locked,
-html.scroll-locked body { overflow: hidden; height: 100%; }
+/* Locked while the preloader or the bottom sheet owns the screen */
+html.scroll-locked, html.scroll-locked body { overflow: hidden; height: 100%; }
 
-/* =========================================================
-   4. THEME TOGGLE + BUBBLE/LIQUID TRANSITION
-   The toggle sits above a full-viewport bubble layer that
-   expands from the exact click point to cover the screen,
-   swaps the theme underneath, then shrinks away.
-   ========================================================= */
-.theme-btn {
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  border: 1.5px solid var(--border-warm);
-  background: var(--surface-glass);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  color: var(--brand);
-  font-size: 1.05rem;
-  cursor: pointer;
+a { color: inherit; }
+
+/* Visible, consistent focus ring for keyboard users everywhere */
+:focus-visible { outline: 2px solid var(--steel); outline-offset: 3px; border-radius: 4px; }
+
+.visually-hidden {
+  position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+}
+
+/* =========================================================================
+   6. PRELOADER — logo core + falling icon "rain" + goo/bubble dissolve
+   ========================================================================= */
+.preloader {
+  position: fixed;
+  inset: 0;
+  z-index: 4000;
   display: flex;
   align-items: center;
   justify-content: center;
+  background: var(--cream);
+  overflow: hidden;
+}
+.preloader::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 20% 22%, var(--brand-soft) 0%, transparent 55%),
+    radial-gradient(circle at 80% 78%, var(--steel-soft) 0%, transparent 55%);
+  pointer-events: none;
+}
+
+/* --- 6.a Rain layer: JS spawns randomly-placed falling icons here,
+    starting above the viewport and drifting down past random points. --- */
+.preloader-rain {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 1;
+}
+.preloader-rain-item {
+  position: absolute;
+  top: -12%;
+  left: var(--start-x, 50%);
+  width: var(--size, 22px);
+  height: var(--size, 22px);
+  margin-left: calc(var(--size, 22px) / -2); /* عمداً فیزیکی: با left فیزیکی همین المان هم‌جهت بماند */
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--surface);
+  border: 1.5px solid var(--brand);
+  color: var(--brand);
+  font-size: calc(var(--size, 22px) * .42);
   box-shadow: var(--shadow-card);
-  transition: all var(--dur) var(--ease);
-  outline: none;
+  opacity: 0;
+  animation-name: rain-fall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+@keyframes rain-fall {
+  0%   { opacity: 0; transform: translateY(0) rotate(0deg); }
+  8%   { opacity: .85; }
+  86%  { opacity: .55; }
+  100% { opacity: 0; transform: translateY(var(--fall-y, 120vh)) rotate(var(--rotate-end, 20deg)); }
+}
+
+/* --- 6.b Core: main logo, brand name, tagline, loading dots --- */
+.preloader-core {
   position: relative;
   z-index: 2;
+  text-align: center;
+  transition: opacity 260ms var(--ease-std), transform 260ms var(--ease-std);
 }
-.theme-btn:hover {
-  transform: rotate(22deg) scale(1.1);
-  box-shadow: var(--shadow-brand);
-  border-color: var(--brand);
-}
-.theme-btn:active { transform: rotate(22deg) scale(0.95); }
-
-.theme-btn i { transition: transform var(--dur-slow) var(--ease), opacity var(--dur) var(--ease-std); }
-.theme-btn.spinning i { animation: theme-spin var(--dur-slow) var(--ease); }
-@keyframes theme-spin {
-  0%   { transform: rotate(0deg) scale(0.6); opacity: 0; }
-  60%  { transform: rotate(180deg) scale(1.15); opacity: 1; }
-  100% { transform: rotate(360deg) scale(1); opacity: 1; }
-}
-
-/* The liquid/bubble ripple that performs the actual theme swap */
-.theme-bubble {
-  position: fixed;
-  top: var(--bubble-y, 50%);
-  left: var(--bubble-x, 50%);
-  width: 24px;
-  height: 24px;
-  margin: -12px 0 0 -12px;
+.preloader-ring {
+  width: 78px; height: 78px;
+  margin: 0 auto 1.1rem;
   border-radius: 50%;
-  background: var(--bubble-color, var(--cream));
-  z-index: 3000;
+  border: 2px solid var(--brand);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 2.1rem;
+  color: var(--brand);
+  overflow: hidden;
+  background: var(--surface);
+  box-shadow: var(--shadow-brand), inset 0 0 18px var(--brand-soft);
+  animation: pulse-ring 1.6s ease-in-out infinite, ring-pop 700ms var(--ease) both;
+}
+.preloader-ring img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+@keyframes pulse-ring {
+  0%, 100% { box-shadow: var(--shadow-brand), inset 0 0 18px var(--brand-soft); }
+  50%      { box-shadow: 0 6px 24px var(--brand-glow), inset 0 0 18px var(--brand-soft); }
+}
+@keyframes ring-pop { from { transform: scale(.3); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+.preloader-brand { font-size: 1.3rem; font-weight: 800; letter-spacing: -.03em; color: var(--ink); margin-bottom: .3rem; }
+.preloader-brand span { color: var(--brand); }
+.preloader-tagline { font-size: .74rem; color: var(--ink-muted); letter-spacing: .03em; margin: 0 0 1.1rem; }
+.preloader-dots { display: flex; align-items: center; justify-content: center; gap: 7px; }
+.preloader-dots span { width: 7px; height: 7px; border-radius: 50%; background: var(--brand); animation: dot-bounce 1.1s ease-in-out infinite; }
+.preloader-dots span:nth-child(2) { animation-delay: .15s; }
+.preloader-dots span:nth-child(3) { animation-delay: .3s; }
+@keyframes dot-bounce { 0%, 80%, 100% { transform: scale(.55); opacity: .4; } 40% { transform: scale(1); opacity: 1; } }
+
+/* --- 6.c Dissolve layer: JS fills this with overlapping circles that all
+    share the *same* background color as the preloader. An SVG "goo" filter
+    (feGaussianBlur + feColorMatrix, defined inline in the page) blends
+    their edges into one seamless liquid sheet. Shrinking them individually,
+    with randomized timing, reads as the loading screen dissolving into
+    bubbles rather than a flat fade. --- */
+.preloader-dissolve {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
   pointer-events: none;
+  filter: url(#nan-goo);
+}
+.preloader-bubble {
+  position: absolute;
+  border-radius: 50%;
+  background: var(--cream);
+  transform: scale(1);
+  will-change: transform;
+}
+.preloader-bubble.pop {
+  transition: transform var(--bubble-dur, 700ms) var(--ease-fall);
   transform: scale(0);
-  opacity: 0;
-}
-.theme-bubble.expanding {
-  animation: bubble-expand 620ms var(--ease) forwards;
-}
-@keyframes bubble-expand {
-  0%   { transform: scale(0); opacity: 1; }
-  85%  { opacity: 1; }
-  100% { transform: scale(60); opacity: 1; }
-}
-.theme-bubble.retreating {
-  animation: bubble-retreat 520ms var(--ease-std) forwards;
-}
-@keyframes bubble-retreat {
-  0%   { transform: scale(60); opacity: 1; }
-  100% { transform: scale(0); opacity: 0; }
 }
 
-/* =========================================================
-   5. TOP BAR — tiny, logo + theme toggle only (no big hero)
-   ========================================================= */
+/* The moment the dissolve begins: base background disappears (the bubbles,
+   being the same color and fully tiled, keep the screen visually covered
+   with zero flash), and the logo/rain fade out quickly out of the way. */
+.preloader.is-dissolving { background: transparent; }
+.preloader.is-dissolving::before { opacity: 0; transition: opacity 200ms var(--ease-std); }
+.preloader.is-dissolving .preloader-core { opacity: 0; transform: scale(.82); }
+.preloader.is-dissolving .preloader-rain { opacity: 0; transition: opacity 220ms var(--ease-std); }
+
+.preloader.is-hidden { visibility: hidden; pointer-events: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .preloader-rain { display: none; }
+  .preloader-bubble.pop { transition-duration: 1ms !important; }
+}
+
+/* =========================================================================
+   7. PAGE ENTRANCE — staggered slide-in once the preloader clears
+   ========================================================================= */
+.top-bar, .cat-nav-wrapper, .menu-main, .menu-footer { opacity: 0; }
+html.app-ready .top-bar        { animation: enter-from-right 620ms var(--ease) 60ms  forwards; }
+html.app-ready .cat-nav-wrapper{ animation: enter-from-left  620ms var(--ease) 180ms forwards; }
+html.app-ready .menu-main      { animation: enter-from-right 620ms var(--ease) 300ms forwards; }
+html.app-ready .menu-footer    { animation: enter-from-left  620ms var(--ease) 420ms forwards; }
+@keyframes enter-from-right { 0% { opacity: 0; transform: translateX(38px); } 100% { opacity: 1; transform: translateX(0); } }
+@keyframes enter-from-left  { 0% { opacity: 0; transform: translateX(-38px); } 100% { opacity: 1; transform: translateX(0); } }
+@media (prefers-reduced-motion: reduce) {
+  .top-bar, .cat-nav-wrapper, .menu-main, .menu-footer { opacity: 1 !important; animation: none !important; transform: none !important; }
+}
+
+/* =========================================================================
+   8. TOP BAR — tiny mini-hero: logo + name + theme toggle only
+   ========================================================================= */
 .top-bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  padding: 16px 18px;
+  padding: clamp(1.1rem, 4vw, 1.7rem) 18px;
   max-width: 1180px;
   margin: 0 auto;
 }
-.brand-mini {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
+.brand-mini { display: flex; align-items: center; gap: 10px; min-width: 0; }
 .brand-mini-logo {
-  width: 42px; height: 42px;
+  width: 44px; height: 44px;
   border-radius: 50%;
   border: 1.5px solid var(--brand);
   display: flex; align-items: center; justify-content: center;
-  font-size: 1.1rem;
+  font-size: 1.15rem;
   color: var(--brand);
   box-shadow: var(--shadow-brand);
   flex-shrink: 0;
@@ -217,41 +359,102 @@ html.scroll-locked body { overflow: hidden; height: 100%; }
   animation: pulse-ring 3.4s ease-in-out infinite;
 }
 .brand-mini-logo img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
-@keyframes pulse-ring {
-  0%,100% { box-shadow: var(--shadow-brand); }
-  50%      { box-shadow: 0 6px 24px var(--brand-glow); }
-}
+.brand-mini-text { min-width: 0; }
 .brand-mini-name {
-  font-size: 1.05rem;
+  font-size: 1.08rem;
   font-weight: 800;
-  letter-spacing: -0.03em;
+  letter-spacing: -.03em;
   color: var(--ink);
-  line-height: 1.1;
+  line-height: 1.15;
+  white-space: nowrap;
 }
 .brand-mini-name span { color: var(--brand); }
 .brand-mini-tagline {
-  font-size: 0.66rem;
+  font-size: .64rem;
   color: var(--ink-muted);
-  letter-spacing: 0.05em;
+  letter-spacing: .12em;
   text-transform: uppercase;
-  margin: 0;
+  margin: 1px 0 0;
+  white-space: nowrap;
 }
 
-/* =========================================================
-   6. CATEGORY CARDS — horizontal row, image on top, minimal
-   ========================================================= */
+/* =========================================================================
+   9. THEME TOGGLE + LIQUID BUBBLE TRANSITION
+   The button sits above a fixed bubble spawned at the exact click point.
+   JS computes the exact radius needed to cover the farthest screen corner
+   so the effect is correct on every viewport, not just phones.
+   ========================================================================= */
+.theme-btn {
+  width: 42px; height: 42px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border-warm);
+  background: var(--surface-glass);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  color: var(--brand);
+  font-size: 1.05rem;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: var(--shadow-card);
+  transition: all var(--dur) var(--ease);
+  outline: none;
+  position: relative;
+  z-index: 2;
+  flex-shrink: 0;
+}
+.theme-btn:hover { transform: rotate(22deg) scale(1.1); box-shadow: var(--shadow-brand); border-color: var(--brand); }
+.theme-btn:active { transform: rotate(22deg) scale(.95); }
+.theme-btn i { transition: transform var(--dur-slow) var(--ease), opacity var(--dur) var(--ease-std); }
+.theme-btn.spinning i { animation: theme-spin var(--dur-slow) var(--ease); }
+@keyframes theme-spin {
+  0%   { transform: rotate(0deg) scale(.6); opacity: 0; }
+  60%  { transform: rotate(180deg) scale(1.15); opacity: 1; }
+  100% { transform: rotate(360deg) scale(1); opacity: 1; }
+}
+
+/* The liquid/bubble ripple that performs the actual theme swap.
+   width/height are animated to an *exact* pixel radius (set by JS via
+   --bubble-radius), not a guessed transform:scale(), so it always fully
+   covers the viewport regardless of screen size or button position. */
+.theme-bubble {
+  position: fixed;
+  top: var(--bubble-y, 50%);
+  left: var(--bubble-x, 50%);
+  width: 0; height: 0;
+  border-radius: 50%;
+  background: var(--bubble-color, var(--cream));
+  box-shadow: inset 0 0 60px rgba(255,255,255,.06);
+  transform: translate(-50%, -50%);
+  z-index: 3000;
+  pointer-events: none;
+}
+.theme-bubble.expanding {
+  transition: width var(--dur-slow) var(--ease), height var(--dur-slow) var(--ease);
+  width: calc(var(--bubble-radius, 100vmax) * 2);
+  height: calc(var(--bubble-radius, 100vmax) * 2);
+}
+.theme-bubble.retreating {
+  transition: width var(--dur-slow) var(--ease-std), height var(--dur-slow) var(--ease-std), opacity var(--dur-slow) var(--ease-std);
+  width: 0; height: 0;
+  opacity: 0;
+}
+@media (prefers-reduced-motion: reduce) {
+  .theme-bubble.expanding, .theme-bubble.retreating { transition-duration: 1ms !important; }
+}
+
+/* =========================================================================
+   10. CATEGORY ROW — horizontal, sticky, image thumbnail + label
+   ========================================================================= */
 .cat-nav-wrapper {
   position: sticky;
   top: 0;
   z-index: 900;
-  border-style: solid;
-  border-color: var(--border-warm);
-  border-width: 0 0 1px 0;
+  border-bottom: 1px solid var(--border-warm);
   background: var(--overlay-bg);
   backdrop-filter: blur(22px);
   -webkit-backdrop-filter: blur(22px);
-  transition: box-shadow var(--dur-slow) var(--ease-std),
-              background var(--dur-slow) var(--ease-std);
+  padding-top: env(safe-area-inset-top, 0px);
+  transition: box-shadow var(--dur-slow) var(--ease-std), background var(--dur-slow) var(--ease-std);
 }
 .cat-nav-wrapper.is-stuck { box-shadow: var(--shadow-sticky); }
 
@@ -284,20 +487,11 @@ html.scroll-locked body { overflow: hidden; height: 100%; }
   cursor: pointer;
   user-select: none;
   outline: none;
-  transition: all var(--dur) var(--ease);
+  transition: border-color var(--dur) var(--ease), box-shadow var(--dur) var(--ease), transform var(--dur) var(--ease), background var(--dur) var(--ease);
   text-align: center;
 }
-.cat-card:hover {
-  border-color: var(--steel);
-  box-shadow: 0 8px 22px var(--steel-glow);
-  transform: translateY(-3px);
-}
-.cat-card.active {
-  border-color: var(--brand);
-  background: var(--brand-soft);
-  box-shadow: var(--shadow-brand);
-  transform: translateY(-3px);
-}
+.cat-card:hover { border-color: var(--steel); box-shadow: 0 8px 22px var(--steel-glow); transform: translateY(-3px); }
+.cat-card.active { border-color: var(--brand); background: var(--brand-soft); box-shadow: var(--shadow-brand); transform: translateY(-3px); }
 
 .cat-card-thumb {
   width: 48px; height: 48px;
@@ -308,156 +502,82 @@ html.scroll-locked body { overflow: hidden; height: 100%; }
   overflow: hidden;
   flex-shrink: 0;
   transition: transform var(--dur) var(--ease);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.14);
+  box-shadow: 0 4px 12px rgba(0,0,0,.14);
 }
-.cat-card:hover .cat-card-thumb,
-.cat-card.active .cat-card-thumb { transform: scale(1.1); }
+.cat-card:hover .cat-card-thumb, .cat-card.active .cat-card-thumb { transform: scale(1.1); }
 .cat-card-thumb img { width: 100%; height: 100%; object-fit: cover; }
 
 .cat-card-label {
-  font-size: 0.72rem;
-  font-weight: 700;
-  color: var(--ink-muted);
-  line-height: 1.25;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 100%;
+  font-size: .72rem; font-weight: 700; color: var(--ink-muted);
+  line-height: 1.25; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;
   transition: color var(--dur) var(--ease-std);
 }
-.cat-card.active .cat-card-label,
-.cat-card:hover .cat-card-label { color: var(--brand); }
+.cat-card.active .cat-card-label, .cat-card:hover .cat-card-label { color: var(--brand); }
 
-.icon-swatch-0 { background: var(--sw-0); }
-.icon-swatch-1 { background: var(--sw-1); }
-.icon-swatch-2 { background: var(--sw-2); }
-.icon-swatch-3 { background: var(--sw-3); }
-.icon-swatch-4 { background: var(--sw-4); }
-.icon-swatch-5 { background: var(--sw-5); }
-.icon-swatch-6 { background: var(--sw-6); }
-.icon-swatch-7 { background: var(--sw-7); }
-.icon-swatch-8 { background: var(--sw-8); }
-.icon-swatch-9 { background: var(--sw-9); }
+.icon-swatch-0 { background: var(--sw-0); } .icon-swatch-1 { background: var(--sw-1); }
+.icon-swatch-2 { background: var(--sw-2); } .icon-swatch-3 { background: var(--sw-3); }
+.icon-swatch-4 { background: var(--sw-4); } .icon-swatch-5 { background: var(--sw-5); }
+.icon-swatch-6 { background: var(--sw-6); } .icon-swatch-7 { background: var(--sw-7); }
+.icon-swatch-8 { background: var(--sw-8); } .icon-swatch-9 { background: var(--sw-9); }
 
-/* =========================================================
-   7. MAIN LAYOUT
-   ========================================================= */
+/* =========================================================================
+   11. MAIN LAYOUT + VIEW SWITCHER (grid / list)
+   ========================================================================= */
 .menu-main { padding: 1.8rem 0 5rem; max-width: 1180px; }
 
-/* View switcher (Grid / List) */
-.view-switcher {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 8px;
-  margin-bottom: 1.3rem;
-}
+.view-switcher { display: flex; align-items: center; justify-content: flex-end; margin-bottom: 1.3rem; }
 .view-switcher-track {
-  display: inline-flex;
-  align-items: center;
-  gap: 2px;
-  padding: 4px;
-  border-radius: 50rem;
-  background: var(--surface-raised);
-  border: 1px solid var(--border-warm);
+  display: inline-flex; align-items: center; gap: 2px;
+  padding: 4px; border-radius: 50rem;
+  background: var(--surface-raised); border: 1px solid var(--border-warm);
 }
 .view-btn {
-  width: 34px; height: 34px;
-  border-radius: 50%;
-  border: none;
-  background: transparent;
-  color: var(--ink-muted);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 0.95rem;
-  cursor: pointer;
-  transition: all var(--dur) var(--ease-std);
+  width: 34px; height: 34px; border-radius: 50%; border: none; background: transparent;
+  color: var(--ink-muted); display: flex; align-items: center; justify-content: center;
+  font-size: .95rem; cursor: pointer; transition: all var(--dur) var(--ease-std);
 }
-.view-btn.active {
-  background: var(--brand);
-  color: #fff;
-  box-shadow: var(--shadow-brand);
-}
+.view-btn.active { background: var(--brand); color: #fff; box-shadow: var(--shadow-brand); }
 .view-btn:not(.active):hover { color: var(--steel); background: var(--steel-soft); }
 
-/* Category product panels */
+/* =========================================================================
+   12. CATEGORY PANELS
+   ========================================================================= */
 .cat-panel { display: none; }
 .cat-panel.active { display: block; }
 
-.cat-section-header {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 1.3rem;
-  padding: 0 2px;
-}
+.cat-section-header { display: flex; align-items: center; gap: 12px; margin-bottom: 1.3rem; padding: 0 2px; }
 .cat-thumb {
-  width: 48px; height: 48px;
-  border-radius: 16px;
+  width: 48px; height: 48px; border-radius: 16px;
   display: flex; align-items: center; justify-content: center;
-  font-size: 1.35rem;
-  flex-shrink: 0;
-  position: relative;
-  overflow: hidden;
-  color: #fff;
-  box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+  font-size: 1.35rem; flex-shrink: 0; position: relative; overflow: hidden;
+  color: #fff; box-shadow: 0 4px 14px rgba(0,0,0,.15);
 }
-.cat-thumb i { position: relative; z-index: 1; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3)); color: #fff; }
+.cat-thumb i { position: relative; z-index: 1; filter: drop-shadow(0 1px 2px rgba(0,0,0,.3)); color: #fff; }
 .cat-thumb img { width: 100%; height: 100%; object-fit: cover; border-radius: 16px; }
-
 .cat-section-texts { flex: 1; min-width: 0; }
-.cat-section-title {
-  font-size: 1.15rem;
-  font-weight: 800;
-  color: var(--ink);
-  margin: 0 0 2px;
-  letter-spacing: -0.03em;
-  line-height: 1.2;
-}
-.cat-section-sub {
-  font-size: 0.72rem;
-  color: var(--ink-muted);
-  margin: 0;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
+.cat-section-title { font-size: 1.15rem; font-weight: 800; color: var(--ink); margin: 0 0 2px; letter-spacing: -.03em; line-height: 1.2; }
+.cat-section-sub { font-size: .72rem; color: var(--ink-muted); margin: 0; letter-spacing: .04em; text-transform: uppercase; }
 
-/* =========================================================
-   8. PRODUCT ENTER / EXIT ANIMATIONS
-   Exit: fall down & fade out (physical drop)
-   Enter: cascade down & fade in (staggered per card)
-   ========================================================= */
-.menu-grid, .menu-list { position: relative; }
+.cat-empty {
+  display: flex; flex-direction: column; align-items: center; gap: .6rem;
+  padding: 2.4rem 1rem; color: var(--ink-muted); text-align: center;
+}
+.cat-empty i { font-size: 1.8rem; color: var(--brand); opacity: .55; }
+.cat-empty p { margin: 0; font-size: .85rem; }
 
-.card-fall-out {
-  animation: card-fall-out 420ms var(--ease-fall) forwards;
-  animation-delay: var(--fall-delay, 0ms);
-  pointer-events: none;
-}
-@keyframes card-fall-out {
-  0%   { opacity: 1; transform: translateY(0) rotate(0deg) scale(1); }
-  100% { opacity: 0; transform: translateY(60px) rotate(4deg) scale(0.92); }
-}
-
-.card-cascade-in {
-  animation: card-cascade-in 560ms var(--ease) backwards;
-  animation-delay: var(--cascade-delay, 0ms);
-}
-@keyframes card-cascade-in {
-  0%   { opacity: 0; transform: translateY(-32px) scale(0.94); }
-  60%  { opacity: 1; }
-  100% { opacity: 1; transform: translateY(0) scale(1); }
-}
-
-/* =========================================================
-   9. MENU GRID VIEW
-   ========================================================= */
-.menu-grid {
+/* =========================================================================
+   13. PRODUCT CARDS — ONE dom node per product, shared by grid + list.
+   Layout is driven entirely by the parent's mode: main[data-view=…] below.
+   ========================================================================= */
+.menu-items {
+  position: relative;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 12px;
 }
-@media (min-width: 576px) { .menu-grid { gap: 16px; } }
-@media (min-width: 992px) { .menu-grid { grid-template-columns: repeat(4, 1fr); gap: 20px; } }
+@media (min-width: 576px) { .menu-items { gap: 16px; } }
+@media (min-width: 768px) { .menu-items { grid-template-columns: repeat(3, 1fr); } }
+@media (min-width: 992px) { .menu-items { grid-template-columns: repeat(4, 1fr); gap: 20px; } }
 
 .menu-card {
   border-radius: 18px;
@@ -467,367 +587,203 @@ html.scroll-locked body { overflow: hidden; height: 100%; }
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  transition: transform var(--dur) var(--ease),
-              box-shadow var(--dur) var(--ease),
-              border-color var(--dur) var(--ease-std);
+  transition: box-shadow var(--dur) var(--ease), border-color var(--dur) var(--ease-std), transform var(--dur) var(--ease);
   cursor: pointer;
   position: relative;
 }
 .menu-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-hover); border-color: var(--brand); }
 .menu-card:focus-visible { outline: 2px solid var(--brand); outline-offset: 3px; }
-.menu-card:active { transform: translateY(-2px) scale(0.99); }
+.menu-card:active { transform: translateY(-2px) scale(.99); }
 
-.menu-card-img {
-  width: 100%;
-  aspect-ratio: 4 / 3;
-  position: relative;
-  overflow: hidden;
-  background: var(--cream-deep);
-  flex-shrink: 0;
-}
+.menu-card-img { width: 100%; aspect-ratio: 4/3; position: relative; overflow: hidden; background: var(--cream-deep); flex-shrink: 0; }
 .menu-card-img img { width: 100%; height: 100%; object-fit: cover; transition: transform var(--dur-slow) var(--ease-std); }
 .menu-card:hover .menu-card-img img { transform: scale(1.06); }
-.menu-card-placeholder {
-  width: 100%; height: 100%;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 2.2rem;
-  color: var(--brand);
-  opacity: 0.45;
-  transition: opacity var(--dur) var(--ease-std);
-}
-.menu-card:hover .menu-card-placeholder { opacity: 0.7; }
+.menu-card-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 2.2rem; color: var(--brand); opacity: .45; }
 
-.menu-card-badge {
-  position: absolute;
-  top: 8px; right: 8px;
-  background: var(--brand);
-  color: #fff;
-  font-size: 0.62rem;
-  font-weight: 700;
-  padding: 3px 8px;
-  border-radius: 50rem;
-  letter-spacing: 0.04em;
-  box-shadow: 0 2px 8px var(--brand-glow);
-  z-index: 2;
-}
-
-.menu-card-info { padding: 10px 12px 12px; display: flex; flex-direction: column; gap: 3px; flex: 1; }
+.menu-card-info { padding: 10px 12px 12px; display: flex; flex-direction: column; gap: 3px; flex: 1; min-width: 0; }
 .menu-card-name {
-  font-size: 0.85rem; font-weight: 700; color: var(--ink); margin: 0; line-height: 1.3;
+  font-size: .85rem; font-weight: 700; color: var(--ink); margin: 0; line-height: 1.35;
   display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
 }
 .menu-card-desc {
-  font-size: 0.70rem; color: var(--ink-muted); margin: 0;
-  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.45;
+  font-size: .70rem; color: var(--ink-muted); margin: 0; line-height: 1.45;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
 }
 .menu-card-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 6px; }
-.menu-card-price { font-size: 0.95rem; font-weight: 800; color: var(--brand); letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
-.menu-card-price small { font-size: 0.60rem; color: var(--ink-muted); font-weight: 500; margin-right: 2px; }
-.menu-card-rating { display: flex; align-items: center; gap: 3px; font-size: 0.72rem; color: var(--ink-muted); font-weight: 600; }
-.menu-card-rating i { color: var(--brand); font-size: 0.65rem; }
+.menu-card-price { font-size: .95rem; font-weight: 800; color: var(--brand); letter-spacing: -.02em; }
+.menu-card-price small { font-size: .60rem; color: var(--ink-muted); font-weight: 500; margin-right: 2px; }
 
-/* =========================================================
-   10. MENU LIST VIEW
-   ========================================================= */
-.menu-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-.menu-list .menu-card {
-  flex-direction: row;
-  align-items: stretch;
-  border-radius: 16px;
-}
-.menu-list .menu-card-img { width: 92px; aspect-ratio: 1/1; flex-shrink: 0; }
-.menu-list .menu-card-info { flex: 1; justify-content: center; padding: 8px 12px; }
-.menu-list .menu-card-desc { -webkit-line-clamp: 1; }
-.menu-list .menu-card:hover { transform: translateX(-3px); }
+/* --- List mode: same card, row layout --- */
+main[data-view="list"] .menu-items { display: flex; flex-direction: column; gap: 10px; }
+main[data-view="list"] .menu-card { flex-direction: row; align-items: stretch; border-radius: 16px; }
+main[data-view="list"] .menu-card-img { width: 92px; aspect-ratio: 1/1; flex-shrink: 0; }
+main[data-view="list"] .menu-card-info { flex: 1; justify-content: center; padding: 8px 12px; }
+main[data-view="list"] .menu-card-desc { -webkit-line-clamp: 1; }
+main[data-view="list"] .menu-card:hover { transform: translateX(-3px); }
+main[data-view="list"] .menu-card:hover .menu-card-img img { transform: none; }
 
-/* Grid <-> List switch: smooth transform + fade managed via JS
-   toggling a transitional class while the DOM view swaps */
-main[data-view="grid"] .cat-panel .menu-list { display: none; }
-main[data-view="list"] .cat-panel .menu-grid { display: none; }
+/* =========================================================================
+   14. CATEGORY-SWITCH CHOREOGRAPHY
+   Exit: cards fall down physically & fade. Enter: cards rain in from above.
+   ========================================================================= */
+.card-fall-out { animation: card-fall-out 420ms var(--ease-fall) forwards; animation-delay: var(--fall-delay, 0ms); pointer-events: none; }
+@keyframes card-fall-out { 0% { opacity: 1; transform: translateY(0) rotate(0deg) scale(1); } 100% { opacity: 0; transform: translateY(60px) rotate(4deg) scale(.92); } }
 
-.view-swap-out {
-  animation: view-swap-out 200ms var(--ease-std) forwards;
+.card-cascade-in { animation: card-cascade-in 560ms var(--ease) backwards; animation-delay: var(--cascade-delay, 0ms); }
+@keyframes card-cascade-in { 0% { opacity: 0; transform: translateY(-32px) scale(.94); } 60% { opacity: 1; } 100% { opacity: 1; transform: translateY(0) scale(1); } }
+
+/* =========================================================================
+   15. GRID ⇄ LIST — FLIP transition
+   JS measures each card's rect before the layout class changes, then plays
+   a transform-only "fly to new slot" animation (never scaled, so text and
+   images are never distorted) with a short opacity dip to soften the
+   instant reshape from grid-card ⇄ list-card. See main.js → setView().
+   ========================================================================= */
+.menu-card.is-flipping {
+  transition: transform var(--dur-slow) var(--ease), opacity var(--dur-slow) var(--ease-std);
+  will-change: transform;
+  z-index: 1;
 }
-.view-swap-in {
-  animation: view-swap-in 320ms var(--ease) backwards;
-}
-@keyframes view-swap-out {
-  to { opacity: 0; transform: scale(0.96); }
-}
-@keyframes view-swap-in {
-  from { opacity: 0; transform: scale(0.97); }
-  to   { opacity: 1; transform: scale(1); }
+.menu-card.is-flip-fade { opacity: .55; }
+@media (prefers-reduced-motion: reduce) {
+  .menu-card.is-flipping { transition-duration: 1ms !important; }
 }
 
-/* =========================================================
-   11. FOOTER
-   ========================================================= */
+/* =========================================================================
+   16. FOOTER
+   ========================================================================= */
 .menu-footer {
   background: var(--brand-dark);
   color: #fff;
-  padding: 2.5rem 1.5rem;
+  padding: 2.5rem 1.5rem calc(2.5rem + env(safe-area-inset-bottom, 0px));
   text-align: center;
 }
-.footer-brand { font-size: 1.2rem; font-weight: 800; color: #fff; letter-spacing: -0.03em; margin-bottom: 0.4rem; }
-.footer-text { font-size: 0.80rem; color: rgba(255,255,255,0.72); margin: 0; }
+.footer-brand { font-size: 1.2rem; font-weight: 800; color: #fff; letter-spacing: -.03em; margin-bottom: .4rem; }
+.footer-text { font-size: .80rem; color: rgba(255,255,255,.72); margin: 0; }
 .footer-text .text-link { color: #fff; text-decoration: underline; }
 .footer-socials { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 1.2rem; }
 .social-dot {
   width: 36px; height: 36px; border-radius: 50%;
-  border: 1.5px solid rgba(255,255,255,0.28);
+  border: 1.5px solid rgba(255,255,255,.28);
   display: flex; align-items: center; justify-content: center;
-  color: rgba(255,255,255,0.85); font-size: 0.95rem;
-  text-decoration: none;
-  transition: all var(--dur) var(--ease);
+  color: rgba(255,255,255,.85); font-size: .95rem; text-decoration: none;
+  transition: background var(--dur) var(--ease), border-color var(--dur) var(--ease), color var(--dur) var(--ease), transform var(--dur) var(--ease);
 }
 .social-dot:hover { background: #fff; border-color: #fff; color: var(--brand-dark); transform: translateY(-3px); }
 
-/* =========================================================
-   12. SCROLLBAR
-   ========================================================= */
+/* =========================================================================
+   17. PRODUCT BOTTOM SHEET — skins Bootstrap's Offcanvas (offcanvas-bottom)
+   Bootstrap supplies show/hide, backdrop, ESC-to-close, focus trap and
+   scroll-lock; this file only restyles it and adds the drag handle.
+   ========================================================================= */
+.offcanvas-backdrop { background: var(--backdrop); }
+.offcanvas-backdrop.show { opacity: 1; }
+@supports (backdrop-filter: blur(1px)) {
+  .offcanvas-backdrop.show { backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); }
+}
+
+.offcanvas.product-sheet {
+  --bs-offcanvas-width: 560px;
+  left: 50%;
+  right: auto; /* منع تداخل با right:0 پیش‌فرض offcanvas-bottom بوت‌استرپ */
+  transform: translate(-50%, 100%);
+  width: 100%;
+  max-width: var(--bs-offcanvas-width);
+  max-height: 88vh;
+  height: auto;
+  border: 1px solid var(--border-warm);
+  border-bottom: none;
+  border-radius: 26px 26px 0 0;
+  box-shadow: var(--shadow-hover);
+  background: var(--surface);
+  color: var(--ink);
+  transition: transform var(--dur-slow) var(--ease);
+}
+.offcanvas.product-sheet.show { transform: translate(-50%, 0); }
+.offcanvas.product-sheet.showing { transform: translate(-50%, 0); }
+.offcanvas.product-sheet.hiding  { transform: translate(-50%, 100%); }
+.offcanvas.product-sheet.is-dragging { transition: none; }
+
+.sheet-drag-handle {
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  padding: 12px 0 8px;
+  cursor: grab;
+  touch-action: none;
+}
+.sheet-drag-handle span { width: 40px; height: 5px; border-radius: 50px; background: var(--border-warm); }
+.offcanvas.product-sheet.is-dragging .sheet-drag-handle { cursor: grabbing; }
+
+.sheet-close-btn {
+  position: absolute; top: 14px; left: 14px; z-index: 3;
+  width: 38px; height: 38px; border-radius: 50%; border: none;
+  background: rgba(0,0,0,.45); color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.05rem; cursor: pointer; backdrop-filter: blur(6px);
+  transition: background var(--dur) var(--ease), transform var(--dur) var(--ease);
+}
+.sheet-close-btn:hover { background: rgba(0,0,0,.7); transform: scale(1.06); }
+
+.offcanvas.product-sheet .offcanvas-body {
+  padding: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+.sheet-media { position: relative; width: 100%; aspect-ratio: 16/10; background: var(--cream-deep); overflow: hidden; flex-shrink: 0; touch-action: none; }
+.sheet-media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.sheet-media-placeholder { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 2.6rem; color: var(--brand); opacity: .4; }
+.sheet-cat-badge {
+  position: absolute; bottom: 12px; right: 12px;
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 12px 6px 8px; border-radius: 50rem;
+  color: #fff; font-size: .72rem; font-weight: 700;
+  box-shadow: 0 4px 14px rgba(0,0,0,.25);
+}
+.sheet-cat-badge i { font-size: .85rem; }
+
+.sheet-body { padding: 1.3rem 1.4rem calc(2rem + env(safe-area-inset-bottom, 0px)); }
+.sheet-item-name { font-size: 1.3rem; font-weight: 800; color: var(--ink); letter-spacing: -.02em; margin: 0 0 .5rem; line-height: 1.3; }
+.sheet-price-row { display: flex; align-items: baseline; gap: 6px; margin-bottom: 1rem; }
+.sheet-price { font-size: 1.5rem; font-weight: 800; color: var(--brand); letter-spacing: -.02em; }
+.sheet-price-unit { font-size: .78rem; color: var(--ink-muted); font-weight: 500; }
+.sheet-desc { font-size: .88rem; line-height: 1.75; color: var(--ink-muted); margin: 0; white-space: pre-line; }
+
+/* =========================================================================
+   18. SCROLLBAR
+   ========================================================================= */
 ::-webkit-scrollbar { width: 5px; }
 ::-webkit-scrollbar-track { background: var(--cream); }
 ::-webkit-scrollbar-thumb { background: var(--border-warm); border-radius: 5px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--brand); }
 
-/* =========================================================
-   13. REDUCED MOTION
-   ========================================================= */
-@media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
-  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
-}
-
-/* =========================================================
-   14. MISC FIXES
-   ========================================================= */
-input[type="number"]::-webkit-outer-spin-button,
-input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+/* =========================================================================
+   19. MISC FIXES
+   ========================================================================= */
+input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 input[type="number"] { -moz-appearance: textfield; appearance: textfield; }
 
-/* =========================================================
-   15. LOADING SCREEN — centered logo + floating particle
-   bubbles drifting in, held for 2s, bubble-scale-up exit
-   ========================================================= */
-.preloader {
-  position: fixed;
-  inset: 0;
-  z-index: 4000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--cream);
-  overflow: hidden;
+/* =========================================================================
+   20. RESPONSIVE FINE-TUNING
+   ========================================================================= */
+@media (max-width: 380px) {
+  .brand-mini-tagline { display: none; }
+  .cat-card { width: 74px; }
 }
-.preloader::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(circle at 20% 22%, var(--brand-soft) 0%, transparent 55%),
-    radial-gradient(circle at 80% 78%, var(--steel-soft) 0%, transparent 55%);
-  pointer-events: none;
+@media (min-width: 992px) {
+  .top-bar { padding-top: 2.2rem; padding-bottom: 1.4rem; }
+  .cat-card { width: 96px; }
 }
 
-/* Small floating logo-particles drifting slowly around the main logo */
-.preloader-particle {
-  position: absolute;
-  top: 50%; left: 50%;
-  width: var(--p-size, 26px);
-  height: var(--p-size, 26px);
-  margin: calc(var(--p-size, 26px) / -2) 0 0 calc(var(--p-size, 26px) / -2);
-  border-radius: 50%;
-  background: var(--surface);
-  border: 1.5px solid var(--brand);
-  color: var(--brand);
-  display: flex; align-items: center; justify-content: center;
-  font-size: calc(var(--p-size, 26px) * 0.42);
-  box-shadow: var(--shadow-card);
-  opacity: 0;
-  animation: particle-float var(--p-dur, 5.5s) ease-in-out infinite;
-  animation-delay: var(--p-delay, 0ms);
-}
-@keyframes particle-float {
-  0%   { opacity: 0; transform: translate(0, 0) scale(0.5); }
-  10%  { opacity: 0.9; }
-  50%  { opacity: 0.9; transform: translate(var(--p-x, 90px), var(--p-y, -60px)) scale(1); }
-  90%  { opacity: 0.4; }
-  100% { opacity: 0; transform: translate(calc(var(--p-x, 90px) * 1.5), calc(var(--p-y, -60px) * 1.5 + 40px)) scale(0.6); }
-}
-
-.preloader-core {
-  position: relative;
-  z-index: 1;
-  text-align: center;
-}
-.preloader-ring {
-  width: 78px;
-  height: 78px;
-  margin: 0 auto 1.1rem;
-  border-radius: 50%;
-  border: 2px solid var(--brand);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 2.1rem;
-  color: var(--brand);
-  overflow: hidden;
-  background: var(--surface);
-  box-shadow: var(--shadow-brand), inset 0 0 18px var(--brand-soft);
-  animation: pulse-ring 1.6s ease-in-out infinite, ring-pop 700ms var(--ease) both;
-}
-.preloader-ring img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
-@keyframes ring-pop {
-  from { transform: scale(0.3); opacity: 0; }
-  to   { transform: scale(1); opacity: 1; }
-}
-.preloader-brand { font-size: 1.3rem; font-weight: 800; letter-spacing: -0.03em; color: var(--ink); margin-bottom: 0.3rem; }
-.preloader-brand span { color: var(--brand); }
-.preloader-tagline { font-size: 0.74rem; color: var(--ink-muted); letter-spacing: 0.03em; margin: 0 0 1.1rem; }
-.preloader-dots { display: flex; align-items: center; justify-content: center; gap: 7px; }
-.preloader-dots span { width: 7px; height: 7px; border-radius: 50%; background: var(--brand); animation: dot-bounce 1.1s ease-in-out infinite; }
-.preloader-dots span:nth-child(2) { animation-delay: .15s; }
-.preloader-dots span:nth-child(3) { animation-delay: .3s; }
-@keyframes dot-bounce {
-  0%, 80%, 100% { transform: scale(.55); opacity: .4; }
-  40%           { transform: scale(1);   opacity: 1; }
-}
-
-/* Bubble scale-up + fade-out exit: the whole loader "pops" outward */
-.preloader.is-hidden {
-  animation: bubble-scale-out 640ms var(--ease) forwards;
-  pointer-events: none;
-}
-@keyframes bubble-scale-out {
-  0%   { opacity: 1; transform: scale(1); border-radius: 0; }
-  60%  { opacity: 1; }
-  100% { opacity: 0; transform: scale(2.4); border-radius: 50%; }
-}
-
-/* =========================================================
-   15.b PAGE ENTRANCE — staggered slide-in after preloader hides
-   html.app-ready triggers each block to slide in from its side
-   ========================================================= */
-.top-bar,
-.cat-nav-wrapper,
-.menu-main,
-.menu-footer {
-  opacity: 0;
-}
-html.app-ready .top-bar {
-  animation: enter-from-right 620ms var(--ease) 60ms forwards;
-}
-html.app-ready .cat-nav-wrapper {
-  animation: enter-from-left 620ms var(--ease) 180ms forwards;
-}
-html.app-ready .menu-main {
-  animation: enter-from-right 620ms var(--ease) 300ms forwards;
-}
-html.app-ready .menu-footer {
-  animation: enter-from-left 620ms var(--ease) 420ms forwards;
-}
-@keyframes enter-from-right {
-  0%   { opacity: 0; transform: translateX(38px); }
-  100% { opacity: 1; transform: translateX(0); }
-}
-@keyframes enter-from-left {
-  0%   { opacity: 0; transform: translateX(-38px); }
-  100% { opacity: 1; transform: translateX(0); }
-}
+/* =========================================================================
+   21. REDUCED MOTION & PRINT
+   ========================================================================= */
 @media (prefers-reduced-motion: reduce) {
-  .top-bar, .cat-nav-wrapper, .menu-main, .menu-footer { opacity: 1 !important; animation: none !important; transform: none !important; }
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
 }
-
-/* =========================================================
-   16. PRODUCT BOTTOM SHEET
-   ========================================================= */
-.sheet-backdrop {
-  position: fixed;
-  inset: 0;
-  z-index: 1400;
-  background: rgba(27, 18, 12, 0.55);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity var(--dur-slow) var(--ease-std);
+@media print {
+  .preloader, .top-bar, .cat-nav-wrapper, .view-switcher, .theme-btn, .offcanvas-backdrop { display: none !important; }
+  .cat-panel { display: block !important; }
 }
-.sheet-backdrop.show { opacity: 1; pointer-events: auto; }
-
-.product-sheet {
-  position: fixed;
-  left: 50%;
-  bottom: 0;
-  z-index: 1500;
-  width: 100%;
-  max-width: 560px;
-  max-height: 88vh;
-  display: flex;
-  flex-direction: column;
-  background: var(--surface);
-  border: 1px solid var(--border-warm);
-  border-bottom: none;
-  border-radius: 26px 26px 0 0;
-  box-shadow: var(--shadow-hover);
-  visibility: hidden;
-  transform: translate(-50%, 100%);
-  transition: transform var(--dur-slow) var(--ease),
-              visibility 0s var(--dur-slow);
-}
-.product-sheet.show {
-  visibility: visible;
-  transform: translate(-50%, 0);
-  transition: transform var(--dur-slow) var(--ease), visibility 0s;
-}
-.product-sheet.dragging { transition: none; }
-
-.sheet-drag-handle {
-  flex-shrink: 0;
-  display: flex; align-items: center; justify-content: center;
-  padding: 12px 0 10px;
-  cursor: grab;
-  touch-action: none;
-}
-.sheet-drag-handle span { width: 40px; height: 5px; border-radius: 50px; background: var(--border-warm); }
-.product-sheet.dragging .sheet-drag-handle { cursor: grabbing; }
-
-.sheet-close-btn {
-  position: absolute;
-  top: 14px; left: 14px;
-  z-index: 2;
-  width: 38px; height: 38px;
-  border-radius: 50%;
-  border: none;
-  background: rgba(27,18,12,0.45);
-  color: #fff;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 1.05rem;
-  cursor: pointer;
-  backdrop-filter: blur(6px);
-  transition: background var(--dur) var(--ease), transform var(--dur) var(--ease);
-}
-.sheet-close-btn:hover { background: rgba(27,18,12,0.7); transform: scale(1.06); }
-
-.sheet-scroll { overflow-y: auto; -webkit-overflow-scrolling: touch; }
-
-.sheet-media { position: relative; width: 100%; aspect-ratio: 16 / 10; background: var(--cream-deep); overflow: hidden; flex-shrink: 0; }
-.sheet-media img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.sheet-media-placeholder { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 2.6rem; color: var(--brand); opacity: 0.4; }
-.sheet-cat-badge {
-  position: absolute; bottom: 12px; right: 12px;
-  display: inline-flex; align-items: center; gap: 6px;
-  padding: 6px 12px 6px 8px;
-  border-radius: 50rem;
-  color: #fff; font-size: 0.72rem; font-weight: 700;
-  box-shadow: 0 4px 14px rgba(0,0,0,0.25);
-}
-.sheet-cat-badge i { font-size: 0.85rem; }
-
-.sheet-body { padding: 1.3rem 1.4rem 2rem; }
-.sheet-item-name { font-size: 1.3rem; font-weight: 800; color: var(--ink); letter-spacing: -0.02em; margin: 0 0 0.5rem; line-height: 1.3; }
-.sheet-price-row { display: flex; align-items: baseline; gap: 6px; margin-bottom: 1rem; }
-.sheet-price { font-size: 1.5rem; font-weight: 800; color: var(--brand); letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
-.sheet-price-unit { font-size: 0.78rem; color: var(--ink-muted); font-weight: 500; }
-.sheet-desc { font-size: 0.88rem; line-height: 1.75; color: var(--ink-muted); margin: 0; white-space: pre-line; }
