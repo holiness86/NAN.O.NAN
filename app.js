@@ -3,7 +3,15 @@ const express = require('express');
 const multer = require('multer');
 const path = require('path');
 const session = require('express-session'); 
+const mongoSanitize = require('express-mongo-sanitize');
+const rateLimit = require('express-rate-limit');
+require('dotenv').config();
 const app = express();
+
+if (!process.env.SESSION_SECRET) {
+    console.error('خطا: SESSION_SECRET در فایل .env تنظیم نشده است. برنامه متوقف شد.');
+    process.exit(1);
+}
 
 // وارد کردن مدل‌ها
 const Iteam = require('./models/iteam');
@@ -15,14 +23,17 @@ app.set('view engine' , 'ejs');
 app.use(express.static('public'));
 app.use(express.urlencoded({extended: true}));
 app.use(express.json());
+app.use(mongoSanitize()); // جلوگیری از NoSQL Injection (پاک‌سازی $ و . از ورودی‌ها)
 
 // سشن
 app.use(session({
-    secret: 'mamad_super_secret_key_123!@#', 
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     cookie: { 
-        maxAge: 1000 * 60 * 60 * 24 
+        maxAge: 1000 * 60 * 60 * 24,
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production' // روی هاست با HTTPS باید true باشه
     }
 }));
 
@@ -35,20 +46,52 @@ const checkAdminLogin = (req, res, next) => {
     }
 };
 
+// محدود کردن تلاش‌های لاگین برای جلوگیری از حمله Brute-Force
+const loginLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // ۱۵ دقیقه
+    max: 10, // حداکثر ۱۰ تلاش در این بازه به ازای هر IP
+    message: 'تعداد تلاش‌های ورود بیش از حد مجاز است. لطفاً چند دقیقه دیگر دوباره تلاش کنید.',
+    standardHeaders: true,
+    legacyHeaders: false
+});
+
 // مالتر و آپلود عکس
+const ALLOWED_MIME_TYPES = {
+    'image/jpeg': '.jpg',
+    'image/png': '.png',
+    'image/webp': '.webp'
+};
+
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, 'public/uploads/');
     },
     filename: function (req, file, cb) {
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        cb(null, uniqueSuffix + path.extname(file.originalname));
+        // پسوند فایل رو خودمون بر اساس mimetype واقعی تعیین می‌کنیم، نه از روی نام فایل ارسالی کاربر
+        const safeExt = ALLOWED_MIME_TYPES[file.mimetype];
+        cb(null, uniqueSuffix + safeExt);
     }
 });
-const upload = multer({ storage : storage });
+
+const fileFilter = (req, file, cb) => {
+    if (ALLOWED_MIME_TYPES[file.mimetype]) {
+        cb(null, true);
+    } else {
+        cb(new Error('فقط فایل تصویری با فرمت jpg, png یا webp مجاز است'));
+    }
+};
+
+const upload = multer({
+    storage: storage,
+    fileFilter: fileFilter,
+    limits: {
+        fileSize: 5 * 1024 * 1024 // حداکثر ۵ مگابایت
+    }
+});
 
 // اتصال دیتا بیس
-const urlDB = 'mongodb://localhost:27017/NANONAN';
+const urlDB = process.env.MONGO_URL || 'mongodb://localhost:27017/NANONAN';
 mongoose.connect(urlDB)
 .then(() => {
     console.log('Connected to MongoDB');
@@ -178,7 +221,7 @@ app.post('/admin/change-credentials', checkAdminLogin, async (req, res) => {
         const adminUser = await Pass.findOne()
 
         adminUser.username = username.trim()
-        adminUser.password = password.trim()
+        adminUser.password = password.trim() // هش شدن به‌صورت خودکار توسط pre-save hook مدل Pass انجام میشه
 
         await adminUser.save()
 
@@ -200,9 +243,13 @@ app.post('/admin/change-credentials', checkAdminLogin, async (req, res) => {
 
 // روت دریافت اطلاعات و عکس از فرم ادمین
 app.post('/admin', checkAdminLogin, upload.single('imageUrl'), (req, res) => {
+    const price = Number(req.body.iteamPrice);
+    if (!req.body.iteamName || isNaN(price) || price < 0) {
+        return res.status(400).send('نام محصول یا قیمت نامعتبر است');
+    }
     const newIteamData = {
         iteamName: req.body.iteamName,
-        iteamPrice: req.body.iteamPrice,
+        iteamPrice: price,
         description: req.body.description,
         category: req.body.category,
         imageUrl: req.file ? '/uploads/' + req.file.filename : ''
@@ -288,7 +335,11 @@ app.get('/admin/edit/:id', checkAdminLogin, async (req, res) => {
 app.post('/admin/update/:id', checkAdminLogin, upload.single('imageUrl'), async (req, res) => {
     try {
         const { iteamName, iteamPrice, description, category } = req.body;
-        let updateData = { iteamName, iteamPrice, description, category };
+        const price = Number(iteamPrice);
+        if (!iteamName || isNaN(price) || price < 0) {
+            return res.status(400).send('نام محصول یا قیمت نامعتبر است');
+        }
+        let updateData = { iteamName, iteamPrice: price, description, category };
         
         if (req.file) updateData.imageUrl = '/uploads/' + req.file.filename;
 
@@ -306,10 +357,11 @@ app.get('/log' , (req , res) => {
 });
 
 // بررسی لاگین
-app.post('/log', async (req, res) => {
+app.post('/log', loginLimiter, async (req, res) => {
     try {
         const user = await Pass.findOne({ username: req.body.username });
-        if (!user || user.password !== req.body.password) {
+        const isMatch = user && await user.comparePassword(req.body.password || '');
+        if (!isMatch) {
             return res.send('نام کاربری یا رمز عبور اشتباه است!');
         }
         req.session.isLoggedIn = true;
@@ -326,4 +378,12 @@ app.get('/logout', (req, res) => {
         if(err) console.log(err);
         res.redirect('/log'); 
     });
+});
+
+// هندلر خطای آپلود (فایل نامعتبر یا حجم زیاد)
+app.use((err, req, res, next) => {
+    if (err instanceof multer.MulterError || err.message.includes('فرمت')) {
+        return res.status(400).send('خطا در آپلود فایل: ' + err.message);
+    }
+    next(err);
 });
