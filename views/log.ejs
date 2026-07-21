@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ورود به مدیریت رستوران</title>
+    <title>ورود به مدیریت | کافه و بیکری نان و نان</title>
     <link href="/css/bootstrap.rtl.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/css/icons-1.13.1/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="/css/style.css">
@@ -149,33 +149,89 @@ textarea:-ms-input-placeholder {
 textarea::-ms-input-placeholder {
   color: var(--text-main) !important;
 }
+
+        /* ── ورود کارت + عناصر (Cascade / Slide-in) ──────────────── */
+        @keyframes cardPop {
+            0%   { opacity: 0; transform: translateY(28px) scale(.96); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        @keyframes fieldIn {
+            0%   { opacity: 0; transform: translateY(14px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        .login-card { animation: cardPop .65s cubic-bezier(.22,1,.36,1) both; }
+        .login-card .brand-icon-wrapper,
+        .login-card h4,
+        .login-card p,
+        .login-card form > div {
+            animation: fieldIn .5s ease both;
+        }
+        .login-card .brand-icon-wrapper { animation-delay: .05s; }
+        .login-card h4 { animation-delay: .12s; }
+        .login-card p { animation-delay: .18s; }
+        .login-card form > div:nth-child(1) { animation-delay: .24s; }
+        .login-card form > div:nth-child(2) { animation-delay: .30s; }
+        .login-card form > div:nth-child(3) { animation-delay: .36s; }
+
+        .brand-icon-wrapper {
+            animation: fieldIn .5s ease both, iconFloat 3.2s ease-in-out .8s infinite;
+        }
+        @keyframes iconFloat {
+            0%, 100% { transform: translateY(0); }
+            50%      { transform: translateY(-6px); }
+        }
+
+        /* ── دکمه ورود + وضعیت لودینگ ─────────────────────────────── */
+        .btn-accent { position: relative; overflow: hidden; }
+        .btn-accent:active { transform: translateY(0) scale(.98); }
+        .btn-accent .btn-spinner {
+            display: none;
+            width: 18px; height: 18px;
+            border: 2.5px solid rgba(255,255,255,.4);
+            border-top-color: currentColor;
+            border-radius: 50%;
+            animation: spin .7s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .btn-accent.is-loading .btn-label { opacity: 0; }
+        .btn-accent.is-loading .btn-spinner {
+            display: inline-block;
+            position: absolute; top: 50%; left: 50%;
+            margin: -9px 0 0 -9px;
+        }
+        .btn-accent[disabled] { cursor: not-allowed; opacity: .85; }
+
+        .glass-input:focus-visible { outline: none; }
     </style>
 </head>
 <body>
 
 <div class="login-card">
     <div class="brand-icon-wrapper">
-        <i class="bi bi-shield-lock-fill"></i>
+        <i class="bi bi-cup-hot-fill"></i>
     </div>
-    <h4 class="fw-bold text-center mb-2">Trattoria Bella</h4>
-    <p class="text-center text-muted small mb-4">پنل مدیریت هوشمند منو کافه رستوران</p>
-    
-    <form action="/log" method="POST" class="row g-3">
+    <h4 class="fw-bold text-center mb-1">کافه و بیکری نان و نان</h4>
+    <p class="text-center text-muted small mb-4">NAN.O.NAN | پنل مدیریت هوشمند</p>
+
+    <form action="/log" method="POST" class="row g-3" id="loginForm">
         <div class="col-12">
             <label class="form-label small fw-medium text-muted">نام کاربری</label>
-            <input type="text" name="username" class="form-control glass-input" placeholder="Username" required autocomplete="username">
+            <input type="text" name="username" class="form-control glass-input" placeholder="نام کاربری خود را وارد کنید" required autocomplete="username">
         </div>
         <div class="col-12">
             <label class="form-label small fw-medium text-muted">رمز عبور</label>
             <div class="input-password-wrap">
-                <input type="password" name="password" id="passwordInput" class="form-control glass-input" placeholder="Password" required autocomplete="current-password">
-                <button type="button" class="password-toggle" id="togglePasswordBtn">
+                <input type="password" name="password" id="passwordInput" class="form-control glass-input" placeholder="رمز عبور خود را وارد کنید" required autocomplete="current-password">
+                <button type="button" class="password-toggle" id="togglePasswordBtn" aria-label="نمایش/مخفی‌سازی رمز عبور">
                     <i class="bi bi-eye-fill" id="passwordIcon"></i>
                 </button>
             </div>
         </div>
         <div class="col-12 mt-4">
-            <button type="submit" class="btn btn-accent py-3">ورود به پنل مدیریت</button>
+            <button type="submit" class="btn btn-accent py-3" id="loginSubmitBtn">
+                <span class="btn-label"><i class="bi bi-box-arrow-in-left me-1"></i> ورود به پنل مدیریت</span>
+                <span class="btn-spinner" aria-hidden="true"></span>
+            </button>
         </div>
     </form>
 </div>
@@ -199,6 +255,17 @@ textarea::-ms-input-placeholder {
         const savedTheme = localStorage.getItem('admin_theme') || 'dark';
         document.documentElement.setAttribute('data-theme', savedTheme);
     });
+
+    // --- لودینگ تعاملی هنگام ارسال فرم ورود ---
+    const loginForm = document.getElementById('loginForm');
+    const loginSubmitBtn = document.getElementById('loginSubmitBtn');
+    if (loginForm && loginSubmitBtn) {
+        loginForm.addEventListener('submit', function () {
+            if (!loginForm.checkValidity()) return;
+            loginSubmitBtn.classList.add('is-loading');
+            loginSubmitBtn.setAttribute('disabled', 'disabled');
+        });
+    }
 </script>
 </body>
 </html>

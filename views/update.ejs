@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ویرایش محصول | <%= iteam.iteamName %></title>
+    <title>ویرایش محصول | <%= iteam.iteamName %> — نان و نان</title>
     <link href="/css/bootstrap.rtl.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/css/icons-1.13.1/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="/css/style.css">
@@ -131,6 +131,62 @@ textarea:-ms-input-placeholder {
 textarea::-ms-input-placeholder {
   color: var(--text-main) !important;
 }
+
+        /* ── انیمیشن ورود کارت/فیلدها ──────────────────────────── */
+        @keyframes cardPop { 0% { opacity: 0; transform: translateY(24px) scale(.97); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
+        @keyframes fieldIn { 0% { opacity: 0; transform: translateY(12px); } 100% { opacity: 1; transform: translateY(0); } }
+        @keyframes imgFadeIn { 0% { opacity: 0; transform: scale(.9); } 100% { opacity: 1; transform: scale(1); } }
+        .glass-card { animation: cardPop .6s cubic-bezier(.22,1,.36,1) both; }
+        .glass-card form > div { animation: fieldIn .45s ease both; }
+        .glass-card form > div:nth-child(1) { animation-delay: .04s; }
+        .glass-card form > div:nth-child(2) { animation-delay: .08s; }
+        .glass-card form > div:nth-child(3) { animation-delay: .12s; }
+        .glass-card form > div:nth-child(4) { animation-delay: .16s; }
+        .glass-card form > div:nth-child(5) { animation-delay: .20s; }
+
+        /* ── باکس آپلود تصویر محصول (Drag & Drop) ─────────────────── */
+        .upload-zone {
+            display: flex; align-items: center; gap: 1rem;
+            padding: 1rem; border-radius: 18px;
+            background: var(--input-bg); border: 1.5px dashed var(--glass-border);
+            transition: all .25s ease; cursor: pointer;
+        }
+        .upload-zone:hover, .upload-zone.dragover {
+            border-color: var(--accent-color);
+            background: rgba(184,134,11,0.08);
+            transform: translateY(-1px);
+        }
+        .preview-img, .preview-placeholder {
+            width: 90px; height: 90px; border-radius: 16px; flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center;
+            border: 2px solid var(--glass-border); box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            overflow: hidden; background: var(--glass-bg);
+        }
+        .preview-img { object-fit: cover; animation: imgFadeIn .4s ease; }
+        .preview-placeholder { border-style: dashed; color: var(--text-muted); font-size: 1.6rem; }
+        .upload-zone .txt strong { display: block; font-size: .85rem; }
+        .upload-zone .txt span { font-size: .74rem; color: var(--text-muted); }
+        .img-remove-btn {
+            border: none; background: rgba(214,69,59,0.12); color: #D6453B;
+            border-radius: 10px; width: 34px; height: 34px; flex-shrink: 0;
+            display: none; align-items: center; justify-content: center;
+        }
+        .img-remove-btn.show { display: flex; }
+
+        /* ── دکمه‌ها: افکت فشار + لودینگ ────────────────────────── */
+        .btn-accent, .btn-glass { position: relative; overflow: hidden; }
+        .btn-accent:active, .btn-glass:active { transform: translateY(0) scale(.97); }
+        .btn-accent[disabled] { cursor: not-allowed; opacity: .85; }
+        .btn-spinner {
+            display: none; width: 18px; height: 18px;
+            border: 2.5px solid rgba(255,255,255,.4); border-top-color: currentColor;
+            border-radius: 50%; animation: spin .7s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .btn-accent.is-loading .btn-label { opacity: 0; }
+        .btn-accent.is-loading .btn-spinner {
+            display: inline-block; position: absolute; top: 50%; left: 50%; margin: -9px 0 0 -9px;
+        }
     </style>
 </head>
 <body>
@@ -141,14 +197,15 @@ textarea::-ms-input-placeholder {
         ویرایش اطلاعات محصول منو
     </h5>
     
-    <form action="/admin/update/<%= iteam._id %>" method="POST" enctype="multipart/form-data" class="row g-4">
+    <form action="/admin/update/<%= iteam._id %>" method="POST" enctype="multipart/form-data" class="row g-4" id="updateProductForm">
         <div class="col-md-6">
             <label class="form-label fw-medium text-muted">نام محصول</label>
             <input type="text" name="iteamName" class="form-control glass-input" value="<%= iteam.iteamName %>" required>
         </div>
         <div class="col-md-6">
             <label class="form-label fw-medium text-muted">قیمت (تومان)</label>
-            <input type="number" name="iteamPrice" class="form-control glass-input" value="<%= iteam.iteamPrice %>" required>
+            <input type="text" inputmode="numeric" name="iteamPrice" class="form-control glass-input price-input"
+                   value="<%= Number(iteam.iteamPrice).toLocaleString('en-US') %>" placeholder="مثال: 185,000" required>
         </div>
         <div class="col-md-12">
             <label class="form-label fw-medium text-muted">دسته‌بندی</label>
@@ -166,54 +223,112 @@ textarea::-ms-input-placeholder {
         </div>
         <div class="col-12">
             <label class="form-label fw-medium text-muted d-block">تصویر محصول</label>
-            <div class="d-flex align-items-center gap-3">
-                <% if(iteam.imageUrl) { %>
-                    <img src="<%= iteam.imageUrl %>" id="imgPreview" class="preview-img">
-                <% } else { %>
-                    <div id="imgPreviewPlace" class="d-flex align-items-center justify-content-center bg-secondary-subtle rounded-3" style="width: 90px; height: 90px; border: 2px dashed var(--glass-border);">
-                        <i class="bi bi-image text-muted fs-3"></i>
-                    </div>
-                <% } %>
-                <div class="flex-grow-1">
-                    <input type="file" name="imageUrl" id="imageInput" class="form-control glass-input" accept="image/*" onchange="previewFile()">
-                    <span class="text-muted small mt-1 d-block">در صورت عدم تمایل به تغییر تصویر، این فیلد را خالی بگذارید.</span>
+            <label class="upload-zone" id="uploadZone" for="imageInput">
+                <div id="imgPreviewBox" class="<%= iteam.imageUrl ? '' : 'preview-placeholder' %>">
+                    <% if (iteam.imageUrl) { %>
+                        <img src="<%= iteam.imageUrl %>" id="imgPreview" class="preview-img">
+                    <% } else { %>
+                        <i class="bi bi-image" id="imgPreviewIcon"></i>
+                    <% } %>
                 </div>
-            </div>
+                <div class="flex-grow-1 txt">
+                    <strong>برای آپلود کلیک یا تصویر را رها کنید</strong>
+                    <span class="d-block mt-1">در صورت عدم تمایل به تغییر تصویر، این فیلد را خالی بگذارید.</span>
+                </div>
+                <button type="button" class="img-remove-btn <%= iteam.imageUrl ? 'show' : '' %>" id="imgRemoveBtn" title="حذف تصویر">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+                <input type="file" name="imageUrl" id="imageInput" accept="image/*" class="visually-hidden">
+            </label>
         </div>
         <div class="col-12 mt-4 d-flex gap-2 justify-content-end">
-            <button type="submit" class="btn btn-accent px-4">ذخیره تغییرات محصول</button>
+            <button type="submit" class="btn btn-accent px-4" id="updateSubmitBtn">
+                <span class="btn-label"><i class="bi bi-check-circle me-1"></i> ذخیره تغییرات محصول</span>
+                <span class="btn-spinner" aria-hidden="true"></span>
+            </button>
             <a href="/admin#productList" class="btn btn-glass px-4">انصراف</a>
         </div>
     </form>
 </div>
 
 <script>
-    function previewFile() {
-        const preview = document.getElementById('imgPreview') || document.getElementById('imgPreviewPlace');
-        const file = document.getElementById('imageInput').files[0];
-        const reader = new FileReader();
-
-        reader.addEventListener("load", function () {
-            if (preview.tagName === 'IMG') {
-                preview.src = reader.result;
-            } else {
-                const img = document.createElement('img');
-                img.id = 'imgPreview';
-                img.className = 'preview-img';
-                img.src = reader.result;
-                preview.replaceWith(img);
-            }
-        }, false);
-
-        if (file) {
-            reader.readAsDataURL(file);
-        }
-    }
-
     window.addEventListener('DOMContentLoaded', () => {
         const savedTheme = localStorage.getItem('admin_theme') || 'dark';
         document.documentElement.setAttribute('data-theme', savedTheme);
     });
+
+    /* ── فرمت‌دهی خودکار قیمت با جداکننده سه‌رقمی + حذف کاما قبل از ارسال ── */
+    (function () {
+        document.querySelectorAll('.price-input').forEach(function (input) {
+            input.addEventListener('input', function () {
+                let raw = this.value.replace(/[^\d]/g, '');
+                this.value = raw.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+            });
+        });
+    })();
+
+    /* ── آپلود تصویر محصول: Drag & Drop + پیش‌نمایش زنده + حذف/جایگزینی ── */
+    (function () {
+        const zone       = document.getElementById('uploadZone');
+        const fileInput  = document.getElementById('imageInput');
+        const previewBox = document.getElementById('imgPreviewBox');
+        const removeBtn  = document.getElementById('imgRemoveBtn');
+
+        function renderPreview(src) {
+            if (src) {
+                previewBox.classList.remove('preview-placeholder');
+                previewBox.innerHTML = `<img src="${src}" id="imgPreview" class="preview-img">`;
+            } else {
+                previewBox.classList.add('preview-placeholder');
+                previewBox.innerHTML = `<i class="bi bi-image" id="imgPreviewIcon"></i>`;
+            }
+            removeBtn.classList.toggle('show', Boolean(src));
+        }
+
+        fileInput.addEventListener('change', function () {
+            const file = this.files && this.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.addEventListener('load', e => renderPreview(e.target.result));
+            reader.readAsDataURL(file);
+        });
+
+        removeBtn.addEventListener('click', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            fileInput.value = '';
+            renderPreview(null);
+        });
+
+        ['dragenter', 'dragover'].forEach(evt => {
+            zone.addEventListener(evt, e => { e.preventDefault(); zone.classList.add('dragover'); });
+        });
+        ['dragleave', 'drop'].forEach(evt => {
+            zone.addEventListener(evt, e => { e.preventDefault(); zone.classList.remove('dragover'); });
+        });
+        zone.addEventListener('drop', function (e) {
+            const file = e.dataTransfer.files && e.dataTransfer.files[0];
+            if (!file) return;
+            fileInput.files = e.dataTransfer.files;
+            fileInput.dispatchEvent(new Event('change'));
+        });
+    })();
+
+    /* ── لودینگ تعاملی هنگام ذخیره‌سازی محصول ─────────────────────────── */
+    (function () {
+        const form = document.getElementById('updateProductForm');
+        const btn  = document.getElementById('updateSubmitBtn');
+        if (!form || !btn) return;
+        form.addEventListener('submit', function () {
+            if (!form.checkValidity()) return;
+            // حذف کاماهای فرمت قیمت پیش از ارسال
+            form.querySelectorAll('.price-input').forEach(input => {
+                input.value = input.value.replace(/,/g, '');
+            });
+            btn.classList.add('is-loading');
+            btn.setAttribute('disabled', 'disabled');
+        });
+    })();
 </script>
 </body>
 </html>

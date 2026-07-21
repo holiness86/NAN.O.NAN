@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>پنل مدیریت | Trattoria Bella</title>
+    <title>پنل مدیریت | کافه و بیکری نان و نان</title>
 
     <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.0.0/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
     <link href="/css/bootstrap.rtl.min.css" rel="stylesheet">
@@ -12,7 +12,7 @@
 
     <style>
         /* =========================================================
-           پنل مدیریت Trattoria Bella — توکن‌های طراحی (هماهنگ با سایت)
+           پنل مدیریت نان و نان (NAN.O.NAN) — توکن‌های طراحی (هماهنگ با سایت)
         ========================================================= */
         :root {
             --bg-grad-1: #FFF8EC;
@@ -509,8 +509,8 @@
         <div class="sidebar-brand">
             <div class="brand-mark"><i class="bi bi-cup-hot-fill"></i></div>
             <div class="brand-text">
-                <strong>Trattoria Bella</strong>
-                <span>پنل مدیریت رستوران</span>
+                <strong>نان و نان</strong>
+                <span>NAN.O.NAN | پنل مدیریت</span>
             </div>
         </div>
 
@@ -1377,6 +1377,31 @@ document.addEventListener("DOMContentLoaded", function () {
             });
         });
     });
+
+    // --- لودینگ تعاملی برای دکمه‌های ارسال فرم (افزودن محصول/دسته‌بندی/امنیت) ---
+    document.querySelectorAll('form').forEach(form => {
+        const submitBtn = form.querySelector('button[type="submit"].btn-accent');
+        if (!submitBtn) return;
+        form.addEventListener('submit', function () {
+            if (!form.checkValidity()) return;
+            if (submitBtn.dataset.loading === '1') return;
+            submitBtn.dataset.loading = '1';
+            submitBtn.dataset.originalHtml = submitBtn.innerHTML;
+            submitBtn.setAttribute('disabled', 'disabled');
+            submitBtn.style.position = 'relative';
+            submitBtn.innerHTML =
+                '<span style="opacity:0;">' + submitBtn.innerHTML + '</span>' +
+                '<span style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center;">' +
+                '<span style="width:18px;height:18px;border:2.5px solid rgba(255,255,255,.4);border-top-color:currentColor;border-radius:50%;display:inline-block;animation:spin .7s linear infinite;"></span>' +
+                '</span>';
+        });
+    });
+    if (!document.getElementById('spinKeyframes')) {
+        const styleTag = document.createElement('style');
+        styleTag.id = 'spinKeyframes';
+        styleTag.textContent = '@keyframes spin{to{transform:rotate(360deg);}}';
+        document.head.appendChild(styleTag);
+    }
 
     // --- جستجوی جدول محصولات ---
     window.searchTable = function (value) {
