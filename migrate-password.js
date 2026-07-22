@@ -5,20 +5,28 @@
 
 require('dotenv').config();
 const mongoose = require('mongoose');
-const Pass = require('../../models/pass');
+const path = require('path');
+
+console.log('مسیر مدل Pass که استفاده میشه:', require.resolve('./models/pass'));
+const Pass = require('./models/pass');
 
 const urlDB = process.env.MONGO_URL || 'mongodb://localhost:27017/NANONAN';
 
 mongoose.connect(urlDB)
     .then(async () => {
+        console.log('متصل به دیتابیس:', urlDB);
         const adminUser = await Pass.findOne();
         if (!adminUser) {
             console.log('هیچ کاربر ادمینی پیدا نشد.');
             process.exit(0);
         }
 
+        console.log('username پیدا شده:', adminUser.username);
+        console.log('password فعلی قبل از تغییر:', adminUser.password);
+
         // اگه پسورد از قبل هش bcrypt باشه، pre-save hook مدل خودش رد میشه و کاری نمی‌کنه
         const alreadyHashed = /^\$2[aby]\$\d{2}\$/.test(adminUser.password);
+        console.log('آیا از قبل هش شده؟', alreadyHashed);
         if (alreadyHashed) {
             console.log('پسورد از قبل هش شده است. نیازی به migration نیست.');
             process.exit(0);
@@ -28,6 +36,7 @@ mongoose.connect(urlDB)
         adminUser.markModified('password');
         await adminUser.save(); // pre-save hook مدل Pass اینجا پسورد رو هش می‌کنه
 
+        console.log('password بعد از ذخیره:', adminUser.password);
         console.log('پسورد با موفقیت هش و ذخیره شد.');
         process.exit(0);
     })

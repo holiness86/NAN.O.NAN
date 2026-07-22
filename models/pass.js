@@ -15,19 +15,18 @@ const passSchema = new mongoose.Schema({
 } , {timestamps : true})
 
 // قبل از هر ذخیره، اگه پسورد تغییر کرده باشه، خودکار هش میشه
-passSchema.pre('save', async function (next) {
+passSchema.pre('save', async function () {
     if (!this.isModified('password')) {
-        return next()
+        return
     }
 
     // اگه از قبل هش bcrypt باشه (مثلاً هنگام migration)، دوباره هش نکن
     const alreadyHashed = /^\$2[aby]\$\d{2}\$/.test(this.password)
     if (alreadyHashed) {
-        return next()
+        return
     }
 
     this.password = await bcrypt.hash(this.password, 10)
-    next()
 })
 
 // متد کمکی برای مقایسه پسورد وارد شده با هش ذخیره‌شده

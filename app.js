@@ -3,9 +3,9 @@ const express = require('express');
 const multer = require('multer');
 const path = require('path');
 const session = require('express-session'); 
-const mongoSanitize = require('express-mongo-sanitize');
 const rateLimit = require('express-rate-limit');
 require('dotenv').config();
+console.log('DEBUG مقدار NODE_ENV:', JSON.stringify(process.env.NODE_ENV));
 const app = express();
 
 if (!process.env.SESSION_SECRET) {
@@ -23,7 +23,25 @@ app.set('view engine' , 'ejs');
 app.use(express.static('public'));
 app.use(express.urlencoded({extended: true}));
 app.use(express.json());
-app.use(mongoSanitize()); // جلوگیری از NoSQL Injection (پاک‌سازی $ و . از ورودی‌ها)
+// جلوگیری از NoSQL Injection: کلیدهای خطرناک ($ و .) رو از داخل آبجکت پاک می‌کنیم
+// (به‌جای reassign کردن req.query که در Express 5 فقط getter هست و ارور می‌ده)
+function sanitizeObject(obj) {
+    if (!obj || typeof obj !== 'object') return;
+    for (const key of Object.keys(obj)) {
+        if (key.startsWith('$') || key.includes('.')) {
+            delete obj[key];
+        } else if (obj[key] && typeof obj[key] === 'object') {
+            sanitizeObject(obj[key]);
+        }
+    }
+}
+
+app.use((req, res, next) => {
+    sanitizeObject(req.body);
+    sanitizeObject(req.params);
+    sanitizeObject(req.query);
+    next();
+});
 
 // سشن
 app.use(session({
@@ -360,12 +378,18 @@ app.get('/log' , (req , res) => {
 app.post('/log', loginLimiter, async (req, res) => {
     try {
         const user = await Pass.findOne({ username: req.body.username });
+        console.log('DEBUG کاربر پیدا شد؟', !!user);
         const isMatch = user && await user.comparePassword(req.body.password || '');
+        console.log('DEBUG پسورد مطابقت داشت؟', isMatch);
         if (!isMatch) {
             return res.send('نام کاربری یا رمز عبور اشتباه است!');
         }
         req.session.isLoggedIn = true;
-        res.redirect('/admin');
+        console.log('DEBUG session id بعد از ست شدن:', req.sessionID, 'isLoggedIn:', req.session.isLoggedIn);
+        req.session.save((err) => {
+            if (err) console.log('DEBUG خطا در ذخیره سشن:', err);
+            res.redirect('/admin');
+        });
     } catch (err) {
         console.error('خطا در لاگین:', err);
         res.status(500).send('خطای سرور');
