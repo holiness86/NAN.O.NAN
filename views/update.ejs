@@ -1,42 +1,56 @@
 <!DOCTYPE html>
-<html lang="fa" dir="rtl" data-theme="dark">
+<html lang="fa" dir="rtl" data-bs-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ویرایش محصول | <%= iteam.iteamName %> — نان و نان</title>
+
+    <!-- جلوگیری از فلاش تم اشتباه — دقیقاً هماهنگ با index.ejs (کلید مشترک) -->
+    <script>
+      (function () {
+        try {
+          var t = localStorage.getItem('nanonan-theme');
+          if (!t) t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+          document.documentElement.setAttribute('data-bs-theme', t);
+        } catch (e) {}
+      })();
+    </script>
+
     <link href="/css/bootstrap.rtl.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/css/icons-1.13.1/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="/css/style.css">
     <style>
-        :root {
-            --bg-gradient-1: #FAF7F2;
-            --bg-gradient-2: #F0EAE0;
-            --bg-gradient-3: #FFFFFF;
-            --glass-bg: rgba(255, 255, 255, 0.45);
-            --glass-border: rgba(184, 134, 11, 0.15);
-            --glass-shadow: rgba(80, 50, 10, 0.05);
-            --text-main: #1A1208;
-            --text-muted: #6B5230;
-            --input-bg: rgba(255, 255, 255, 0.7);
-            --input-focus: rgba(255, 255, 255, 0.95);
-            --accent-color: #B8860B;
-            --accent-hover: #D4A843;
-            --option-bg: #FFFFFF;
+        /* توکن‌های محلی صرفاً alias به توکن‌های اصلی style.css هستند
+           تا پالت رنگی و تم روشن/تاریک دقیقاً مثل صفحه اصلی باشد. */
+        :root, [data-bs-theme="light"] {
+            --bg-gradient-1: var(--cream);
+            --bg-gradient-2: var(--cream-deep);
+            --bg-gradient-3: var(--surface-raised);
+            --glass-bg: var(--surface-glass);
+            --glass-border: var(--border-warm);
+            --glass-shadow: rgba(var(--ink-rgb), .08);
+            --text-main: var(--ink);
+            --text-muted: var(--ink-muted);
+            --input-bg: rgba(255, 255, 255, 0.65);
+            --input-focus: rgba(255, 255, 255, 0.92);
+            --accent-color: var(--brand);
+            --accent-hover: var(--brand-dark);
+            --option-bg: var(--surface);
         }
-        [data-theme="dark"] {
-            --bg-gradient-1: #120C05;
-            --bg-gradient-2: #1A1208;
-            --bg-gradient-3: #1F160B;
-            --glass-bg: rgba(26, 18, 8, 0.55);
-            --glass-border: rgba(184, 134, 11, 0.2);
+        [data-bs-theme="dark"] {
+            --bg-gradient-1: var(--cream);
+            --bg-gradient-2: var(--cream-deep);
+            --bg-gradient-3: var(--surface-raised);
+            --glass-bg: var(--surface-glass);
+            --glass-border: var(--border-warm);
             --glass-shadow: rgba(0, 0, 0, 0.5);
-            --text-main: #FAF7F2;
-            --text-muted: #D4A843;
-            --input-bg: rgba(18, 12, 5, 0.5);
-            --input-focus: rgba(18, 12, 5, 0.8);
-            --accent-color: #D4A843;
-            --accent-hover: #B8860B;
-            --option-bg: #1A1208;
+            --text-main: var(--ink);
+            --text-muted: var(--ink-muted);
+            --input-bg: rgba(0, 0, 0, 0.3);
+            --input-focus: rgba(0, 0, 0, 0.5);
+            --accent-color: var(--brand);
+            --accent-hover: var(--brand-dark);
+            --option-bg: var(--surface);
         }
         body {
             background: linear-gradient(-45deg, var(--bg-gradient-1), var(--bg-gradient-2), var(--bg-gradient-3));
@@ -85,7 +99,7 @@
             font-weight: 600;
             transition: all 0.3s ease;
         }
-        [data-theme="dark"] .btn-accent {
+        [data-bs-theme="dark"] .btn-accent {
             color: #120C05 !important;
         }
         .btn-accent:hover {
@@ -252,10 +266,7 @@ textarea::-ms-input-placeholder {
 </div>
 
 <script>
-    window.addEventListener('DOMContentLoaded', () => {
-        const savedTheme = localStorage.getItem('admin_theme') || 'dark';
-        document.documentElement.setAttribute('data-theme', savedTheme);
-    });
+    // نکته: تم پیش از رندر توسط اسکریپت ضدفلاش در <head> ست شده (کلید مشترک nanonan-theme)
 
     /* ── فرمت‌دهی خودکار قیمت با جداکننده سه‌رقمی + حذف کاما قبل از ارسال ── */
     (function () {

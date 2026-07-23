@@ -1,9 +1,21 @@
 <!DOCTYPE html>
-<html lang="fa" dir="rtl" data-theme="dark">
+<html lang="fa" dir="rtl" data-bs-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>پنل مدیریت | کافه و بیکری نان و نان</title>
+
+    <!-- جلوگیری از فلاش تم اشتباه قبل از رندر اول — دقیقاً هماهنگ با index.ejs
+         (همان کلید localStorage، یعنی تم پنل ادمین و منوی عمومی یکی است) -->
+    <script>
+      (function () {
+        try {
+          var t = localStorage.getItem('nanonan-theme');
+          if (!t) t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+          document.documentElement.setAttribute('data-bs-theme', t);
+        } catch (e) {}
+      })();
+    </script>
 
     <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.0.0/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
     <link href="/css/bootstrap.rtl.min.css" rel="stylesheet">
@@ -12,65 +24,59 @@
 
     <style>
         /* =========================================================
-           پنل مدیریت نان و نان (NAN.O.NAN) — توکن‌های طراحی (هماهنگ با سایت)
+           پنل مدیریت نان و نان (NAN.O.NAN) — توکن‌های طراحی
+           این بلوک هیچ رنگ مستقلی تعریف نمی‌کند؛ فقط نام‌متغیرهای
+           قدیمی پنل ادمین (--accent-color, --glass-bg, --text-main ...)
+           را مستقیماً به توکن‌های اصلی style.css (--brand, --cream,
+           --ink, --surface-glass, --sw-0..9 و ...) نگاشت (alias) می‌کند
+           تا پالت رنگی و تم روشن/تاریک ۱۰۰٪ با صفحه اصلی یکسان باشد.
         ========================================================= */
-        :root {
-            --bg-grad-1: #FFF8EC;
-            --bg-grad-2: #F3E3BE;
-            --bg-grad-3: #FBEFDD;
-            --glass-bg: rgba(255, 252, 245, 0.55);
-            --glass-border: rgba(184, 134, 11, 0.22);
-            --glass-shadow: rgba(120, 80, 20, 0.12);
-            --glass-hover: rgba(184, 134, 11, 0.10);
-            --text-main: #2A1F10;
-            --text-muted: #7A6644;
-            --input-bg: rgba(255, 255, 255, 0.55);
-            --input-focus: rgba(255, 255, 255, 0.85);
-            --btn-bg: rgba(255, 255, 255, 0.65);
-            --btn-hover: rgba(255, 255, 255, 0.9);
-            --accent-color: #B8860B;
-            --accent-light: #D4A843;
-            --accent-hover: #96700A;
-            --danger-color: #D6453B;
-            --danger-hover: #C13A31;
-            --success-color: #2E8A50;
-            --option-bg: #ffffff;
+        :root, [data-bs-theme="light"] {
+            --bg-grad-1: var(--cream);
+            --bg-grad-2: var(--cream-deep);
+            --bg-grad-3: var(--surface-raised);
+            --glass-bg: var(--surface-glass);
+            --glass-border: var(--border-warm);
+            --glass-shadow: rgba(var(--ink-rgb), .08);
+            --glass-hover: var(--brand-soft);
+            --text-main: var(--ink);
+            --text-muted: var(--ink-muted);
+            --input-bg: rgba(255, 255, 255, 0.6);
+            --input-focus: rgba(255, 255, 255, 0.92);
+            --btn-bg: var(--surface-raised);
+            --btn-hover: var(--brand-soft);
+            --accent-color: var(--brand);
+            --accent-light: var(--brand-light);
+            --accent-hover: var(--brand-dark);
+            --danger-color: #C1443A;
+            --danger-hover: #A83A31;
+            --success-color: #3E8A5B;
+            --option-bg: var(--surface);
             --sidebar-width: 280px;
             --topbar-height: 72px;
-
-            --sw-0: linear-gradient(135deg,#e8c88a 0%,#c49a3c 100%);
-            --sw-1: linear-gradient(135deg,#f29a82 0%,#c94f30 100%);
-            --sw-2: linear-gradient(135deg,#b5d4a8 0%,#4a8a38 100%);
-            --sw-3: linear-gradient(135deg,#a8d8b0 0%,#2e8a50 100%);
-            --sw-4: linear-gradient(135deg,#f0b8c8 0%,#c83860 100%);
-            --sw-5: linear-gradient(135deg,#a8cce8 0%,#2e6aa8 100%);
-            --sw-6: linear-gradient(135deg,#f4b87e 0%,#d47230 100%);
-            --sw-7: linear-gradient(135deg,#d8b8e8 0%,#8a3ec4 100%);
-            --sw-8: linear-gradient(135deg,#a0e0d0 0%,#1e9a82 100%);
-            --sw-9: linear-gradient(135deg,#d8a878 0%,#8a5a28 100%);
         }
 
-        [data-theme="dark"] {
-            --bg-grad-1: #130D06;
-            --bg-grad-2: #211609;
-            --bg-grad-3: #2C1C0C;
-            --glass-bg: rgba(24, 17, 9, 0.55);
-            --glass-border: rgba(212, 168, 67, 0.16);
+        [data-bs-theme="dark"] {
+            --bg-grad-1: var(--cream);
+            --bg-grad-2: var(--cream-deep);
+            --bg-grad-3: var(--surface-raised);
+            --glass-bg: var(--surface-glass);
+            --glass-border: var(--border-warm);
             --glass-shadow: rgba(0, 0, 0, 0.45);
-            --glass-hover: rgba(212, 168, 67, 0.10);
-            --text-main: #F5EDD8;
-            --text-muted: #B79A6B;
+            --glass-hover: var(--brand-soft);
+            --text-main: var(--ink);
+            --text-muted: var(--ink-muted);
             --input-bg: rgba(0, 0, 0, 0.28);
-            --input-focus: rgba(0, 0, 0, 0.45);
-            --btn-bg: rgba(255, 255, 255, 0.08);
-            --btn-hover: rgba(255, 255, 255, 0.16);
-            --accent-color: #D4A843;
-            --accent-light: #F0C860;
-            --accent-hover: #E8BD52;
+            --input-focus: rgba(0, 0, 0, 0.5);
+            --btn-bg: rgba(255, 255, 255, 0.06);
+            --btn-hover: var(--brand-soft);
+            --accent-color: var(--brand);
+            --accent-light: var(--brand-light);
+            --accent-hover: var(--brand-dark);
             --danger-color: #E8716A;
             --danger-hover: #F08983;
-            --success-color: #4FBE7A;
-            --option-bg: #1C140A;
+            --success-color: #6FC090;
+            --option-bg: var(--surface);
         }
 
         html { scroll-behavior: smooth; }
@@ -92,6 +98,7 @@
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
+
 
         .admin-layout { display: flex; min-height: 100vh; }
 
@@ -199,7 +206,7 @@
             font-weight: 700;
             box-shadow: 0 6px 18px rgba(184,134,11,0.30);
         }
-        [data-theme="dark"] .sidebar .nav-link.active { color: #1A1208; }
+        [data-bs-theme="dark"] .sidebar .nav-link.active { color: #1A1208; }
         .sidebar .nav-link.active .nav-ico { background: rgba(255,255,255,0.25); }
         .sidebar .nav-link.active .nav-badge { background: rgba(255,255,255,0.3); color: #1A1208; }
 
@@ -564,10 +571,10 @@
                     <i class="bi bi-list"></i>
                 </button>
                 <div class="topbar-title">
-                    <i class="bi bi-egg-fried text-accent fs-5"></i>
+                    <i class="bi bi-cup-hot-fill text-accent fs-5"></i>
                     <div>
-                        مدیریت رستوران
-                        <span class="topbar-sub">خوش آمدید، امروز روز خوبی برای پختن غذای خوب است 🍝</span>
+                        پنل مدیریت نان و نان
+                        <span class="topbar-sub">خوش آمدید، امروز روز خوبی برای پختن نان تازه است ☕🥐</span>
                     </div>
                 </div>
             </div>
@@ -612,7 +619,7 @@
             <section id="dashboardSection" class="content-section active-section">
                 <h5 class="fw-bold mb-4 d-flex align-items-center gap-2">
                     <i class="bi bi-pie-chart-fill text-accent"></i>
-                    آمار و وضعیت کلی رستوران
+                    آمار و وضعیت کلی نان و نان
                 </h5>
 
                 <div class="row g-3 mb-4">
@@ -1325,14 +1332,9 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // --- تم ذخیره‌شده ---
-    const savedTheme = localStorage.getItem("admin_theme");
-    if (savedTheme) {
-        document.documentElement.setAttribute("data-theme", savedTheme);
-        updateThemeIcon(savedTheme);
-    } else {
-        updateThemeIcon("dark");
-    }
+    // --- همگام‌سازی آیکون تم با مقدار مشترک با صفحه اصلی (nanonan-theme) ---
+    // خودِ تم پیش از رندر توسط اسکریپت ضدفلاش در <head> ست شده؛ اینجا فقط آیکون را هماهنگ می‌کنیم.
+    updateThemeIcon(document.documentElement.getAttribute('data-bs-theme') || 'dark');
 
     const initialHash = window.location.hash || '#dashboard';
     setActiveTab(initialHash.substring(1));
@@ -1480,9 +1482,9 @@ function closeSidebarOnMobile() {
 // --- Theme ---
 function toggleTheme() {
     const html = document.documentElement;
-    const newTheme = html.getAttribute("data-theme") === "dark" ? "light" : "dark";
-    html.setAttribute("data-theme", newTheme);
-    localStorage.setItem("admin_theme", newTheme);
+    const newTheme = html.getAttribute("data-bs-theme") === "dark" ? "light" : "dark";
+    html.setAttribute("data-bs-theme", newTheme);
+    try { localStorage.setItem("nanonan-theme", newTheme); } catch (e) {}
     updateThemeIcon(newTheme);
 }
 function updateThemeIcon(theme) {
