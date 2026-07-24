@@ -176,23 +176,44 @@
 
     function spawnRain() {
       if (!rainContainer || prefersReducedMotion()) return;
-      var icons = ['bi-cup-hot-fill', 'bi-cake2-fill', 'bi-egg-fried', 'bi-flower1', 'bi-basket2-fill', 'bi-cup-straw'];
+
+      var images = [
+        '/images/logo/Nan.O.Nan-black.png',
+        '/images/logo/Nan.O.Nan-white.png',
+        '/images/logo/Nan.O.Nan-brand.png'
+      ];
+
       var count = window.innerWidth < 640 ? 10 : 18;
       var frag = document.createDocumentFragment();
+
       for (var i = 0; i < count; i++) {
         var el = document.createElement('span');
         el.className = 'preloader-rain-item';
         el.setAttribute('aria-hidden', 'true');
+
         var size = 14 + Math.random() * 16;
+
         el.style.setProperty('--size', size.toFixed(1) + 'px');
         el.style.setProperty('--start-x', (Math.random() * 96 + 2).toFixed(1) + '%');
         el.style.setProperty('--fall-y', (110 + Math.random() * 30).toFixed(0) + 'vh');
         el.style.setProperty('--rotate-end', ((Math.random() - 0.5) * 70).toFixed(0) + 'deg');
         el.style.animationDuration = (4.2 + Math.random() * 3.6).toFixed(2) + 's';
         el.style.animationDelay = (Math.random() * 3.2).toFixed(2) + 's';
-        el.innerHTML = '<i class="bi ' + icons[(Math.random() * icons.length) | 0] + '" aria-hidden="true"></i>';
+
+        var randomImage = images[(Math.random() * images.length) | 0];
+
+        el.innerHTML = `
+          <img
+            src="${randomImage}"
+            alt=""
+            aria-hidden="true"
+            style="width:100%;height:100%;object-fit:contain;"
+          >
+        `;
+
         frag.appendChild(el);
       }
+
       rainContainer.appendChild(frag);
     }
 

@@ -303,6 +303,14 @@ a { color: inherit; }
   transform: scale(0);
 }
 
+.preloader-rain-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  user-select: none;
+  pointer-events: none;
+}
 /* The moment the dissolve begins: base background disappears (the bubbles,
    being the same color and fully tiled, keep the screen visually covered
    with zero flash), and the logo/rain fade out quickly out of the way. */
