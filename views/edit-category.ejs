@@ -149,7 +149,50 @@ textarea::-ms-input-placeholder {
         .glass-card > form > .col-12:nth-child(4) { animation-delay: .24s; }
         .glass-card > form > .col-12:nth-child(5) { animation-delay: .30s; }
 
-        /* ── باکس آپلود تصویر دسته‌بندی ──────────────────────────── */
+        /* ── پیش‌نمایش تصویر/وکتور انتخاب‌شده ─────────────────────── */
+        .cat-visual-preview {
+            background: var(--brand-soft);
+            border: 1px solid var(--glass-border);
+        }
+        .cat-visual-preview-box {
+            width: 52px; height: 52px; border-radius: 14px; flex-shrink: 0;
+            overflow: hidden; display: flex; align-items: center; justify-content: center;
+            background: var(--glass-bg); border: 1px solid var(--glass-border);
+            font-size: 1.4rem; color: var(--accent-color); padding: 6px;
+        }
+        .cat-visual-preview-box img { width: 100%; height: 100%; object-fit: contain; animation: fieldIn .4s ease; }
+        .cat-visual-preview-hint { font-size: .78rem; color: var(--text-muted); display: block; }
+
+        /* ── گرید وکتورهای از پیش آپلود‌شده ──────────────────────── */
+        .visual-picker-grid {
+            display: grid; grid-template-columns: repeat(5, 1fr);
+            gap: 10px; max-height: 260px; overflow-y: auto;
+            padding: 10px; border-radius: 16px;
+            background: var(--input-bg); border: 1px solid var(--glass-border);
+        }
+        .visual-picker-item {
+            aspect-ratio: 1/1; border-radius: 14px; cursor: pointer;
+            background: var(--glass-bg); border: 2px solid var(--glass-border);
+            display: flex; align-items: center; justify-content: center;
+            padding: 8px; position: relative; transition: transform .2s ease, border-color .2s ease;
+        }
+        .visual-picker-item img { width: 100%; height: 100%; object-fit: contain; }
+        .visual-picker-item:hover { transform: translateY(-3px) scale(1.05); border-color: var(--accent-light); }
+        .visual-picker-item.active { border-color: var(--accent-color); background: var(--brand-soft); }
+        .visual-picker-item.active::after {
+            content: "\f26e"; font-family: "bootstrap-icons"; color: var(--accent-color);
+            position: absolute; bottom: -4px; left: -4px;
+            width: 18px; height: 18px; border-radius: 50%;
+            background: var(--surface, #fff); display: flex; align-items: center; justify-content: center;
+            font-size: .7rem; box-shadow: 0 2px 6px rgba(0,0,0,.25);
+        }
+        .visual-picker-item span.vp-label {
+            position: absolute; inset: auto 0 -20px 0; text-align: center;
+            font-size: .62rem; color: var(--text-muted); white-space: nowrap;
+            overflow: hidden; text-overflow: ellipsis;
+        }
+
+        /* ── باکس آپلود تصویر/وکتور دلخواه ────────────────────────── */
         .cat-img-upload {
             display: flex; align-items: center; gap: 1rem;
             padding: .9rem; border-radius: 16px;
@@ -158,15 +201,14 @@ textarea::-ms-input-placeholder {
         }
         .cat-img-upload:hover, .cat-img-upload.dragover {
             border-color: var(--accent-color);
-            background: rgba(184,134,11,0.08);
+            background: var(--brand-soft);
         }
-        .cat-img-preview-box {
-            width: 64px; height: 64px; border-radius: 16px; flex-shrink: 0;
-            overflow: hidden; display: flex; align-items: center; justify-content: center;
+        .cat-img-upload-icon {
+            width: 44px; height: 44px; border-radius: 12px; flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center;
             background: var(--glass-bg); border: 1px solid var(--glass-border);
-            font-size: 1.5rem; color: var(--accent-color);
+            font-size: 1.2rem; color: var(--accent-color);
         }
-        .cat-img-preview-box img { width: 100%; height: 100%; object-fit: cover; animation: fieldIn .4s ease; }
         .cat-img-upload .txt strong { display: block; font-size: .85rem; }
         .cat-img-upload .txt span { font-size: .74rem; color: var(--text-muted); }
         .cat-img-remove {
@@ -238,62 +280,45 @@ textarea::-ms-input-placeholder {
                value="<%= category.enname %>" required>
     </div>
 
-    <!-- آیکون -->
+    <!-- تصویر / وکتور دسته‌بندی -->
     <div class="col-12">
-        <label class="form-label fw-medium text-muted">آیکون دسته‌بندی</label>
+        <label class="form-label fw-medium text-muted">تصویر دسته‌بندی</label>
 
-        <!-- پیش‌نمایش -->
-        <div class="d-flex align-items-center gap-3 mb-3 p-3 rounded-3"
-             style="background: rgba(184,134,11,0.08); border: 1px solid var(--glass-border);">
-            <div id="iconPreview"
-                 style="width:48px; height:48px; border-radius:14px;
-                        background: var(--glass-bg); border: 1px solid var(--glass-border);
-                        display:flex; align-items:center; justify-content:center;
-                        font-size:1.4rem; color: var(--accent-color);">
-                <i class="bi <%= category.icon || 'bi-grid' %>" id="previewIcon"></i>
-            </div>
-            <div>
-                <span class="fw-medium d-block" id="previewName"><%= category.icon || 'bi-grid' %></span>
-                <span style="font-size:0.8rem; color: var(--text-muted);">آیکون انتخاب‌شده</span>
-            </div>
-        </div>
-
-        <!-- جستجو -->
-        <input type="text" id="iconSearch" class="form-control glass-input mb-3"
-               placeholder="جستجو... (مثال: cup, fire, heart)">
-
-        <!-- گرید آیکون‌ها -->
-        <div id="iconGrid"
-             style="display:grid; grid-template-columns: repeat(auto-fill, minmax(52px,1fr));
-                    gap:8px; max-height:220px; overflow-y:auto;
-                    padding:10px; border-radius:14px;
-                    background: var(--input-bg); border: 1px solid var(--glass-border);">
-        </div>
-
-        <!-- مقدار نهایی -->
-        <input type="hidden" name="icon" id="selectedIcon" value="<%= category.icon || 'bi-grid' %>">
-    </div>
-
-    <!-- تصویر اختصاصی دسته‌بندی -->
-    <div class="col-12">
-        <label class="form-label fw-medium text-muted">تصویر اختصاصی دسته‌بندی (اختیاری)</label>
-        <label class="cat-img-upload" id="catImgDrop" for="catImageInput">
-            <div class="cat-img-preview-box" id="catImgPreviewBox">
+        <!-- پیش‌نمایش زنده -->
+        <div class="d-flex align-items-center gap-3 mb-3 p-3 rounded-3 cat-visual-preview">
+            <div class="cat-visual-preview-box" id="catVisualPreviewBox">
                 <% if (category.imageUrl) { %>
-                    <img src="<%= category.imageUrl %>" alt="" id="catImgPreview">
+                    <img src="<%= category.imageUrl %>" alt="" id="catVisualPreviewImg">
                 <% } else { %>
-                    <i class="bi bi-image" id="catImgPlaceholderIcon"></i>
+                    <i class="bi bi-image" id="catVisualPlaceholderIcon"></i>
                 <% } %>
             </div>
+            <div>
+                <span class="fw-medium d-block" id="catVisualPreviewLabel">
+                    <%= category.imageUrl ? 'تصویر انتخاب‌شده' : 'هیچ تصویری انتخاب نشده' %>
+                </span>
+                <span class="cat-visual-preview-hint">یکی از وکتورهای آماده را انتخاب کنید یا تصویر دلخواه آپلود کنید</span>
+            </div>
+        </div>
+
+        <!-- گرید وکتورهای از پیش آپلود شده -->
+        <div class="visual-picker-grid" id="visualPickerGrid"></div>
+
+        <!-- آپلود تصویر/وکتور دلخواه -->
+        <label class="cat-img-upload mt-3" id="catImgDrop" for="catImageInput">
+            <div class="cat-img-upload-icon"><i class="bi bi-cloud-arrow-up"></i></div>
             <div class="txt flex-grow-1">
-                <strong>برای آپلود کلیک یا تصویر را رها کنید</strong>
-                <span>PNG / JPG — در صورت خالی گذاشتن، آیکون فعلی استفاده می‌شود</span>
+                <strong>آپلود تصویر یا وکتور دلخواه</strong>
+                <span>SVG / PNG / JPG — برای آپلود کلیک یا فایل را اینجا رها کنید</span>
             </div>
             <button type="button" class="cat-img-remove <%= category.imageUrl ? 'show' : '' %>" id="catImgRemoveBtn" title="حذف تصویر">
                 <i class="bi bi-x-lg"></i>
             </button>
-            <input type="file" name="image" id="catImageInput" accept="image/*" class="visually-hidden">
+            <input type="file" name="image" id="catImageInput" accept="image/*,.svg" class="visually-hidden">
         </label>
+
+        <!-- مقدار نهایی (مسیر وکتور پیش‌فرض انتخاب‌شده، یا مقدار فعلی؛ در صورت آپلود فایل، سرور باید فایل را در اولویت قرار دهد) -->
+        <input type="hidden" name="imageUrl" id="selectedImageUrl" value="<%= category.imageUrl || '' %>">
     </div>
 
     <!-- سواتچ رنگی/گرادیان دسته‌بندی -->
@@ -321,129 +346,107 @@ textarea::-ms-input-placeholder {
 <script>
     // نکته: تم پیش از رندر توسط اسکریپت ضدفلاش در <head> ست شده (کلید مشترک nanonan-theme)
 
+    /* ── وکتورهای از پیش آپلود‌شده — مسیر واقعی فایل‌ها روی سرور
+       این فایل‌ها باید در public/images/categories/presets/ قرار بگیرند
+       (۱۰ فایل SVG پیوست‌شده در پاسخ). برای افزودن وکتور جدید فقط
+       فایل را در همان مسیر قرار داده و یک آیتم به این آرایه اضافه کنید. */
+    const CATEGORY_PRESETS = [
+        { file: 'bread.svg',         label: 'نان' },
+        { file: 'croissant.svg',     label: 'کرواسان' },
+        { file: 'coffee.svg',        label: 'قهوه' },
+        { file: 'cake.svg',          label: 'کیک' },
+        { file: 'cupcake.svg',       label: 'کاپ‌کیک' },
+        { file: 'donut.svg',         label: 'دونات' },
+        { file: 'cookie.svg',        label: 'کوکی' },
+        { file: 'cinnamon-roll.svg', label: 'رول دارچین' },
+        { file: 'sandwich.svg',      label: 'ساندویچ' },
+        { file: 'milk.svg',          label: 'شیر' }
+    ];
+    const PRESET_BASE_PATH = '/images/categories/presets/';
 
-    const ICONS = [
-  'bi-grid','bi-cup-hot','bi-cup-hot-fill','bi-cup-straw',
-  'bi-egg-fried','bi-egg-fill','bi-fire','bi-flower1','bi-flower2',
-  'bi-pie-chart-fill','bi-heart-fill','bi-star-fill','bi-star',
-  'bi-droplet-fill','bi-droplet','bi-water','bi-snow2','bi-snow3',
-  'bi-brightness-alt-high','bi-layers-fill','bi-circle-fill',
-  'bi-grid-fill','bi-grid-3x3-gap-fill','bi-box-seam-fill',
-  'bi-bag-fill','bi-cart-fill','bi-basket-fill',
-  'bi-cup','bi-cup-fill','bi-thermometer-half',
-  'bi-lightning-fill','bi-moon-stars-fill','bi-sun-fill',
-  'bi-leaf','bi-tree','bi-award-fill','bi-bookmark-fill',
-  'bi-clock-fill','bi-gem','bi-globe','bi-house-fill',
-  'bi-music-note-beamed','bi-palette-fill','bi-percent',
-  'bi-pin-map-fill','bi-shop','bi-shop-window','bi-tag-fill',
-  'bi-tags-fill','bi-truck','bi-emoji-smile-fill',
-  'bi-hexagon-fill','bi-people-fill','bi-person-fill',
-  'bi-trophy-fill','bi-umbrella-fill','bi-wrench-adjustable',
-  'bi-puzzle-fill','bi-robot','bi-send-fill','bi-sliders2',
-  'bi-speedometer2','bi-table','bi-zoom-in'
-];
+    (function () {
+        const grid         = document.getElementById('visualPickerGrid');
+        const hiddenUrl     = document.getElementById('selectedImageUrl');
+        const previewBox    = document.getElementById('catVisualPreviewBox');
+        const previewLabel  = document.getElementById('catVisualPreviewLabel');
+        const fileInput     = document.getElementById('catImageInput');
+        const removeBtn     = document.getElementById('catImgRemoveBtn');
+        const currentValue  = hiddenUrl.value;
 
-let filteredIcons = [...ICONS];
+        function fullPath(file) { return PRESET_BASE_PATH + file; }
 
-function renderIconGrid(list) {
-    const grid = document.getElementById('iconGrid');
-    const current = document.getElementById('selectedIcon').value;
-    grid.innerHTML = '';
+        function setPreview(src, label) {
+            if (src) {
+                previewBox.innerHTML = `<img src="${src}" alt="" id="catVisualPreviewImg">`;
+            } else {
+                previewBox.innerHTML = `<i class="bi bi-image" id="catVisualPlaceholderIcon"></i>`;
+            }
+            previewLabel.textContent = label || 'هیچ تصویری انتخاب نشده';
+            removeBtn.classList.toggle('show', Boolean(src));
+        }
 
-    list.forEach(icon => {
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.title = icon;
-        const isActive = current === icon;
-        btn.style.cssText = `
-            width:52px; height:52px; border-radius:12px;
-            background: ${isActive ? 'rgba(184,134,11,0.2)' : 'var(--glass-bg)'};
-            border: 1px solid ${isActive ? 'var(--accent-color)' : 'var(--glass-border)'};
-            display:flex; align-items:center; justify-content:center;
-            font-size:1.25rem;
-            color: ${isActive ? 'var(--accent-color)' : 'var(--text-main)'};
-            cursor:pointer; transition: all .2s ease;
-        `;
-        btn.innerHTML = `<i class="bi ${icon}"></i>`;
+        function highlightActive(activeFile) {
+            grid.querySelectorAll('.visual-picker-item').forEach(item => {
+                item.classList.toggle('active', item.dataset.file === activeFile);
+            });
+        }
 
-        btn.addEventListener('mouseenter', () => {
-            btn.style.background = 'rgba(184,134,11,0.15)';
-            btn.style.borderColor = 'var(--accent-color)';
-            btn.style.color = 'var(--accent-color)';
-            btn.style.transform = 'scale(1.12)';
+        function renderGrid() {
+            grid.innerHTML = '';
+            CATEGORY_PRESETS.forEach(preset => {
+                const path = fullPath(preset.file);
+                const isActive = currentValue === path;
+                const item = document.createElement('div');
+                item.className = 'visual-picker-item' + (isActive ? ' active' : '');
+                item.dataset.file = path;
+                item.title = preset.label;
+                item.innerHTML = `<img src="${path}" alt="${preset.label}" loading="lazy">`;
+                item.addEventListener('click', () => {
+                    fileInput.value = '';               // انصراف از فایل آپلودی احتمالی
+                    hiddenUrl.value = path;
+                    highlightActive(path);
+                    setPreview(path, preset.label);
+                });
+                grid.appendChild(item);
+            });
+        }
+
+        renderGrid();
+
+        /* ── آپلود وکتور/تصویر دلخواه: پیش‌نمایش زنده + Drag&Drop + حذف ── */
+        const dropZone = document.getElementById('catImgDrop');
+
+        fileInput.addEventListener('change', function () {
+            const file = this.files && this.files[0];
+            if (!file) return;
+            highlightActive(null); // انتخاب از گرید پریست‌ها لغو می‌شود
+            const reader = new FileReader();
+            reader.onload = e => setPreview(e.target.result, file.name);
+            reader.readAsDataURL(file);
         });
-        btn.addEventListener('mouseleave', () => {
-            const sel = document.getElementById('selectedIcon').value;
-            const active = sel === icon;
-            btn.style.background  = active ? 'rgba(184,134,11,0.2)' : 'var(--glass-bg)';
-            btn.style.borderColor = active ? 'var(--accent-color)' : 'var(--glass-border)';
-            btn.style.color       = active ? 'var(--accent-color)' : 'var(--text-main)';
-            btn.style.transform   = 'scale(1)';
+
+        removeBtn.addEventListener('click', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            fileInput.value = '';
+            hiddenUrl.value = '';
+            highlightActive(null);
+            setPreview(null, null);
         });
 
-        btn.addEventListener('click', () => {
-            document.getElementById('selectedIcon').value = icon;
-            document.getElementById('previewIcon').className = `bi ${icon}`;
-            document.getElementById('previewName').textContent = icon;
-            renderIconGrid(filteredIcons); // رفرش برای هایلایت
+        ['dragenter', 'dragover'].forEach(evt => {
+            dropZone.addEventListener(evt, e => { e.preventDefault(); dropZone.classList.add('dragover'); });
         });
-
-        grid.appendChild(btn);
-    });
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-    renderIconGrid(ICONS);
-
-    document.getElementById('iconSearch').addEventListener('input', function () {
-        const q = this.value.toLowerCase().trim();
-        filteredIcons = q ? ICONS.filter(i => i.includes(q)) : [...ICONS];
-        renderIconGrid(filteredIcons);
-    });
-});
-
-/* ── آپلود تصویر دسته‌بندی: پیش‌نمایش زنده + Drag&Drop + حذف ─────────── */
-(function () {
-    const dropZone   = document.getElementById('catImgDrop');
-    const fileInput  = document.getElementById('catImageInput');
-    const previewBox = document.getElementById('catImgPreviewBox');
-    const removeBtn  = document.getElementById('catImgRemoveBtn');
-
-    function renderPreview(src) {
-        previewBox.innerHTML = src
-            ? `<img src="${src}" alt="" id="catImgPreview">`
-            : `<i class="bi bi-image" id="catImgPlaceholderIcon"></i>`;
-        removeBtn.classList.toggle('show', Boolean(src));
-    }
-
-    fileInput.addEventListener('change', function () {
-        const file = this.files && this.files[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = e => renderPreview(e.target.result);
-        reader.readAsDataURL(file);
-    });
-
-    removeBtn.addEventListener('click', function (e) {
-        e.preventDefault();
-        e.stopPropagation();
-        fileInput.value = '';
-        renderPreview(null);
-    });
-
-    ['dragenter', 'dragover'].forEach(evt => {
-        dropZone.addEventListener(evt, e => { e.preventDefault(); dropZone.classList.add('dragover'); });
-    });
-    ['dragleave', 'drop'].forEach(evt => {
-        dropZone.addEventListener(evt, e => { e.preventDefault(); dropZone.classList.remove('dragover'); });
-    });
-    dropZone.addEventListener('drop', function (e) {
-        const file = e.dataTransfer.files && e.dataTransfer.files[0];
-        if (!file) return;
-        fileInput.files = e.dataTransfer.files;
-        fileInput.dispatchEvent(new Event('change'));
-    });
-})();
+        ['dragleave', 'drop'].forEach(evt => {
+            dropZone.addEventListener(evt, e => { e.preventDefault(); dropZone.classList.remove('dragover'); });
+        });
+        dropZone.addEventListener('drop', function (e) {
+            const file = e.dataTransfer.files && e.dataTransfer.files[0];
+            if (!file) return;
+            fileInput.files = e.dataTransfer.files;
+            fileInput.dispatchEvent(new Event('change'));
+        });
+    })();
 
 /* ── انتخاب سواتچ رنگی/گرادیان ─────────────────────────────────────── */
 (function () {

@@ -423,7 +423,7 @@
         .icon-swatch-6 { background: var(--sw-6); } .icon-swatch-7 { background: var(--sw-7); }
         .icon-swatch-8 { background: var(--sw-8); } .icon-swatch-9 { background: var(--sw-9); }
 
-        /* ---------- Icon Picker ---------- */
+        /* ---------- Visual (Vector/Image) Picker ---------- */
         .icon-picker-preview {
             display: flex; align-items: center; gap: 1rem;
             padding: 0.9rem 1rem; border-radius: 16px;
@@ -433,40 +433,69 @@
         .icon-picker-preview .ipv-box {
             width: 54px; height: 54px; border-radius: 15px;
             display: flex; align-items: center; justify-content: center;
-            font-size: 1.55rem; color: #fff;
-            box-shadow: 0 4px 14px rgba(0,0,0,0.2);
-            flex-shrink: 0;
+            font-size: 1.55rem; color: var(--accent-color);
+            background: var(--glass-bg); border: 1px solid var(--glass-border);
+            box-shadow: 0 4px 14px rgba(0,0,0,0.12);
+            flex-shrink: 0; overflow: hidden; padding: 8px;
         }
-        .icon-picker-groups { max-height: 280px; overflow-y: auto; border-radius: 16px; background: var(--input-bg); border: 1px solid var(--glass-border); padding: 0.9rem; }
-        .icon-picker-groups::-webkit-scrollbar { width: 5px; }
-        .icon-picker-groups::-webkit-scrollbar-thumb { background: var(--glass-border); border-radius: 5px; }
-        .icon-group-title { font-size: 0.72rem; font-weight: 700; color: var(--text-muted); margin: 0.7rem 0 0.5rem; text-transform: uppercase; letter-spacing: 0.04em; display: flex; align-items: center; gap: 0.4rem; }
-        .icon-group-title:first-child { margin-top: 0; }
-        .icon-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(50px, 1fr)); gap: 8px; }
-        .icon-grid-item {
-            width: 100%; aspect-ratio: 1/1; border-radius: 12px;
+        .icon-picker-preview .ipv-box img { width: 100%; height: 100%; object-fit: contain; }
+
+        .visual-picker-grid {
+            display: grid; grid-template-columns: repeat(5, 1fr);
+            gap: 10px; max-height: 260px; overflow-y: auto;
+            padding: 10px; border-radius: 16px;
+            background: var(--input-bg); border: 1px solid var(--glass-border);
+        }
+        .visual-picker-grid::-webkit-scrollbar { width: 5px; }
+        .visual-picker-grid::-webkit-scrollbar-thumb { background: var(--glass-border); border-radius: 5px; }
+        .visual-picker-item {
+            aspect-ratio: 1/1; border-radius: 14px; cursor: pointer;
+            background: var(--glass-bg); border: 2px solid var(--glass-border);
             display: flex; align-items: center; justify-content: center;
-            color: #fff; font-size: 1.15rem; cursor: pointer;
-            border: 2px solid transparent;
-            transition: transform 0.18s ease, box-shadow 0.18s ease;
-            position: relative;
+            padding: 8px; position: relative; transition: transform .2s ease, border-color .2s ease;
         }
-        .icon-grid-item:hover { transform: scale(1.12); box-shadow: 0 4px 14px rgba(0,0,0,0.25); }
-        .icon-grid-item.selected { border-color: var(--text-main); box-shadow: 0 0 0 3px var(--glass-hover), 0 4px 14px rgba(0,0,0,0.3); }
-        .icon-grid-item.selected::after {
+        .visual-picker-item img { width: 100%; height: 100%; object-fit: contain; }
+        .visual-picker-item:hover { transform: translateY(-3px) scale(1.06); box-shadow: 0 6px 16px rgba(0,0,0,0.18); border-color: var(--accent-light); }
+        .visual-picker-item.active { border-color: var(--accent-color); background: var(--brand-soft); }
+        .visual-picker-item.active::after {
             content: '\F26E'; font-family: 'bootstrap-icons'; position: absolute; bottom: -4px; left: -4px;
             background: var(--success-color); color: #fff; width: 16px; height: 16px; border-radius: 50%;
             font-size: 0.55rem; display: flex; align-items: center; justify-content: center;
             box-shadow: 0 1px 4px rgba(0,0,0,0.3);
         }
-        .icon-grid-empty { text-align: center; padding: 1.5rem; color: var(--text-muted); font-size: 0.85rem; grid-column: 1/-1; }
+
+        .cat-img-upload {
+            display: flex; align-items: center; gap: 1rem;
+            padding: .9rem; border-radius: 16px;
+            background: var(--input-bg); border: 1px dashed var(--glass-border);
+            transition: all .25s ease; cursor: pointer;
+        }
+        .cat-img-upload:hover, .cat-img-upload.dragover {
+            border-color: var(--accent-color); background: var(--brand-soft);
+        }
+        .cat-img-upload-icon {
+            width: 44px; height: 44px; border-radius: 12px; flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center;
+            background: var(--glass-bg); border: 1px solid var(--glass-border);
+            font-size: 1.2rem; color: var(--accent-color);
+        }
+        .cat-img-upload .txt strong { display: block; font-size: .85rem; }
+        .cat-img-upload .txt span { font-size: .74rem; color: var(--text-muted); }
+        .cat-img-remove {
+            border: none; background: rgba(214,69,59,0.12); color: #D6453B;
+            border-radius: 10px; width: 32px; height: 32px; flex-shrink: 0;
+            display: none; align-items: center; justify-content: center;
+        }
+        .cat-img-remove.show { display: flex; }
 
         /* ---------- Category badge in table ---------- */
         .cat-icon-badge {
             width: 34px; height: 34px; border-radius: 10px;
             display: inline-flex; align-items: center; justify-content: center;
             color: #fff; font-size: 1rem; box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            overflow: hidden; padding: 5px;
         }
+        .cat-icon-badge img { width: 100%; height: 100%; object-fit: contain; }
         .product-cat-pill {
             display: inline-flex; align-items: center; gap: 0.4rem;
             background: var(--glass-hover); border: 1px solid var(--glass-border);
@@ -889,7 +918,7 @@
                                 <i class="bi bi-plus-square-fill text-accent"></i>
                                 ایجاد دسته‌بندی جدید
                             </h5>
-                            <form action="/admin/category/add" method="POST" class="row g-3">
+                            <form action="/admin/category/add" method="POST" enctype="multipart/form-data" class="row g-3" id="addCategoryForm">
                                 <div class="col-12">
                                     <label class="form-label fw-medium text-muted-custom">نام فارسی</label>
                                     <input type="text" name="name" class="form-control glass-input" required placeholder="مثال: پاستا">
@@ -901,24 +930,33 @@
                                 </div>
 
                                 <div class="col-12">
-                                    <label class="form-label fw-medium text-muted-custom">آیکون دسته‌بندی</label>
+                                    <label class="form-label fw-medium text-muted-custom">تصویر دسته‌بندی</label>
 
                                     <div class="icon-picker-preview">
-                                        <div class="ipv-box icon-swatch-0" id="addIconPreviewBox">
-                                            <i class="bi bi-grid" id="addPreviewIcon"></i>
+                                        <div class="ipv-box" id="addVisualPreviewBox">
+                                            <i class="bi bi-image"></i>
                                         </div>
                                         <div>
-                                            <span class="fw-semibold d-block" id="addPreviewName">bi-grid</span>
-                                            <span class="text-muted-custom" style="font-size:0.78rem;">آیکون انتخاب‌شده برای این دسته‌بندی</span>
+                                            <span class="fw-semibold d-block" id="addVisualPreviewLabel">هیچ تصویری انتخاب نشده</span>
+                                            <span class="text-muted-custom" style="font-size:0.78rem;">یکی از وکتورهای آماده را انتخاب یا تصویر دلخواه آپلود کنید</span>
                                         </div>
                                     </div>
 
-                                    <input type="text" id="addIconSearch" class="form-control glass-input mb-3"
-                                           placeholder="جستجو در آیکون‌ها... (مثال: قهوه، آتش، گل، ستاره)">
+                                    <div class="visual-picker-grid" id="addVisualPickerGrid"></div>
 
-                                    <div class="icon-picker-groups" id="addIconGrid"></div>
+                                    <label class="cat-img-upload mt-3" id="addCategoryImageDrop" for="addCategoryImageInput">
+                                        <div class="cat-img-upload-icon"><i class="bi bi-cloud-arrow-up"></i></div>
+                                        <div class="txt flex-grow-1">
+                                            <strong>آپلود تصویر یا وکتور دلخواه</strong>
+                                            <span>SVG / PNG / JPG — برای آپلود کلیک یا فایل را رها کنید</span>
+                                        </div>
+                                        <button type="button" class="cat-img-remove" id="addCategoryImageRemoveBtn" title="حذف تصویر">
+                                            <i class="bi bi-x-lg"></i>
+                                        </button>
+                                        <input type="file" name="image" id="addCategoryImageInput" accept="image/*,.svg" class="visually-hidden">
+                                    </label>
 
-                                    <input type="hidden" name="icon" id="addSelectedIcon" value="bi-grid">
+                                    <input type="hidden" name="imageUrl" id="addSelectedImageUrl" value="">
                                 </div>
 
                                 <div class="col-12 text-end mt-2">
@@ -1095,203 +1133,123 @@
 
 <script>
 /* =========================================================
-   داده‌های آیکون‌ها — گروه‌بندی‌شده و رنگی، مرتبط با کافه/رستوران
+   وکتورهای از پیش آپلود‌شده برای دسته‌بندی‌ها (کافه/بیکری)
+   فایل‌های SVG باید در public/images/categories/presets/ باشند.
 ========================================================= */
-const ICON_LIBRARY = [
-    { group: 'نوشیدنی گرم', icons: [
-        ['cup-hot-fill','قهوه چای گرم اسپرسو coffee tea hot'],
-        ['cup-hot','قهوه چای گرم coffee tea hot'],
-        ['cup-fill','فنجان نوشیدنی cup drink'],
-        ['cup','فنجان نوشیدنی cup drink'],
-        ['fire','گرم داغ تند fire hot spicy']
-    ]},
-    { group: 'نوشیدنی سرد', icons: [
-        ['cup-straw','نوشیدنی سرد آبمیوه اسموتی straw cold drink'],
-        ['droplet-fill','آب نوشیدنی مایع water droplet'],
-        ['droplet-half','آب نوشیدنی water droplet'],
-        ['droplet','آب نوشیدنی water droplet'],
-        ['water','آب نوشیدنی water'],
-        ['snow','یخ سرد بستنی snow ice cold'],
-        ['snow2','یخ سرد snow ice cold'],
-        ['snow3','یخ سرد snow ice cold']
-    ]},
-    { group: 'غذای اصلی', icons: [
-        ['egg-fried','تخم‌مرغ صبحانه egg fried breakfast'],
-        ['egg-fill','تخم‌مرغ egg'],
-        ['egg','تخم‌مرغ egg'],
-        ['basket-fill','سبد غذا basket food'],
-        ['basket2-fill','سبد غذا basket food'],
-        ['basket3-fill','سبد غذا basket food'],
-        ['box-seam-fill','بسته غذا پک box package'],
-        ['box2-fill','بسته غذا box package'],
-        ['box-fill','بسته غذا box'],
-        ['layers-fill','لایه لازانیا layers'],
-        ['layers','لایه layers'],
-        ['bag-fill','کیسه غذا بیرون‌بر bag takeaway']
-    ]},
-    { group: 'دسر و شیرینی', icons: [
-        ['cookie','کوکی شیرینی بیسکویت cookie sweet dessert'],
-        ['heart-fill','محبوب علاقه دسر heart favorite'],
-        ['heart','محبوب علاقه heart favorite'],
-        ['gift-fill','هدیه ویژه gift special'],
-        ['gift','هدیه gift'],
-        ['balloon-fill','جشن شیرینی balloon party'],
-        ['balloon-heart-fill','جشن شیرینی balloon party love'],
-        ['bookmark-heart-fill','محبوب bookmark heart'],
-        ['emoji-heart-eyes-fill','عاشقانه خوشمزه emoji love']
-    ]},
-    { group: 'تازه و سالم', icons: [
-        ['flower1','تازه گل سالاد flower fresh salad'],
-        ['flower2','تازه گل سالاد flower fresh'],
-        ['flower3','تازه گل flower fresh'],
-        ['tree-fill','سبزیجات گیاهی tree green vegetable'],
-        ['tree','گیاهی tree green'],
-        ['sun-fill','تابستانی تازه sun fresh summer']
-    ]},
-    { group: 'ویژه و امتیاز', icons: [
-        ['star-fill','ویژه برتر محبوب star special'],
-        ['star','ویژه star'],
-        ['award-fill','جایزه کیفیت award quality'],
-        ['award','جایزه award'],
-        ['trophy-fill','برترین قهرمان trophy best'],
-        ['trophy','برترین trophy'],
-        ['lightning-fill','سریع فوری lightning fast'],
-        ['lightning-charge-fill','سریع پرانرژی lightning energy'],
-        ['bookmark-star-fill','ویژه پیشنهاد bookmark special'],
-        ['brightness-alt-high-fill','درخشان ویژه brightness special'],
-        ['brightness-alt-high','درخشان brightness']
-    ]},
-    { group: 'عمومی و دکوری', icons: [
-        ['grid-fill','عمومی پیش‌فرض grid general'],
-        ['grid-3x3-gap-fill','عمومی شبکه grid'],
-        ['grid-1x2-fill','عمومی grid'],
-        ['circle-fill','دایره ساده circle'],
-        ['circle','دایره circle'],
-        ['square-fill','مربع ساده square'],
-        ['pie-chart-fill','پیتزا گرد pie chart pizza round'],
-        ['pie-chart','پیتزا گرد pie chart'],
-        ['moon-stars-fill','شب night moon'],
-        ['stars','ستاره stars'],
-        ['emoji-smile-fill','خوشحال emoji smile'],
-        ['emoji-laughing-fill','خوشحال emoji laugh'],
-        ['clock-fill','زمان سفارش clock time'],
-        ['calendar-heart-fill','رزرو calendar'],
-        ['tag-fill','تخفیف برچسب tag price'],
-        ['tags-fill','تخفیف برچسب tags price'],
-        ['percent','تخفیف درصد percent discount'],
-        ['cash-coin','قیمت پول cash money'],
-        ['currency-exchange','قیمت پول currency'],
-        ['palette-fill','رنگارنگ هنری palette art'],
-        ['brush-fill','هنری برس brush art'],
-        ['magic','ویژه جادویی magic special'],
-        ['rocket-fill','سریع ارسال rocket fast delivery'],
-        ['hand-thumbs-up-fill','پیشنهاد محبوب thumbs up'],
-        ['people-fill','گروهی خانوادگی people family'],
-        ['geo-alt-fill','مکان محلی geo location'],
-        ['telephone-fill','سفارش تلفنی telephone order'],
-        ['chat-heart-fill','نظرات مشتری chat'],
-        ['umbrella-fill','فضای باز تراس umbrella terrace'],
-        ['compass-fill','کاوش compass explore'],
-        ['map-fill','نقشه map'],
-        ['puzzle-fill','ترکیبی puzzle combo'],
-        ['truck','ارسال بیرون‌بر truck delivery'],
-        ['shop','فروشگاه shop'],
-        ['shop-window','ویترین shop window'],
-        ['house-heart-fill','خانگی house home'],
-        ['globe-americas','بین‌المللی globe international'],
-        ['globe2','بین‌المللی globe'],
-        ['bag-heart-fill','بیرون‌بر ویژه bag special'],
-        ['bag-check-fill','سفارش تایید‌شده bag check']
-    ]}
+const CATEGORY_PRESETS = [
+    { file: 'bread.svg',         label: 'نان' },
+    { file: 'croissant.svg',     label: 'کرواسان' },
+    { file: 'coffee.svg',        label: 'قهوه' },
+    { file: 'cake.svg',          label: 'کیک' },
+    { file: 'cupcake.svg',       label: 'کاپ‌کیک' },
+    { file: 'donut.svg',         label: 'دونات' },
+    { file: 'cookie.svg',        label: 'کوکی' },
+    { file: 'cinnamon-roll.svg', label: 'رول دارچین' },
+    { file: 'sandwich.svg',      label: 'ساندویچ' },
+    { file: 'milk.svg',          label: 'شیر' }
 ];
+const PRESET_BASE_PATH = '/images/categories/presets/';
 
-function swatchIdx(str){
-    if(!str) return 0;
-    let h = 0;
-    for (let i=0;i<str.length;i++){ h = (h + str.charCodeAt(i)) % 10; }
-    return h;
-}
+/* گرید انتخاب تصویر/وکتور + آپلود دلخواه — برای فرم افزودن دسته‌بندی */
+function initVisualPicker(cfg) {
+    const grid        = document.getElementById(cfg.gridId);
+    const hiddenUrl    = document.getElementById(cfg.hiddenId);
+    const previewBox   = document.getElementById(cfg.previewBoxId);
+    const previewLabel = document.getElementById(cfg.previewLabelId);
+    const fileInput    = document.getElementById(cfg.fileInputId);
+    const removeBtn    = document.getElementById(cfg.removeBtnId);
+    const dropZone      = document.getElementById(cfg.dropZoneId);
+    if (!grid) return;
 
-function initIconPicker(cfg){
-    const gridEl = document.getElementById(cfg.gridId);
-    const searchEl = document.getElementById(cfg.searchId);
-    const hiddenEl = document.getElementById(cfg.hiddenId);
-    const previewIconEl = document.getElementById(cfg.previewIconId);
-    const previewNameEl = document.getElementById(cfg.previewNameId);
-    const previewBoxEl = document.getElementById(cfg.previewBoxId);
-    if (!gridEl) return;
+    let currentValue = hiddenUrl.value || '';
 
-    let current = cfg.initial || 'bi-grid';
-
-    function applyPreview(iconName){
-        const idx = swatchIdx(iconName);
-        previewIconEl.className = 'bi bi-' + iconName;
-        previewNameEl.textContent = 'bi-' + iconName;
-        previewBoxEl.className = 'ipv-box icon-swatch-' + idx;
-        hiddenEl.value = 'bi-' + iconName;
+    function setPreview(src, label) {
+        previewBox.innerHTML = src
+            ? `<img src="${src}" alt="">`
+            : `<i class="bi bi-image"></i>`;
+        if (previewLabel) previewLabel.textContent = label || 'هیچ تصویری انتخاب نشده';
+        if (removeBtn) removeBtn.classList.toggle('show', Boolean(src));
     }
 
-    function render(filter){
-        gridEl.innerHTML = '';
-        let matched = 0;
-        ICON_LIBRARY.forEach(group => {
-            const filteredIcons = group.icons.filter(([name, keywords]) => {
-                if (!filter) return true;
-                const f = filter.toLowerCase();
-                return name.toLowerCase().includes(f) || keywords.toLowerCase().includes(f);
-            });
-            if (filteredIcons.length === 0) return;
-            matched += filteredIcons.length;
-
-            const titleEl = document.createElement('div');
-            titleEl.className = 'icon-group-title';
-            titleEl.innerHTML = '<i class="bi bi-dot"></i> ' + group.group;
-            gridEl.appendChild(titleEl);
-
-            const rowEl = document.createElement('div');
-            rowEl.className = 'icon-grid';
-            filteredIcons.forEach(([name]) => {
-                const idx = swatchIdx(name);
-                const item = document.createElement('div');
-                item.className = 'icon-grid-item icon-swatch-' + idx + (('bi-' + name) === current ? ' selected' : '');
-                item.innerHTML = '<i class="bi bi-' + name + '"></i>';
-                item.title = 'bi-' + name;
-                item.addEventListener('click', () => {
-                    current = 'bi-' + name;
-                    applyPreview(name);
-                    gridEl.querySelectorAll('.icon-grid-item.selected').forEach(el => el.classList.remove('selected'));
-                    item.classList.add('selected');
-                });
-                rowEl.appendChild(item);
-            });
-            gridEl.appendChild(rowEl);
+    function highlightActive(activeFile) {
+        grid.querySelectorAll('.visual-picker-item').forEach(item => {
+            item.classList.toggle('active', item.dataset.file === activeFile);
         });
-
-        if (matched === 0) {
-            gridEl.innerHTML = '<div class="icon-grid-empty"><i class="bi bi-search d-block mb-2" style="font-size:1.4rem;"></i>آیکونی با این عبارت پیدا نشد.</div>';
-        }
     }
 
-    if (searchEl) {
-        searchEl.addEventListener('input', () => render(searchEl.value.trim()));
+    function renderGrid() {
+        grid.innerHTML = '';
+        CATEGORY_PRESETS.forEach(preset => {
+            const path = PRESET_BASE_PATH + preset.file;
+            const item = document.createElement('div');
+            item.className = 'visual-picker-item' + (currentValue === path ? ' active' : '');
+            item.dataset.file = path;
+            item.title = preset.label;
+            item.innerHTML = `<img src="${path}" alt="${preset.label}" loading="lazy">`;
+            item.addEventListener('click', () => {
+                if (fileInput) fileInput.value = '';
+                hiddenUrl.value = path;
+                currentValue = path;
+                highlightActive(path);
+                setPreview(path, preset.label);
+            });
+            grid.appendChild(item);
+        });
+    }
+    renderGrid();
+
+    if (fileInput) {
+        fileInput.addEventListener('change', function () {
+            const file = this.files && this.files[0];
+            if (!file) return;
+            highlightActive(null);
+            const reader = new FileReader();
+            reader.onload = e => setPreview(e.target.result, file.name);
+            reader.readAsDataURL(file);
+        });
     }
 
-    // مقدار اولیه (برای فرم ویرایش)
-    if (current && current.indexOf('bi-') === 0) {
-        applyPreview(current.replace('bi-', ''));
+    if (removeBtn) {
+        removeBtn.addEventListener('click', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            if (fileInput) fileInput.value = '';
+            hiddenUrl.value = '';
+            currentValue = '';
+            highlightActive(null);
+            setPreview(null, null);
+        });
     }
-    render('');
+
+    if (dropZone) {
+        ['dragenter', 'dragover'].forEach(evt => {
+            dropZone.addEventListener(evt, e => { e.preventDefault(); dropZone.classList.add('dragover'); });
+        });
+        ['dragleave', 'drop'].forEach(evt => {
+            dropZone.addEventListener(evt, e => { e.preventDefault(); dropZone.classList.remove('dragover'); });
+        });
+        dropZone.addEventListener('drop', function (e) {
+            const file = e.dataTransfer.files && e.dataTransfer.files[0];
+            if (!file || !fileInput) return;
+            fileInput.files = e.dataTransfer.files;
+            fileInput.dispatchEvent(new Event('change'));
+        });
+    }
 }
 
 document.addEventListener("DOMContentLoaded", function () {
 
-    initIconPicker({
-        gridId: 'addIconGrid', searchId: 'addIconSearch', hiddenId: 'addSelectedIcon',
-        previewIconId: 'addPreviewIcon', previewNameId: 'addPreviewName', previewBoxId: 'addIconPreviewBox',
-        initial: 'bi-grid'
+    initVisualPicker({
+        gridId: 'addVisualPickerGrid',
+        hiddenId: 'addSelectedImageUrl',
+        previewBoxId: 'addVisualPreviewBox',
+        previewLabelId: 'addVisualPreviewLabel',
+        fileInputId: 'addCategoryImageInput',
+        removeBtnId: 'addCategoryImageRemoveBtn',
+        dropZoneId: 'addCategoryImageDrop'
     });
 
-    // --- Modals ---
+
     const deleteModal = document.getElementById('deleteModal');
     if (deleteModal) {
         deleteModal.addEventListener('show.bs.modal', event => {
