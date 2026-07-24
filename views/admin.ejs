@@ -999,8 +999,8 @@
                                                     </td>
                                                     <td class="fw-bold">
                                                         <span class="cat-icon-badge icon-swatch-<%= sIdx %> me-2">
-                                                            <% if (cat.imageUrl) { %>
-                                                                <img src="<%= cat.imageUrl %>" alt="">
+                                                            <% if (cat.image) { %>
+                                                                <img src="<%= cat.image %>" alt="<%= cat.name %>" style="width:100%; height:100%; object-fit:cover; border-radius:inherit;">
                                                             <% } else { %>
                                                                 <i class="bi <%= cat.icon || 'bi-image' %>"></i>
                                                             <% } %>

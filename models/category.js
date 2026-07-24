@@ -15,7 +15,11 @@ const categorySchema = new mongoose.Schema({
     icon: {
         type: String,
         default: 'bi-grid'  // ← اضافه شد
-    }
+    },
+    image: {
+    type: String,
+    default: ''
+}
 } , { timestamps : true })
 
 const Category = mongoose.model('category' , categorySchema)

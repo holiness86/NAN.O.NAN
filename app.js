@@ -182,17 +182,26 @@ app.get('/admin/category/edit/:id', checkAdminLogin, async (req, res) => {
     }
 })
 
-app.post('/admin/category/update/:id', checkAdminLogin, async (req, res) => {
+app.post('/admin/category/update/:id', checkAdminLogin, upload.single('image'), async (req, res) => {
     try {
-        const { nameFa, nameEn, icon } = req.body  // ← icon اضافه شد
+        const { nameFa, nameEn, icon, imageUrl } = req.body
+
+        const updateData = {
+            name: nameFa,
+            enname: nameEn,
+            icon: icon || 'bi-grid'
+        }
+
+        // اگه فایل جدید آپلود شده، عکس رو عوض کن؛ وگرنه اگه imageUrl (وکتور از پیش‌انتخاب‌شده) اومده اونو بذار؛ وگرنه عکس قبلی دست‌نخورده می‌مونه
+        if (req.file) {
+            updateData.image = '/uploads/' + req.file.filename
+        } else if (imageUrl) {
+            updateData.image = imageUrl
+        }
 
         await Category.findByIdAndUpdate(
             req.params.id,
-            {
-                name: nameFa,
-                enname: nameEn,
-                icon: icon || 'bi-grid'  // ← icon ذخیره میشه
-            }
+            updateData
         )
 
         res.redirect('/admin')
@@ -282,9 +291,11 @@ app.post('/admin', checkAdminLogin, upload.single('imageUrl'), (req, res) => {
 });
 
 // افزودن کتگوری
-app.post('/admin/category/add', checkAdminLogin, async (req, res) => {
+app.post('/admin/category/add', checkAdminLogin, upload.single('image'), async (req, res) => {
     try {
-        const { name, enname, icon } = req.body   // ← icon اضافه شد
+        console.log('DEBUG req.body:', req.body)
+        console.log('DEBUG req.file:', req.file)
+        const { name, enname, icon, imageUrl } = req.body   // imageUrl = مسیر وکتور آماده‌ی انتخاب‌شده (اگه فایل آپلود نشده باشه)
 
         if (!name || !enname) {
             return res.status(400).send('name و enname الزامی هستند')
@@ -298,7 +309,9 @@ app.post('/admin/category/add', checkAdminLogin, async (req, res) => {
         const newCategory = new Category({
             name,
             enname,
-            icon: icon || 'bi-grid'    // ← icon ذخیره میشه
+            icon: icon || 'bi-grid',
+            // اولویت با فایل آپلودی؛ اگه فایلی نبود از وکتور از پیش‌انتخاب‌شده استفاده کن
+            image: req.file ? '/uploads/' + req.file.filename : (imageUrl || '')
         })
 
         await newCategory.save()
