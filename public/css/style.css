@@ -48,7 +48,16 @@
 :root {
   --cream-light-value: #F6ECE5;
   --cream-dark-value:  #1B120C;
+
+  /* فاصله‌ی افقی یکسان برای کل صفحه (Header/دسته‌بندی‌ها/محتوا/فوتر)
+     تا هیچ کارتی به لبه‌ی صفحه نچسبد — مقیاس‌پذیر بر اساس اندازه‌ی صفحه */
+  --page-pad-x: 16px;
 }
+@media (min-width: 380px)  { :root { --page-pad-x: 18px; } }
+@media (min-width: 576px)  { :root { --page-pad-x: 22px; } }
+@media (min-width: 768px)  { :root { --page-pad-x: 30px; } }
+@media (min-width: 992px)  { :root { --page-pad-x: 40px; } }
+@media (min-width: 1200px) { :root { --page-pad-x: 48px; } }
 
 /* =========================================================================
    3. DESIGN TOKENS — Light theme (نان و نان)
@@ -348,7 +357,7 @@ html.app-ready .menu-footer    { animation: enter-from-left  620ms var(--ease) 4
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  padding: clamp(1.1rem, 4vw, 1.7rem) 18px;
+  padding: clamp(1.1rem, 4vw, 1.7rem) var(--page-pad-x);
   max-width: 1180px;
   margin: 0 auto;
 }
@@ -470,7 +479,7 @@ html.app-ready .menu-footer    { animation: enter-from-left  620ms var(--ease) 4
   display: flex;
   align-items: flex-end;
   gap: 12px;
-  padding: 14px 16px;
+  padding: 14px var(--page-pad-x);
   max-width: 1180px;
   margin: 0 auto;
   overflow-x: auto;
@@ -531,7 +540,7 @@ html.app-ready .menu-footer    { animation: enter-from-left  620ms var(--ease) 4
 /* =========================================================================
    11. MAIN LAYOUT + VIEW SWITCHER (grid / list)
    ========================================================================= */
-.menu-main { padding: 1.8rem 0 5rem; max-width: 1180px; }
+.menu-main { padding: 1.8rem var(--page-pad-x) 5rem; max-width: 1180px; }
 
 .view-switcher { display: flex; align-items: center; justify-content: flex-end; margin-bottom: 1.3rem; }
 .view-switcher-track {
@@ -583,9 +592,11 @@ html.app-ready .menu-footer    { animation: enter-from-left  620ms var(--ease) 4
   grid-template-columns: repeat(2, 1fr);
   gap: 12px;
 }
-@media (min-width: 576px) { .menu-items { gap: 16px; } }
-@media (min-width: 768px) { .menu-items { grid-template-columns: repeat(3, 1fr); } }
+@media (min-width: 480px) { .menu-items { gap: 14px; } }
+@media (min-width: 576px) { .menu-items { grid-template-columns: repeat(3, 1fr); gap: 16px; } }
+@media (min-width: 768px) { .menu-items { grid-template-columns: repeat(3, 1fr); gap: 18px; } }
 @media (min-width: 992px) { .menu-items { grid-template-columns: repeat(4, 1fr); gap: 20px; } }
+@media (min-width: 1200px) { .menu-items { grid-template-columns: repeat(5, 1fr); gap: 22px; } }
 
 .menu-card {
   border-radius: 18px;
@@ -663,7 +674,7 @@ main[data-view="list"] .menu-card:hover .menu-card-img img { transform: none; }
 .menu-footer {
   background: var(--brand-dark);
   color: #fff;
-  padding: 2.5rem 1.5rem calc(2.5rem + env(safe-area-inset-bottom, 0px));
+  padding: 2.5rem var(--page-pad-x) calc(2.5rem + env(safe-area-inset-bottom, 0px));
   text-align: center;
 }
 .footer-brand { font-size: 1.2rem; font-weight: 800; color: #fff; letter-spacing: -.03em; margin-bottom: .4rem; }

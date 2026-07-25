@@ -441,10 +441,13 @@
         .icon-picker-preview .ipv-box img { width: 100%; height: 100%; object-fit: contain; }
 
         .visual-picker-grid {
-            display: grid; grid-template-columns: repeat(5, 1fr);
-            gap: 10px; max-height: 260px; overflow-y: auto;
+            display: grid; grid-template-columns: repeat(6, 1fr);
+            gap: 10px; max-height: 320px; overflow-y: auto;
             padding: 10px; border-radius: 16px;
             background: var(--input-bg); border: 1px solid var(--glass-border);
+        }
+        @media (max-width: 400px) {
+            .visual-picker-grid { grid-template-columns: repeat(5, 1fr); }
         }
         .visual-picker-grid::-webkit-scrollbar { width: 5px; }
         .visual-picker-grid::-webkit-scrollbar-thumb { background: var(--glass-border); border-radius: 5px; }
@@ -942,6 +945,9 @@
                                         </div>
                                     </div>
 
+                                    <input type="text" id="addVisualPickerSearch" class="form-control glass-input mb-2"
+                                           placeholder="جستجو در وکتورها... (مثال: قهوه، نان، کیک)">
+
                                     <div class="visual-picker-grid" id="addVisualPickerGrid"></div>
 
                                     <label class="cat-img-upload mt-3" id="addCategoryImageDrop" for="addCategoryImageInput">
@@ -953,7 +959,7 @@
                                         <button type="button" class="cat-img-remove" id="addCategoryImageRemoveBtn" title="حذف تصویر">
                                             <i class="bi bi-x-lg"></i>
                                         </button>
-                                        <input type="file" name="image" id="addCategoryImageInput" accept="image/*,.svg" class="visually-hidden">
+                                        <input type="file" name="image" id="addCategoryImageInput" accept="image/png,image/jpeg,image/webp,image/svg+xml,.svg,.png,.jpg,.jpeg,.webp" class="visually-hidden">
                                     </label>
 
                                     <input type="hidden" name="imageUrl" id="addSelectedImageUrl" value="">
@@ -1141,16 +1147,38 @@
    فایل‌های SVG باید در public/images/categories/presets/ باشند.
 ========================================================= */
 const CATEGORY_PRESETS = [
-    { file: 'bread.svg',         label: 'نان' },
-    { file: 'croissant.svg',     label: 'کرواسان' },
-    { file: 'coffee.svg',        label: 'قهوه' },
-    { file: 'cake.svg',          label: 'کیک' },
-    { file: 'cupcake.svg',       label: 'کاپ‌کیک' },
-    { file: 'donut.svg',         label: 'دونات' },
-    { file: 'cookie.svg',        label: 'کوکی' },
-    { file: 'cinnamon-roll.svg', label: 'رول دارچین' },
-    { file: 'sandwich.svg',      label: 'ساندویچ' },
-    { file: 'milk.svg',          label: 'شیر' }
+    { file: 'bread.svg',             label: 'نان' },
+    { file: 'traditional-bread.svg', label: 'نان سنتی' },
+    { file: 'fantasy-bread.svg',     label: 'نان فانتزی' },
+    { file: 'bulky-bread.svg',       label: 'نان حجیم' },
+    { file: 'croissant.svg',         label: 'کرواسان' },
+    { file: 'pastry.svg',            label: 'شیرینی' },
+    { file: 'dry-pastry.svg',        label: 'شیرینی خشک' },
+    { file: 'wet-pastry.svg',        label: 'شیرینی تر' },
+    { file: 'cake.svg',              label: 'کیک' },
+    { file: 'birthday-cake.svg',     label: 'کیک تولد' },
+    { file: 'cupcake.svg',           label: 'کاپ‌کیک' },
+    { file: 'dessert.svg',           label: 'دسر' },
+    { file: 'cookie.svg',            label: 'کوکی' },
+    { file: 'biscuit.svg',           label: 'بیسکویت' },
+    { file: 'donut.svg',             label: 'دونات' },
+    { file: 'cinnamon-roll.svg',     label: 'رول دارچین' },
+    { file: 'chocolate.svg',         label: 'شکلات' },
+    { file: 'icecream.svg',          label: 'بستنی' },
+    { file: 'coffee.svg',            label: 'قهوه' },
+    { file: 'espresso.svg',          label: 'اسپرسو' },
+    { file: 'tea.svg',               label: 'چای' },
+    { file: 'hot-drink.svg',         label: 'نوشیدنی گرم' },
+    { file: 'cold-drink.svg',        label: 'نوشیدنی سرد' },
+    { file: 'smoothie.svg',          label: 'اسموتی' },
+    { file: 'juice.svg',             label: 'آبمیوه' },
+    { file: 'milk.svg',              label: 'شیر' },
+    { file: 'breakfast.svg',         label: 'صبحانه' },
+    { file: 'sandwich.svg',          label: 'ساندویچ' },
+    { file: 'pizza.svg',             label: 'پیتزا' },
+    { file: 'fastfood.svg',          label: 'فست‌فود' },
+    { file: 'iranian-food.svg',      label: 'غذای ایرانی' },
+    { file: 'salad.svg',             label: 'سالاد' }
 ];
 const PRESET_BASE_PATH = '/images/categories/presets/';
 /* گرید انتخاب تصویر/وکتور + آپلود دلخواه — برای فرم افزودن دسته‌بندی */
@@ -1180,9 +1208,14 @@ function initVisualPicker(cfg) {
         });
     }
 
-    function renderGrid() {
+    function renderGrid(list) {
+        const items = list || CATEGORY_PRESETS;
         grid.innerHTML = '';
-        CATEGORY_PRESETS.forEach(preset => {
+        if (items.length === 0) {
+            grid.innerHTML = '<p class="text-center text-muted-custom small py-3 mb-0" style="grid-column:1/-1;">وکتوری با این عنوان پیدا نشد.</p>';
+            return;
+        }
+        items.forEach(preset => {
             const path = PRESET_BASE_PATH + preset.file;
             const item = document.createElement('div');
             item.className = 'visual-picker-item' + (currentValue === path ? ' active' : '');
@@ -1200,6 +1233,17 @@ function initVisualPicker(cfg) {
         });
     }
     renderGrid();
+
+    if (cfg.searchId) {
+        const searchInput = document.getElementById(cfg.searchId);
+        if (searchInput) {
+            searchInput.addEventListener('input', function () {
+                const q = this.value.trim();
+                const filtered = q ? CATEGORY_PRESETS.filter(p => p.label.indexOf(q) !== -1) : CATEGORY_PRESETS;
+                renderGrid(filtered);
+            });
+        }
+    }
 
     if (fileInput) {
         fileInput.addEventListener('change', function () {
@@ -1249,7 +1293,8 @@ document.addEventListener("DOMContentLoaded", function () {
         previewLabelId: 'addVisualPreviewLabel',
         fileInputId: 'addCategoryImageInput',
         removeBtnId: 'addCategoryImageRemoveBtn',
-        dropZoneId: 'addCategoryImageDrop'
+        dropZoneId: 'addCategoryImageDrop',
+        searchId: 'addVisualPickerSearch'
     });
 
 

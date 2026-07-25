@@ -165,10 +165,13 @@ textarea::-ms-input-placeholder {
 
         /* ── گرید وکتورهای از پیش آپلود‌شده ──────────────────────── */
         .visual-picker-grid {
-            display: grid; grid-template-columns: repeat(5, 1fr);
-            gap: 10px; max-height: 260px; overflow-y: auto;
+            display: grid; grid-template-columns: repeat(6, 1fr);
+            gap: 10px; max-height: 320px; overflow-y: auto;
             padding: 10px; border-radius: 16px;
             background: var(--input-bg); border: 1px solid var(--glass-border);
+        }
+        @media (max-width: 400px) {
+            .visual-picker-grid { grid-template-columns: repeat(5, 1fr); }
         }
         .visual-picker-item {
             aspect-ratio: 1/1; border-radius: 14px; cursor: pointer;
@@ -301,6 +304,10 @@ textarea::-ms-input-placeholder {
             </div>
         </div>
 
+        <!-- جستجو در وکتورهای آماده -->
+        <input type="text" id="visualPickerSearch" class="form-control glass-input mb-2"
+               placeholder="جستجو در وکتورها... (مثال: قهوه، نان، کیک)">
+
         <!-- گرید وکتورهای از پیش آپلود شده -->
         <div class="visual-picker-grid" id="visualPickerGrid"></div>
 
@@ -314,7 +321,7 @@ textarea::-ms-input-placeholder {
             <button type="button" class="cat-img-remove <%= category.imageUrl ? 'show' : '' %>" id="catImgRemoveBtn" title="حذف تصویر">
                 <i class="bi bi-x-lg"></i>
             </button>
-            <input type="file" name="image" id="catImageInput" accept="image/*,.svg" class="visually-hidden">
+            <input type="file" name="image" id="catImageInput" accept="image/png,image/jpeg,image/webp,image/svg+xml,.svg,.png,.jpg,.jpeg,.webp" class="visually-hidden">
         </label>
 
         <!-- مقدار نهایی (مسیر وکتور پیش‌فرض انتخاب‌شده، یا مقدار فعلی؛ در صورت آپلود فایل، سرور باید فایل را در اولویت قرار دهد) -->
@@ -351,16 +358,38 @@ textarea::-ms-input-placeholder {
        (۱۰ فایل SVG پیوست‌شده در پاسخ). برای افزودن وکتور جدید فقط
        فایل را در همان مسیر قرار داده و یک آیتم به این آرایه اضافه کنید. */
     const CATEGORY_PRESETS = [
-        { file: 'bread.svg',         label: 'نان' },
-        { file: 'croissant.svg',     label: 'کرواسان' },
-        { file: 'coffee.svg',        label: 'قهوه' },
-        { file: 'cake.svg',          label: 'کیک' },
-        { file: 'cupcake.svg',       label: 'کاپ‌کیک' },
-        { file: 'donut.svg',         label: 'دونات' },
-        { file: 'cookie.svg',        label: 'کوکی' },
-        { file: 'cinnamon-roll.svg', label: 'رول دارچین' },
-        { file: 'sandwich.svg',      label: 'ساندویچ' },
-        { file: 'milk.svg',          label: 'شیر' }
+        { file: 'bread.svg',             label: 'نان' },
+        { file: 'traditional-bread.svg', label: 'نان سنتی' },
+        { file: 'fantasy-bread.svg',     label: 'نان فانتزی' },
+        { file: 'bulky-bread.svg',       label: 'نان حجیم' },
+        { file: 'croissant.svg',         label: 'کرواسان' },
+        { file: 'pastry.svg',            label: 'شیرینی' },
+        { file: 'dry-pastry.svg',        label: 'شیرینی خشک' },
+        { file: 'wet-pastry.svg',        label: 'شیرینی تر' },
+        { file: 'cake.svg',              label: 'کیک' },
+        { file: 'birthday-cake.svg',     label: 'کیک تولد' },
+        { file: 'cupcake.svg',           label: 'کاپ‌کیک' },
+        { file: 'dessert.svg',           label: 'دسر' },
+        { file: 'cookie.svg',            label: 'کوکی' },
+        { file: 'biscuit.svg',           label: 'بیسکویت' },
+        { file: 'donut.svg',             label: 'دونات' },
+        { file: 'cinnamon-roll.svg',     label: 'رول دارچین' },
+        { file: 'chocolate.svg',         label: 'شکلات' },
+        { file: 'icecream.svg',          label: 'بستنی' },
+        { file: 'coffee.svg',            label: 'قهوه' },
+        { file: 'espresso.svg',          label: 'اسپرسو' },
+        { file: 'tea.svg',               label: 'چای' },
+        { file: 'hot-drink.svg',         label: 'نوشیدنی گرم' },
+        { file: 'cold-drink.svg',        label: 'نوشیدنی سرد' },
+        { file: 'smoothie.svg',          label: 'اسموتی' },
+        { file: 'juice.svg',             label: 'آبمیوه' },
+        { file: 'milk.svg',              label: 'شیر' },
+        { file: 'breakfast.svg',         label: 'صبحانه' },
+        { file: 'sandwich.svg',          label: 'ساندویچ' },
+        { file: 'pizza.svg',             label: 'پیتزا' },
+        { file: 'fastfood.svg',          label: 'فست‌فود' },
+        { file: 'iranian-food.svg',      label: 'غذای ایرانی' },
+        { file: 'salad.svg',             label: 'سالاد' }
     ];
     const PRESET_BASE_PATH = '/images/categories/presets/';
 
@@ -391,9 +420,14 @@ textarea::-ms-input-placeholder {
             });
         }
 
-        function renderGrid() {
+        function renderGrid(list) {
+            const items = list || CATEGORY_PRESETS;
             grid.innerHTML = '';
-            CATEGORY_PRESETS.forEach(preset => {
+            if (items.length === 0) {
+                grid.innerHTML = '<p class="text-center text-muted small py-3 mb-0" style="grid-column:1/-1;">وکتوری با این عنوان پیدا نشد.</p>';
+                return;
+            }
+            items.forEach(preset => {
                 const path = fullPath(preset.file);
                 const isActive = currentValue === path;
                 const item = document.createElement('div');
@@ -412,6 +446,15 @@ textarea::-ms-input-placeholder {
         }
 
         renderGrid();
+
+        const searchInput = document.getElementById('visualPickerSearch');
+        if (searchInput) {
+            searchInput.addEventListener('input', function () {
+                const q = this.value.trim();
+                const filtered = q ? CATEGORY_PRESETS.filter(p => p.label.indexOf(q) !== -1) : CATEGORY_PRESETS;
+                renderGrid(filtered);
+            });
+        }
 
         /* ── آپلود وکتور/تصویر دلخواه: پیش‌نمایش زنده + Drag&Drop + حذف ── */
         const dropZone = document.getElementById('catImgDrop');
