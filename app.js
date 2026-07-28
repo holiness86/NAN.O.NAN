@@ -110,10 +110,11 @@ const upload = multer({
 
 // اتصال دیتا بیس
 const urlDB = process.env.MONGO_URL || 'mongodb://localhost:27017/NANONAN';
+const PORT = process.env.PORT || 3000;
 mongoose.connect(urlDB)
 .then(() => {
     console.log('Connected to MongoDB');
-    app.listen(3000 , () => {
+    app.listen(PORT , () => {
         console.log('Server is running on port 3000');
     });
 })
