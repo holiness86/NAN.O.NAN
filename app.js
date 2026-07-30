@@ -20,8 +20,7 @@ const Category = require('./models/category')
 
 // میدل ور ها
 app.set('view engine' , 'ejs');
-// این خط رو کنار بقیه express.static هات اضافه کن
-app.use('/uploads', express.static('/uploads'));
+app.use(express.static('public'));
 app.use(express.urlencoded({extended: true}));
 app.use(express.json());
 // جلوگیری از NoSQL Injection: کلیدهای خطرناک ($ و .) رو از داخل آبجکت پاک می‌کنیم
