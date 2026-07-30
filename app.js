@@ -20,7 +20,8 @@ const Category = require('./models/category')
 
 // میدل ور ها
 app.set('view engine' , 'ejs');
-app.use(express.static('public'));
+// این خط رو کنار بقیه express.static هات اضافه کن
+app.use('/uploads', express.static('/uploads'));
 app.use(express.urlencoded({extended: true}));
 app.use(express.json());
 // جلوگیری از NoSQL Injection: کلیدهای خطرناک ($ و .) رو از داخل آبجکت پاک می‌کنیم
@@ -82,11 +83,10 @@ const ALLOWED_MIME_TYPES = {
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, 'public/uploads/');
+        cb(null, '/uploads/'); // مسیر مطلق دیسک persistent، نه پوشه public داخل کانتینر
     },
     filename: function (req, file, cb) {
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        // پسوند فایل رو خودمون بر اساس mimetype واقعی تعیین می‌کنیم، نه از روی نام فایل ارسالی کاربر
         const safeExt = ALLOWED_MIME_TYPES[file.mimetype];
         cb(null, uniqueSuffix + safeExt);
     }
