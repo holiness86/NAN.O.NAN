@@ -30,13 +30,82 @@
    menu still renders correctly on slow or filtered connections.
    License: SIL OFL 1.1 — see css/fonts/YekanBakh/LICENSE-OFL.txt
    ========================================================================= */
+/* ================================
+   YekanBakh Variable Font
+================================ */
+
 @font-face {
   font-family: 'YekanBakh';
-  src: url('./Fonts/YekanBakh-VF.ttf');
-  font-weight: 100 900;
+  src: url('./Fonts/YekanBakh-VF.ttf') format('truetype');
   font-style: normal;
+  font-weight: 100 900;
   font-display: swap;
 }
+
+/* ================================
+   Global Typography
+================================ */
+
+html {
+  direction: rtl;
+  font-family: 'YekanBakh', sans-serif;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  direction: rtl;
+  font-family: 'YekanBakh', sans-serif;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* اعمال فونت روی تمام المان‌ها و کنترل‌های فرم */
+*,
+*::before,
+*::after {
+  font-family: inherit;
+}
+
+/* اطمینان از اعمال فونت روی المان‌هایی که مرورگر معمولاً فونت پیش‌فرض دارند */
+button,
+input,
+textarea,
+select,
+option,
+optgroup {
+  font-family: 'YekanBakh', sans-serif;
+}
+
+/* حفظ ویژگی ارث‌بری فونت برای تمام عناصر */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+a,
+span,
+div,
+label,
+small,
+strong,
+b,
+em,
+i,
+li,
+td,
+th,
+button,
+input,
+textarea,
+select {
+  font-family: inherit;
+}
+
 
 /* =========================================================================
    2. DESIGN TOKENS — always-available brand values (theme-independent)
@@ -167,7 +236,7 @@ html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
 body {
   background-color: var(--cream);
   color: var(--ink);
-  font-family: 'YekanBakh';
+  font-family: 'YekanBakh', Tahoma, 'Segoe UI', Arial, sans-serif;
   font-size: 15px;
   line-height: 1.6;
   min-height: 100vh;
