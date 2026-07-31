@@ -436,12 +436,11 @@ html.app-ready .menu-footer    { animation: enter-from-left  620ms var(--ease) 4
   display: flex; align-items: center; justify-content: center;
   font-size: 1.15rem;
   color: var(--brand);
-  box-shadow: var(--shadow-brand);
   flex-shrink: 0;
   overflow: hidden;
   animation: pulse-ring 3.4s ease-in-out infinite;
 }
-.brand-mini-logo img { width: 100%; height: 100%; object-fit: contain; }
+.brand-mini-logo img { width: 100%; height: 100%; object-fit: contain; box-shadow: var(--shadow-brand); }
 .brand-mini-text { min-width: 0; }
 .brand-mini-name {
   font-size: 1.08rem;
