@@ -627,6 +627,12 @@ html.app-ready .menu-footer    { animation: enter-from-left  620ms var(--ease) 4
 .cat-panel { display: none; }
 .cat-panel.active { display: block; }
 
+/* =========================================================
+   CATEGORY SECTION HEADER
+   English = large faded background
+   Persian = smaller bold foreground
+========================================================= */
+
 .cat-section-header {
   display: flex;
   align-items: center;
@@ -635,74 +641,209 @@ html.app-ready .menu-footer    { animation: enter-from-left  620ms var(--ease) 4
   padding: 0 2px;
 }
 
+
+/* =========================
+   Category Thumbnail
+========================= */
+
 .cat-thumb {
   width: 48px;
   height: 48px;
   border-radius: 16px;
+
   display: flex;
   align-items: center;
   justify-content: center;
+
   font-size: 1.35rem;
   flex-shrink: 0;
+
   position: relative;
   overflow: hidden;
+
   color: #fff;
-  box-shadow: 0 4px 14px rgba(0,0,0,.15);
+
+  box-shadow: 0 4px 14px rgba(0, 0, 0, .15);
 }
 
 .cat-thumb i {
   position: relative;
   z-index: 1;
-  filter: drop-shadow(0 1px 2px rgba(0,0,0,.3));
+
   color: #fff;
+
+  filter: drop-shadow(
+    0 1px 2px rgba(0, 0, 0, .3)
+  );
 }
 
 .cat-thumb img {
   width: 100%;
   height: 100%;
+
   object-fit: cover;
+
   border-radius: 16px;
 }
+
+
+/* =========================
+   Text Container
+========================= */
 
 .cat-section-texts {
   flex: 1;
   min-width: 0;
+
   position: relative;
+
+  min-height: 42px;
+
   display: flex;
   align-items: center;
-  min-height: 54px;
 }
+
+
+/* =========================================================
+   ENGLISH CATEGORY NAME
+   Large / Transparent / Background
+========================================================= */
 
 .cat-section-title {
   position: absolute;
-  top: 50%;
+
   right: 0;
+  top: 50%;
+
   transform: translateY(-50%);
+
+  z-index: 1;
+
   margin: 0;
-  font-size: clamp(1.3rem, 3vw, 1.9rem);
+
+  font-family: Arial, sans-serif;
+
+  font-size: clamp(1.65rem, 5vw, 2.15rem);
   font-weight: 900;
+
   line-height: 1;
-  letter-spacing: 0.06em;
-  color: rgba(0, 0, 0, 0.08);
+  letter-spacing: .02em;
+
+  text-transform: uppercase;
+
   white-space: nowrap;
+
+  color: var(--ink);
+
+  /*
+   * Transparent but still readable
+   */
+  opacity: .12;
+
+  /*
+   * Very subtle blur for background effect
+   */
+  filter: blur(.25px);
+
   pointer-events: none;
   user-select: none;
-  z-index: 0;
-  text-transform: uppercase;
+
+  max-width: 100%;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
+
+/* =========================================================
+   PERSIAN CATEGORY NAME
+   Smaller / Bold / Foreground
+========================================================= */
 
 .cat-section-sub {
   position: relative;
-  z-index: 1;
+
+  z-index: 2;
+
   margin: 0;
+
   font-size: 1rem;
   font-weight: 800;
-  line-height: 1.5;
+
+  line-height: 1.35;
+
   color: var(--ink);
+
+  /*
+   * Keeps the Persian text clean and readable
+   * over the large English background text.
+   */
+  background: var(--cream);
+
+  padding: 2px 7px;
+
+  border-radius: 8px;
+
+  white-space: nowrap;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  opacity: 1;
+
+  letter-spacing: -.02em;
+
+  text-shadow: 0 1px 1px rgba(0, 0, 0, .04);
 }
 
 
+/* =========================================================
+   DARK THEME
+   Slightly stronger English background for dark mode
+========================================================= */
+
+[data-bs-theme="dark"] .cat-section-title {
+  opacity: .14;
+}
+
+
+/* =========================================================
+   SMALL MOBILE SCREENS
+========================================================= */
+
+@media (max-width: 380px) {
+
+  .cat-section-texts {
+    min-height: 38px;
+  }
+
+  .cat-section-title {
+    font-size: 1.5rem;
+  }
+
+  .cat-section-sub {
+    font-size: .92rem;
+    padding: 2px 6px;
+  }
+
+}
+
+
+/* =========================================================
+   LARGER SCREENS
+========================================================= */
+
+@media (min-width: 768px) {
+
+  .cat-section-title {
+    font-size: 2rem;
+  }
+
+  .cat-section-sub {
+    font-size: 1.05rem;
+  }
+
+}
 .cat-empty {
   display: flex; flex-direction: column; align-items: center; gap: .6rem;
   padding: 2.4rem 1rem; color: var(--ink-muted); text-align: center;
