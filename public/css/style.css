@@ -627,88 +627,221 @@ html.app-ready .menu-footer    { animation: enter-from-left  620ms var(--ease) 4
 .cat-panel { display: none; }
 .cat-panel.active { display: block; }
 
-/* هدر بخش دسته‌بندی */
-.cat-section-header { 
-  display: flex; 
-  align-items: center; 
-  gap: 12px; 
-  margin-bottom: 1.3rem; 
-  padding: 0 2px; 
+/* =========================================================
+   CATEGORY SECTION HEADER
+========================================================= */
+
+.cat-section-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 1.3rem;
+  padding: 0 2px;
 }
+
+
+/* =========================
+   Category Thumbnail
+========================= */
 
 .cat-thumb {
-  width: 48px; 
-  height: 48px; 
+  width: 48px;
+  height: 48px;
   border-radius: 16px;
-  display: flex; 
-  align-items: center; 
-  justify-content: center;
-  font-size: 1.35rem; 
-  flex-shrink: 0; 
-  position: relative; 
-  overflow: hidden;
-  color: #fff; 
-  box-shadow: 0 4px 14px rgba(0,0,0,.15);
-}
 
-.cat-thumb i { 
-  position: relative; 
-  z-index: 1; 
-  filter: drop-shadow(0 1px 2px rgba(0,0,0,.3)); 
-  color: #fff; 
-}
-
-.cat-thumb img { 
-  width: 100%; 
-  height: 100%; 
-  object-fit: cover; 
-  border-radius: 16px; 
-}
-
-/* کانتینر متون: لایه‌بندی روی هم با CSS Grid */
-.cat-section-texts { 
-  flex: 1; 
-  min-width: 0; 
-  display: grid;
+  display: flex;
   align-items: center;
-  justify-items: start; /* برای LTR یا هم‌پوشانی کامل چپ/راست */
+  justify-content: center;
+
+  font-size: 1.35rem;
+  flex-shrink: 0;
+
   position: relative;
-  overflow: hidden; /* جلوگیری از بیرون زدگی متن‌های انگلیسی خیلی طولانی */
+  overflow: hidden;
+
+  color: #fff;
+
+  box-shadow: 0 4px 14px rgba(0, 0, 0, .15);
 }
 
-/* متن انگلیسی پس‌زمینه (بزرگ، محو و ترنسپرنت) */
-.cat-section-bg {
-  grid-area: 1 / 1;
-  font-size: 2.2rem;
-  font-weight: 900;
-  text-transform: uppercase;
-  color: var(--ink); /* ارث‌بری متغیر رنگ اصلی تم */
-  opacity: 0.07;     /* شفافیت محو که هم در لایت و هم دارک کار می‌کند */
-  letter-spacing: -0.02em;
-  line-height: 1;
-  white-space: nowrap;
-  user-select: none;
-  pointer-events: none;
+.cat-thumb i {
+  position: relative;
   z-index: 1;
-  transform: translateY(-2px); /* تنظیم جزئی جهت سنتر دقیق‌تر روی متن فارسی */
+
+  color: #fff;
+
+  filter: drop-shadow(
+    0 1px 2px rgba(0, 0, 0, .3)
+  );
 }
 
-/* متن فارسی اصلی (توچشم، کاملاً واضح و روی متن انگلیسی) */
-.cat-section-title { 
-  grid-area: 1 / 1;
-  font-size: 1.1rem; 
-  font-weight: 800; 
-  color: var(--ink); /* رنگ اصلی تم دارک/لایت */
-  margin: 0; 
-  line-height: 1.2; 
+.cat-thumb img {
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+
+  border-radius: 16px;
+}
+
+
+/* =========================
+   Text Container
+========================= */
+
+.cat-section-texts {
+  flex: 1;
+  min-width: 0;
+
+  position: relative;
+
+  min-height: 42px;
+
+  display: flex;
+  align-items: center;
+}
+
+
+/* =========================================================
+   ENGLISH
+   Large / Transparent / Behind
+========================================================= */
+
+.cat-section-title {
+  position: absolute;
+
+  right: 0;
+  top: 50%;
+
+  transform: translateY(-50%);
+
+  z-index: 1;
+
+  margin: 0;
+
+  font-family: Arial, sans-serif;
+
+  font-size: clamp(1.65rem, 5vw, 2.15rem);
+  font-weight: 900;
+
+  line-height: 1;
+  letter-spacing: .02em;
+
+  text-transform: uppercase;
+
+  white-space: nowrap;
+
+  color: var(--ink);
+
+  opacity: .12;
+
+  filter: blur(.25px);
+
+  pointer-events: none;
+  user-select: none;
+
+  max-width: 100%;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+
+/* =========================================================
+   PERSIAN
+   Small / Bold / Directly Over English
+========================================================= */
+
+.cat-section-sub {
+  position: relative;
+
   z-index: 2;
-  /* اضافه کردن یک سایه ملایم همرنگ پس‌زمینه جهت ارتقای خوانایی روی متن محو */
-  text-shadow: 0 0 12px var(--surface);
+
+  margin: 0;
+
+  font-size: 1rem;
+  font-weight: 800;
+
+  line-height: 1.35;
+
+  color: var(--ink);
+
+  /* بدون بک گراند */
+  background: transparent;
+
+  /* بدون فضای اضافی */
+  padding: 0;
+
+  border-radius: 0;
+
+  white-space: nowrap;
+
+  overflow: visible;
+
+  text-overflow: clip;
+
+  opacity: 1;
+
+  letter-spacing: -.02em;
+
+  /*
+   * فقط برای اینکه فارسی روی انگلیسی
+   * کمی خواناتر باشد، نه برای ایجاد بک گراند
+   */
+  text-shadow:
+    0 1px 2px rgba(246, 236, 229, .35);
 }
 
-/* تنظیم ویژه برای تم دارک در صورت نیاز به وضوح بیشتر */
-[data-bs-theme="dark"] .cat-section-bg {
-  opacity: 0.12; /* در تم دارک ترنسپرنسی کمی بیشتر دیده می‌شود */[cite: 1]
+
+/* =========================================================
+   DARK THEME
+========================================================= */
+
+[data-bs-theme="dark"] .cat-section-title {
+  opacity: .14;
+}
+
+[data-bs-theme="dark"] .cat-section-sub {
+  text-shadow:
+    0 1px 3px rgba(0, 0, 0, .45);
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
+@media (max-width: 380px) {
+
+  .cat-section-texts {
+    min-height: 38px;
+  }
+
+  .cat-section-title {
+    font-size: 1.5rem;
+  }
+
+  .cat-section-sub {
+    font-size: .92rem;
+  }
+
+}
+
+
+/* =========================================================
+   DESKTOP
+========================================================= */
+
+@media (min-width: 768px) {
+
+  .cat-section-title {
+    font-size: 2rem;
+  }
+
+  .cat-section-sub {
+    font-size: 1.05rem;
+  }
+
 }
 .cat-empty {
   display: flex; flex-direction: column; align-items: center; gap: .6rem;
