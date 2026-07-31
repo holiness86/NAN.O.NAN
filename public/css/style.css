@@ -667,27 +667,21 @@ html.app-ready .menu-footer    { animation: enter-from-left  620ms var(--ease) 4
 .cat-thumb i {
   position: relative;
   z-index: 1;
-
   color: #fff;
-
-  filter: drop-shadow(
-    0 1px 2px rgba(0, 0, 0, .3)
-  );
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, .3));
 }
 
 .cat-thumb img {
   width: 100%;
   height: 100%;
-
   object-fit: cover;
-
   border-radius: 16px;
 }
 
 
-/* =========================
-   Text Container
-========================= */
+/* =========================================================
+   TEXT CONTAINER
+========================================================= */
 
 .cat-section-texts {
   flex: 1;
@@ -695,25 +689,28 @@ html.app-ready .menu-footer    { animation: enter-from-left  620ms var(--ease) 4
 
   position: relative;
 
-  min-height: 42px;
+  min-height: 48px;
 
   display: flex;
   align-items: center;
+  justify-content: center;
+
+  overflow: hidden;
 }
 
 
 /* =========================================================
    ENGLISH
-   Large / Transparent / Behind
+   Large / Faded / Centered Background
 ========================================================= */
 
 .cat-section-title {
   position: absolute;
 
-  right: 0;
   top: 50%;
+  left: 50%;
 
-  transform: translateY(-50%);
+  transform: translate(-50%, -50%);
 
   z-index: 1;
 
@@ -739,21 +736,21 @@ html.app-ready .menu-footer    { animation: enter-from-left  620ms var(--ease) 4
 
   pointer-events: none;
   user-select: none;
-
-  max-width: 100%;
-
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 
 /* =========================================================
    PERSIAN
-   Small / Bold / Directly Over English
+   Center of English Text
 ========================================================= */
 
 .cat-section-sub {
-  position: relative;
+  position: absolute;
+
+  top: 50%;
+  left: 50%;
+
+  transform: translate(-50%, -50%);
 
   z-index: 2;
 
@@ -766,28 +763,24 @@ html.app-ready .menu-footer    { animation: enter-from-left  620ms var(--ease) 4
 
   color: var(--ink);
 
-  /* بدون بک گراند */
   background: transparent;
 
-  /* بدون فضای اضافی */
   padding: 0;
 
-  border-radius: 0;
-
   white-space: nowrap;
-
-  overflow: visible;
-
-  text-overflow: clip;
 
   opacity: 1;
 
   letter-spacing: -.02em;
 
+  text-align: center;
+
   /*
-   * فقط برای اینکه فارسی روی انگلیسی
-   * کمی خواناتر باشد، نه برای ایجاد بک گراند
+   * باعث می شود فارسی دقیقا
+   * در مرکز انگلیسی قرار بگیرد
    */
+  width: max-content;
+
   text-shadow:
     0 1px 2px rgba(246, 236, 229, .35);
 }
@@ -814,7 +807,7 @@ html.app-ready .menu-footer    { animation: enter-from-left  620ms var(--ease) 4
 @media (max-width: 380px) {
 
   .cat-section-texts {
-    min-height: 38px;
+    min-height: 42px;
   }
 
   .cat-section-title {
@@ -833,6 +826,10 @@ html.app-ready .menu-footer    { animation: enter-from-left  620ms var(--ease) 4
 ========================================================= */
 
 @media (min-width: 768px) {
+
+  .cat-section-texts {
+    min-height: 52px;
+  }
 
   .cat-section-title {
     font-size: 2rem;
