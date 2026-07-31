@@ -258,9 +258,10 @@ a { color: inherit; }
   transition: opacity 260ms var(--ease-std), transform 260ms var(--ease-std);
 }
 .preloader-ring {
-  width: 78px; height: 78px;
+  width: 80px; height: 80px;
   margin: 0 auto 1.1rem;
   border-radius: 50%;
+  padding: 5px;
   border: 2px solid var(--brand);
   display: flex; align-items: center; justify-content: center;
   font-size: 2.1rem;
@@ -270,7 +271,7 @@ a { color: inherit; }
   box-shadow: var(--shadow-brand), inset 0 0 18px var(--brand-soft);
   animation: pulse-ring 1.6s ease-in-out infinite, ring-pop 700ms var(--ease) both;
 }
-.preloader-ring img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+.preloader-ring img { width: 100%; height: 100%; object-fit: contain; }
 @keyframes pulse-ring {
   0%, 100% { box-shadow: var(--shadow-brand), inset 0 0 18px var(--brand-soft); }
   50%      { box-shadow: 0 6px 24px var(--brand-glow), inset 0 0 18px var(--brand-soft); }
@@ -362,19 +363,16 @@ html.app-ready .menu-footer    { animation: enter-from-left  620ms var(--ease) 4
 }
 .brand-mini { display: flex; align-items: center; gap: 10px; min-width: 0; }
 .brand-mini-logo {
-  width: 44px; height: 44px;
-  border-radius: 50%;
-  border: 1.5px solid var(--brand);
+  width: 60px; height: 60px;
   display: flex; align-items: center; justify-content: center;
   font-size: 1.15rem;
   color: var(--brand);
   box-shadow: var(--shadow-brand);
   flex-shrink: 0;
   overflow: hidden;
-  background: var(--surface);
   animation: pulse-ring 3.4s ease-in-out infinite;
 }
-.brand-mini-logo img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+.brand-mini-logo img { width: 100%; height: 100%; object-fit: contain; }
 .brand-mini-text { min-width: 0; }
 .brand-mini-name {
   font-size: 1.08rem;
