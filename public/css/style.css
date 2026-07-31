@@ -3,7 +3,7 @@
    Minimal · Warm · Bubble/Liquid Motion · Dual Theme · Mobile-First
    -------------------------------------------------------------------------
    Contents
-     1.  Web font (self-hosted Vazirmatn variable font)
+     1.  Web font (self-hosted YekanBakh variable font)
      2.  Design tokens — Light theme
      3.  Design tokens — Dark theme
      4.  Reset & base
@@ -25,15 +25,14 @@
    ========================================================================= */
 
 /* =========================================================================
-   1. WEB FONT — Vazirmatn (self-hosted, variable weight 100–900)
+   1. WEB FONT — YekanBakh (self-hosted, variable weight 100–900)
    Self-hosted on purpose: no Google Fonts / external CDN round-trip, so the
    menu still renders correctly on slow or filtered connections.
-   License: SIL OFL 1.1 — see css/fonts/vazirmatn/LICENSE-OFL.txt
+   License: SIL OFL 1.1 — see css/fonts/YekanBakh/LICENSE-OFL.txt
    ========================================================================= */
 @font-face {
-  font-family: 'Vazirmatn';
-  src: url('./fonts/vazirmatn/Vazirmatn[wght].woff2') format('woff2-variations'),
-       url('./fonts/vazirmatn/Vazirmatn[wght].woff2') format('woff2');
+  font-family: 'YekanBakh';
+  src: url('./Fonts/YekanBakh-VF.ttf');
   font-weight: 100 900;
   font-style: normal;
   font-display: swap;
@@ -168,7 +167,7 @@ html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
 body {
   background-color: var(--cream);
   color: var(--ink);
-  font-family: 'Vazirmatn', Tahoma, 'Segoe UI', Arial, sans-serif;
+  font-family: 'YekanBakh', Tahoma, 'Segoe UI', Arial, sans-serif;
   font-size: 15px;
   line-height: 1.6;
   min-height: 100vh;
