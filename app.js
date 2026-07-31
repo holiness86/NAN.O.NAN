@@ -20,6 +20,10 @@ const Category = require('./models/category')
 
 // میدل ور ها
 app.set('view engine' , 'ejs');
+// اول: مسیر اختصاصی uploads از دیسک persistent (اولویت داره)
+app.use('/uploads', express.static('/uploads'));
+
+// بعد: بقیه فایل‌های استاتیک از public (css, js, images, picture)
 app.use(express.static('public'));
 app.use(express.urlencoded({extended: true}));
 app.use(express.json());
