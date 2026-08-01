@@ -3,7 +3,7 @@
    Minimal · Warm · Bubble/Liquid Motion · Dual Theme · Mobile-First
    -------------------------------------------------------------------------
    Contents
-     1.  Web font (self-hosted Vazirmatn variable font)
+     1.  Web font (self-hosted YekanBakh variable font)
      2.  Design tokens — Light theme
      3.  Design tokens — Dark theme
      4.  Reset & base
@@ -25,19 +25,87 @@
    ========================================================================= */
 
 /* =========================================================================
-   1. WEB FONT — Vazirmatn (self-hosted, variable weight 100–900)
+   1. WEB FONT — YekanBakh (self-hosted, variable weight 100–900)
    Self-hosted on purpose: no Google Fonts / external CDN round-trip, so the
    menu still renders correctly on slow or filtered connections.
-   License: SIL OFL 1.1 — see css/fonts/vazirmatn/LICENSE-OFL.txt
+   License: SIL OFL 1.1 — see css/fonts/YekanBakh/LICENSE-OFL.txt
    ========================================================================= */
+/* ================================
+   YekanBakh Variable Font
+================================ */
+
 @font-face {
-  font-family: 'Vazirmatn';
-  src: url('./fonts/vazirmatn/Vazirmatn[wght].woff2') format('woff2-variations'),
-       url('./fonts/vazirmatn/Vazirmatn[wght].woff2') format('woff2');
-  font-weight: 100 900;
+  font-family: 'YekanBakh';
+  src: url('../Fonts/YekanBakh-VF.ttf') format('truetype');
   font-style: normal;
+  font-weight: 100 900;
   font-display: swap;
 }
+
+/* ================================
+   Global Typography
+================================ */
+
+html {
+  direction: rtl;
+  font-family: 'YekanBakh', sans-serif;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  direction: rtl;
+  font-family: 'YekanBakh', sans-serif;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* اعمال فونت روی تمام المان‌ها و کنترل‌های فرم */
+*,
+*::before,
+*::after {
+  font-family: inherit;
+}
+
+/* اطمینان از اعمال فونت روی المان‌هایی که مرورگر معمولاً فونت پیش‌فرض دارند */
+button,
+input,
+textarea,
+select,
+option,
+optgroup {
+  font-family: 'YekanBakh', sans-serif;
+}
+
+/* حفظ ویژگی ارث‌بری فونت برای تمام عناصر */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+a,
+span,
+div,
+label,
+small,
+strong,
+b,
+em,
+i,
+li,
+td,
+th,
+button,
+input,
+textarea,
+select {
+  font-family: inherit;
+}
+
 
 /* =========================================================================
    2. DESIGN TOKENS — always-available brand values (theme-independent)
@@ -168,7 +236,7 @@ html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
 body {
   background-color: var(--cream);
   color: var(--ink);
-  font-family: 'Vazirmatn', Tahoma, 'Segoe UI', Arial, sans-serif;
+  font-family: 'YekanBakh', Tahoma, 'Segoe UI', Arial, sans-serif;
   font-size: 15px;
   line-height: 1.6;
   min-height: 100vh;
@@ -259,9 +327,10 @@ a { color: inherit; }
   transition: opacity 260ms var(--ease-std), transform 260ms var(--ease-std);
 }
 .preloader-ring {
-  width: 78px; height: 78px;
+  width: 80px; height: 80px;
   margin: 0 auto 1.1rem;
   border-radius: 50%;
+  padding: 5px;
   border: 2px solid var(--brand);
   display: flex; align-items: center; justify-content: center;
   font-size: 2.1rem;
@@ -271,7 +340,7 @@ a { color: inherit; }
   box-shadow: var(--shadow-brand), inset 0 0 18px var(--brand-soft);
   animation: pulse-ring 1.6s ease-in-out infinite, ring-pop 700ms var(--ease) both;
 }
-.preloader-ring img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+.preloader-ring img { width: 100%; height: 100%; object-fit: contain; }
 @keyframes pulse-ring {
   0%, 100% { box-shadow: var(--shadow-brand), inset 0 0 18px var(--brand-soft); }
   50%      { box-shadow: 0 6px 24px var(--brand-glow), inset 0 0 18px var(--brand-soft); }
@@ -363,22 +432,18 @@ html.app-ready .menu-footer    { animation: enter-from-left  620ms var(--ease) 4
 }
 .brand-mini { display: flex; align-items: center; gap: 10px; min-width: 0; }
 .brand-mini-logo {
-  width: 44px; height: 44px;
-  border-radius: 50%;
-  border: 1.5px solid var(--brand);
+  width: 60px; height: 60px;
   display: flex; align-items: center; justify-content: center;
   font-size: 1.15rem;
   color: var(--brand);
-  box-shadow: var(--shadow-brand);
   flex-shrink: 0;
   overflow: hidden;
-  background: var(--surface);
   animation: pulse-ring 3.4s ease-in-out infinite;
 }
-.brand-mini-logo img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+.brand-mini-logo img { width: 100%; height: 100%; object-fit: contain; box-shadow: var(--shadow-brand); }
 .brand-mini-text { min-width: 0; }
 .brand-mini-name {
-  font-size: 1.08rem;
+  font-size: 1.40rem;
   font-weight: 800;
   letter-spacing: -.03em;
   color: var(--ink);
@@ -387,7 +452,7 @@ html.app-ready .menu-footer    { animation: enter-from-left  620ms var(--ease) 4
 }
 .brand-mini-name span { color: var(--brand); }
 .brand-mini-tagline {
-  font-size: .64rem;
+  font-size: .80rem;
   color: var(--ink-muted);
   letter-spacing: .12em;
   text-transform: uppercase;
@@ -562,19 +627,219 @@ html.app-ready .menu-footer    { animation: enter-from-left  620ms var(--ease) 4
 .cat-panel { display: none; }
 .cat-panel.active { display: block; }
 
-.cat-section-header { display: flex; align-items: center; gap: 12px; margin-bottom: 1.3rem; padding: 0 2px; }
-.cat-thumb {
-  width: 48px; height: 48px; border-radius: 16px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 1.35rem; flex-shrink: 0; position: relative; overflow: hidden;
-  color: #fff; box-shadow: 0 4px 14px rgba(0,0,0,.15);
-}
-.cat-thumb i { position: relative; z-index: 1; filter: drop-shadow(0 1px 2px rgba(0,0,0,.3)); color: #fff; }
-.cat-thumb img { width: 100%; height: 100%; object-fit: cover; border-radius: 16px; }
-.cat-section-texts { flex: 1; min-width: 0; }
-.cat-section-title { font-size: 1.15rem; font-weight: 800; color: var(--ink); margin: 0 0 2px; letter-spacing: -.03em; line-height: 1.2; }
-.cat-section-sub { font-size: .72rem; color: var(--ink-muted); margin: 0; letter-spacing: .04em; text-transform: uppercase; }
+/* =========================================================
+   CATEGORY SECTION HEADER
+========================================================= */
 
+.cat-section-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 1.3rem;
+  padding: 0 2px;
+}
+
+
+/* =========================
+   Category Thumbnail
+========================= */
+
+.cat-thumb {
+  width: 48px;
+  height: 48px;
+  border-radius: 16px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 1.35rem;
+  flex-shrink: 0;
+
+  position: relative;
+  overflow: hidden;
+
+  color: #fff;
+
+  box-shadow: 0 4px 14px rgba(0, 0, 0, .15);
+}
+
+.cat-thumb i {
+  position: relative;
+  z-index: 1;
+  color: #fff;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, .3));
+}
+
+.cat-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 16px;
+}
+
+
+/* =========================================================
+   TEXT CONTAINER
+========================================================= */
+
+.cat-section-texts {
+  flex: 1;
+  min-width: 0;
+
+  position: relative;
+
+  min-height: 48px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  overflow: hidden;
+}
+
+
+/* =========================================================
+   ENGLISH
+   Large / Faded / Centered Background
+========================================================= */
+
+.cat-section-title {
+  position: absolute;
+
+  top: 50%;
+  left: 50%;
+
+  transform: translate(-50%, -50%);
+
+  z-index: 1;
+
+  margin: 0;
+
+  font-family: Arial, sans-serif;
+
+  font-size: clamp(1.65rem, 5vw, 2.15rem);
+  font-weight: 900;
+
+  line-height: 1;
+  letter-spacing: .02em;
+
+  text-transform: uppercase;
+
+  white-space: nowrap;
+
+  color: var(--ink);
+
+  opacity: .12;
+
+  filter: blur(.25px);
+
+  pointer-events: none;
+  user-select: none;
+}
+
+
+/* =========================================================
+   PERSIAN
+   Center of English Text
+========================================================= */
+
+.cat-section-sub {
+  position: absolute;
+
+  top: 50%;
+  left: 50%;
+
+  transform: translate(-50%, -50%);
+
+  z-index: 2;
+
+  margin: 0;
+
+  font-size: 1rem;
+  font-weight: 800;
+
+  line-height: 1.35;
+
+  color: var(--ink);
+
+  background: transparent;
+
+  padding: 0;
+
+  white-space: nowrap;
+
+  opacity: 1;
+
+  letter-spacing: -.02em;
+
+  text-align: center;
+
+  /*
+   * باعث می شود فارسی دقیقا
+   * در مرکز انگلیسی قرار بگیرد
+   */
+  width: max-content;
+
+  text-shadow:
+    0 1px 2px rgba(246, 236, 229, .35);
+}
+
+
+/* =========================================================
+   DARK THEME
+========================================================= */
+
+[data-bs-theme="dark"] .cat-section-title {
+  opacity: .14;
+}
+
+[data-bs-theme="dark"] .cat-section-sub {
+  text-shadow:
+    0 1px 3px rgba(0, 0, 0, .45);
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
+@media (max-width: 380px) {
+
+  .cat-section-texts {
+    min-height: 42px;
+  }
+
+  .cat-section-title {
+    font-size: 1.5rem;
+  }
+
+  .cat-section-sub {
+    font-size: .92rem;
+  }
+
+}
+
+
+/* =========================================================
+   DESKTOP
+========================================================= */
+
+@media (min-width: 768px) {
+
+  .cat-section-texts {
+    min-height: 52px;
+  }
+
+  .cat-section-title {
+    font-size: 2rem;
+  }
+
+  .cat-section-sub {
+    font-size: 1.05rem;
+  }
+
+}
 .cat-empty {
   display: flex; flex-direction: column; align-items: center; gap: .6rem;
   padding: 2.4rem 1rem; color: var(--ink-muted); text-align: center;
