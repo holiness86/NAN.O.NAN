@@ -4,6 +4,7 @@ const multer = require('multer');
 const path = require('path');
 const session = require('express-session'); 
 const rateLimit = require('express-rate-limit');
+const os = require('os');
 require('dotenv').config();
 console.log('DEBUG مقدار NODE_ENV:', JSON.stringify(process.env.NODE_ENV));
 const app = express();
@@ -122,6 +123,27 @@ mongoose.connect(urlDB)
     });
 })
 .catch((err) => console.error('Could not connect to MongoDB', err));
+
+
+
+// صفحه داشبورد
+app.get('/admin/monitoring', (req, res) => {
+  if (!req.session || !req.session.admin) {
+    return res.redirect('/admin/login');
+  }
+  res.render('monitoring'); // views/monitoring.ejs همون فایل قبلی
+});
+
+// اندپوینت داده‌ای که صفحه هر ۲ ثانیه صداش می‌زنه
+app.get('/admin/monitoring/data', async (req, res) => {
+  if (!req.session || !req.session.admin) {
+    return res.status(401).json({ error: 'unauthorized' });
+  }
+  const data = await getMonitoringData();
+  res.json(data);
+});
+
+
 
 // روت صفحه اصلی (نمایش منو)
 app.get('/', async (req, res) => {
