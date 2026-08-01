@@ -127,18 +127,12 @@ mongoose.connect(urlDB)
 
 
 // صفحه داشبورد
-app.get('/admin/monitoring', checkAdminLogin , (req, res) => {
-  if (!req.session || !req.session.admin) {
-    return res.redirect('/admin/login');
-  }
-  res.render('monitoring'); // views/monitoring.ejs همون فایل قبلی
+app.get('/admin/monitoring', checkAdminLogin, (req, res) => {
+  res.render('monitoring'); // views/monitoring.ejs
 });
 
 // اندپوینت داده‌ای که صفحه هر ۲ ثانیه صداش می‌زنه
-app.get('/admin/monitoring/data', checkAdminLogin , async (req, res) => {
-//   if (!req.session || !req.session.admin) {
-//     return res.status(401).json({ error: 'unauthorized' });
-//   }
+app.get('/admin/monitoring/data', checkAdminLogin, async (req, res) => {
   const data = await getMonitoringData();
   res.json(data);
 });
