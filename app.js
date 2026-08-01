@@ -3,7 +3,7 @@ const express = require('express');
 const multer = require('multer');
 const path = require('path');
 const session = require('express-session');
-const MongoStore = require('connect-mongo');
+const { MongoStore } = require('connect-mongo');
 const rateLimit = require('express-rate-limit');
 const os = require('os');
 require('dotenv').config();
