@@ -64,9 +64,10 @@
   </div>
 
   <%
-    // تشخیص آیکون برداری تک‌رنگ (SVG) در برابر تصویر رستری —
-    // برای SVGها به‌جای <img>، از mask-image + currentColor استفاده می‌کنیم
-    // تا رنگشان کاملاً هوشمند و هم‌سو با تم/حالت انتخاب تغییر کند.
+    // تشخیص آیکون برداری (SVG) در برابر عکس رستری — صرفاً برای انتخاب object-fit
+    // مناسب (contain برای وکتور تا کادر نبرد، cover برای عکس واقعی محصول/دسته)؛
+    // خودِ فایل با تمام رنگ‌ها و جزئیاتش، دقیقاً همان‌طور که در پنل ادمین
+    // آپلود/انتخاب شده، به‌صورت <img> واقعی نمایش داده می‌شود.
     function isVectorIcon(url) { return !!url && /\.svg(\?.*)?$/i.test(url); }
     var hasCategories = typeof categoriesWithItems !== 'undefined' && categoriesWithItems && categoriesWithItems.length > 0;
   %>
