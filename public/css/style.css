@@ -637,18 +637,22 @@ html.app-ready .menu-footer    { animation: enter-from-left  620ms var(--ease) 4
   width: 48px; height: 48px;
   border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
-  font-size: 1.35rem;
-  color: #fff;
+  font-size: 1.3rem;
+  color: var(--brand);
+  background: var(--surface-glass);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--border-warm);
   overflow: hidden;
   flex-shrink: 0;
-  transition: transform var(--dur) var(--ease);
-  box-shadow: 0 4px 12px rgba(0,0,0,.14);
+  transition: transform var(--dur) var(--ease), border-color var(--dur) var(--ease-std), background var(--dur) var(--ease-std), box-shadow var(--dur) var(--ease);
+  box-shadow: 0 4px 14px rgba(var(--ink-rgb), .10);
 }
-.cat-card.active .cat-card-thumb { transform: scale(1.1); }
+.cat-card.active .cat-card-thumb { transform: scale(1.1); border-color: var(--brand); background: var(--brand-soft); box-shadow: var(--shadow-brand); }
 @media (hover: hover) and (pointer: fine) {
-  .cat-card:hover .cat-card-thumb { transform: scale(1.1); }
+  .cat-card:hover .cat-card-thumb { transform: scale(1.1); border-color: var(--brand); background: var(--brand-soft); }
 }
-.cat-card-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.cat-card-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
 .cat-card-label {
   font-size: .72rem; font-weight: 700; color: var(--ink-muted);
@@ -660,11 +664,24 @@ html.app-ready .menu-footer    { animation: enter-from-left  620ms var(--ease) 4
   .cat-card:hover .cat-card-label { color: var(--brand); }
 }
 
-.icon-swatch-0 { background: var(--sw-0); } .icon-swatch-1 { background: var(--sw-1); }
-.icon-swatch-2 { background: var(--sw-2); } .icon-swatch-3 { background: var(--sw-3); }
-.icon-swatch-4 { background: var(--sw-4); } .icon-swatch-5 { background: var(--sw-5); }
-.icon-swatch-6 { background: var(--sw-6); } .icon-swatch-7 { background: var(--sw-7); }
-.icon-swatch-8 { background: var(--sw-8); } .icon-swatch-9 { background: var(--sw-9); }
+/* آیکون برداری تک‌رنگ (SVG) — چون از طریق mask-image پوشانده می‌شود (نه <img> ساده)،
+   رنگش را از background-color:currentColor می‌گیرد و با هر تغییر تم/حالت انتخاب/هاور
+   (که رنگ فریم دور آن را عوض می‌کند) به‌طور کاملاً هوشمند هم‌رنگ می‌شود. */
+.cat-visual-icon {
+  display: block;
+  width: 58%; height: 58%;
+  background-color: currentColor;
+  -webkit-mask-image: var(--icon-url);
+  mask-image: var(--icon-url);
+  -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+  -webkit-mask-position: center; mask-position: center;
+  -webkit-mask-size: contain; mask-size: contain;
+  transition: background-color var(--dur) var(--ease-std);
+}
+
+/* توکن‌های --sw-0..9 بالا برای این صفحه دیگر استفاده نمی‌شوند —
+   خودِ کلاس‌های icon-swatch-N (پس‌زمینه‌های رنگی متفرقه) عمداً از این‌جا حذف شده‌اند؛
+   توکن‌ها فقط برای سازگاری با پنل ادمین (/admin) نگه داشته شده‌اند. */
 
 /* =========================================================================
    11. MAIN LAYOUT + VIEW SWITCHER (grid / list)
@@ -720,29 +737,32 @@ html.app-ready .menu-footer    { animation: enter-from-left  620ms var(--ease) 4
   align-items: center;
   justify-content: center;
 
-  font-size: 1.35rem;
+  font-size: 1.3rem;
   flex-shrink: 0;
 
   position: relative;
   overflow: hidden;
 
-  color: #fff;
+  color: var(--brand);
+  background: var(--surface-glass);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--border-warm);
 
-  box-shadow: 0 4px 14px rgba(0, 0, 0, .15);
+  box-shadow: 0 4px 14px rgba(var(--ink-rgb), .10);
 }
 
 .cat-thumb i {
   position: relative;
   z-index: 1;
-  color: #fff;
-  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, .3));
 }
 
 .cat-thumb img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 16px;
+  border-radius: inherit;
+  display: block;
 }
 
 
@@ -1106,12 +1126,24 @@ main[data-view="list"] .menu-card-desc { -webkit-line-clamp: 1; }
 .sheet-media-placeholder { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 2.6rem; color: var(--brand); opacity: .4; }
 .sheet-cat-badge {
   position: absolute; bottom: 12px; right: 12px;
-  display: inline-flex; align-items: center; gap: 6px;
-  padding: 6px 12px 6px 8px; border-radius: 50rem;
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 5px 12px 5px 6px; border-radius: 50rem;
+  background: rgba(20,14,10,.55);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,.14);
   color: #fff; font-size: .72rem; font-weight: 700;
   box-shadow: 0 4px 14px rgba(0,0,0,.25);
 }
-.sheet-cat-badge i { font-size: .85rem; }
+.sheet-cat-visual {
+  width: 22px; height: 22px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden; flex-shrink: 0;
+  background: rgba(255,255,255,.16);
+  color: #fff;
+  font-size: .8rem;
+}
+.sheet-cat-visual img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.sheet-cat-visual .cat-visual-icon { width: 62%; height: 62%; }
 
 .sheet-body { padding: 1.3rem 1.4rem calc(2rem + env(safe-area-inset-bottom, 0px)); }
 .sheet-item-name { font-size: 1.3rem; font-weight: 800; color: var(--ink); letter-spacing: -.02em; margin: 0 0 .5rem; line-height: 1.3; }

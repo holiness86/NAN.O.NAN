@@ -466,20 +466,43 @@
     var dragHandle    = document.getElementById('sheetDragHandle');
     var sheetImg      = document.getElementById('sheetImg');
     var sheetMediaPh  = document.getElementById('sheetMediaPlaceholder');
-    var sheetCatBadge = document.getElementById('sheetCatBadge');
-    var sheetCatIcon  = document.getElementById('sheetCatIcon');
+    var sheetCatVisual = document.getElementById('sheetCatVisual');
     var sheetCatName  = document.getElementById('sheetCatName');
     var sheetItemName = document.getElementById('sheetItemName');
     var sheetPrice    = document.getElementById('sheetPrice');
     var sheetDesc     = document.getElementById('sheetDesc');
+
+    // همان منطق isVectorIcon سمت سرور (index.ejs) — SVG تک‌رنگ با mask-image
+    // رنگ‌آمیزی می‌شود تا currentColor (رنگ برند) را بگیرد؛ عکس رستری با <img>
+    // ساده و object-fit:cover؛ در نبود تصویر، آیکون بوت‌استرپ (خودش currentColor است).
+    function isVectorIconUrl(url) { return !!url && /\.svg(\?.*)?$/i.test(url); }
+    function renderCatVisual(container, imgUrl, iconClass) {
+      container.textContent = '';
+      var node;
+      if (isVectorIconUrl(imgUrl)) {
+        node = document.createElement('i');
+        node.className = 'cat-visual-icon';
+        node.setAttribute('aria-hidden', 'true');
+        node.style.setProperty('--icon-url', "url('" + imgUrl + "')");
+      } else if (imgUrl) {
+        node = document.createElement('img');
+        node.src = imgUrl;
+        node.alt = '';
+        node.loading = 'lazy';
+      } else {
+        node = document.createElement('i');
+        node.className = 'bi ' + (iconClass || 'bi-grid');
+        node.setAttribute('aria-hidden', 'true');
+      }
+      container.appendChild(node);
+    }
 
     function fillSheet(data) {
       sheetItemName.textContent = data.name || '';
       sheetPrice.textContent = Number(data.price || 0).toLocaleString('fa-IR');
       sheetDesc.textContent = (data.desc && data.desc.trim()) ? data.desc : 'توضیحاتی برای این محصول ثبت نشده است.';
       sheetCatName.textContent = data.cat || '';
-      sheetCatIcon.className = 'bi ' + (data.catIcon || 'bi-grid');
-      sheetCatBadge.className = 'sheet-cat-badge icon-swatch-' + (data.swatch || '0');
+      renderCatVisual(sheetCatVisual, data.catImg, data.catIcon);
 
       if (data.img) {
         sheetImg.src = data.img;

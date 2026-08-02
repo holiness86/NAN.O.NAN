@@ -64,13 +64,10 @@
   </div>
 
   <%
-    // هش سادهٔ نام/آیکون دسته‌بندی برای انتخاب یک رنگ ثابت از پالت (۰ تا ۹)
-    function swatchIndex(str){
-      if(!str) return 0;
-      var h = 0;
-      for (var i = 0; i < str.length; i++) { h = (h * 31 + str.charCodeAt(i)) >>> 0; }
-      return h % 10;
-    }
+    // تشخیص آیکون برداری تک‌رنگ (SVG) در برابر تصویر رستری —
+    // برای SVGها به‌جای <img>، از mask-image + currentColor استفاده می‌کنیم
+    // تا رنگشان کاملاً هوشمند و هم‌سو با تم/حالت انتخاب تغییر کند.
+    function isVectorIcon(url) { return !!url && /\.svg(\?.*)?$/i.test(url); }
     var hasCategories = typeof categoriesWithItems !== 'undefined' && categoriesWithItems && categoriesWithItems.length > 0;
   %>
 
@@ -96,8 +93,10 @@
           <button type="button" class="cat-card <%= index === 0 ? 'active' : '' %>"
                aria-pressed="<%= index === 0 ? 'true' : 'false' %>"
                data-target="cat-<%= cat.enname %>">
-            <span class="cat-card-thumb icon-swatch-<%= swatchIndex(cat.icon || cat.name) %>">
-              <% if (cat.imageUrl) { %>
+            <span class="cat-card-thumb">
+              <% if (isVectorIcon(cat.imageUrl)) { %>
+                <i class="cat-visual-icon" style="--icon-url:url('<%= cat.imageUrl %>')" aria-hidden="true"></i>
+              <% } else if (cat.imageUrl) { %>
                 <img src="<%= cat.imageUrl %>" alt="" loading="lazy">
               <% } else { %>
                 <i class="bi <%= cat.icon || 'bi-grid' %>" aria-hidden="true"></i>
@@ -129,8 +128,10 @@
         <section class="cat-panel <%= index === 0 ? 'active' : '' %>" id="cat-<%= cat.enname %>" data-cat-panel aria-label="<%= cat.name %>">
 
           <div class="cat-section-header">
-            <div class="cat-thumb icon-swatch-<%= swatchIndex(cat.icon || cat.name) %>">
-              <% if (cat.imageUrl) { %>
+            <div class="cat-thumb">
+              <% if (isVectorIcon(cat.imageUrl)) { %>
+                <i class="cat-visual-icon" style="--icon-url:url('<%= cat.imageUrl %>')" aria-hidden="true"></i>
+              <% } else if (cat.imageUrl) { %>
                 <img src="<%= cat.imageUrl %>" alt="" loading="lazy">
               <% } else { %>
                 <i class="bi <%= cat.icon || 'bi-grid' %>" aria-hidden="true"></i>
@@ -160,7 +161,7 @@
                      data-img="<%= item.imageUrl || '' %>"
                      data-cat="<%= cat.name %>"
                      data-cat-icon="<%= cat.icon || 'bi-grid' %>"
-                     data-swatch="<%= swatchIndex(cat.icon || cat.name) %>">
+                     data-cat-img="<%= cat.imageUrl || '' %>">
                   <span class="menu-card-img">
                     <% if (item.imageUrl) { %>
                       <img src="<%= item.imageUrl %>" alt="<%= item.iteamName %>" loading="lazy">
@@ -225,8 +226,8 @@
           <i class="bi bi-image" aria-hidden="true"></i>
         </div>
         <img id="sheetImg" alt="" style="display:none;">
-        <span class="sheet-cat-badge icon-swatch-0" id="sheetCatBadge">
-          <i class="bi bi-grid" id="sheetCatIcon" aria-hidden="true"></i>
+        <span class="sheet-cat-badge" id="sheetCatBadge">
+          <span class="sheet-cat-visual" id="sheetCatVisual"><i class="bi bi-grid" aria-hidden="true"></i></span>
           <span id="sheetCatName"></span>
         </span>
       </div>
