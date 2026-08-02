@@ -78,13 +78,13 @@
   <header class="top-bar">
     <div class="brand-mini">
       <div class="brand-mini-logo"><img src="/images/logo/Nan.O.Nan-brand.png" alt="نان و نان"></div>
-      <h1 class="brand-mini-text">
-        <div class="brand-mini-name">نان <span>و نان</span></div>
+      <div class="brand-mini-text">
+        <h1 class="brand-mini-name">نان <span>و نان</span></h1>
         <p class="brand-mini-tagline">Café &amp; Bakery</p>
-      </h1>
+      </div>
     </div>
     <button type="button" class="theme-btn" id="themeBtn" aria-label="تغییر تم روشن/تاریک">
-      <i class="bi bi-moon-stars-fill" id="themeIcon"></i>
+      <i class="bi bi-moon-stars-fill" id="themeIcon" aria-hidden="true"></i>
     </button>
   </header>
 
@@ -93,19 +93,18 @@
     <nav class="cat-nav" aria-label="دسته‌بندی منو">
       <% if (hasCategories) { %>
         <% categoriesWithItems.forEach(function (cat, index) { %>
-          <div class="cat-card <%= index === 0 ? 'active' : '' %>"
-               role="button" tabindex="0"
+          <button type="button" class="cat-card <%= index === 0 ? 'active' : '' %>"
                aria-pressed="<%= index === 0 ? 'true' : 'false' %>"
                data-target="cat-<%= cat.enname %>">
-            <div class="cat-card-thumb icon-swatch-<%= swatchIndex(cat.icon || cat.name) %>">
+            <span class="cat-card-thumb icon-swatch-<%= swatchIndex(cat.icon || cat.name) %>">
               <% if (cat.imageUrl) { %>
-                <img src="<%= cat.imageUrl %>" alt="<%= cat.name %>" loading="lazy">
+                <img src="<%= cat.imageUrl %>" alt="" loading="lazy">
               <% } else { %>
-                <i class="bi <%= cat.icon || 'bi-grid' %>"></i>
+                <i class="bi <%= cat.icon || 'bi-grid' %>" aria-hidden="true"></i>
               <% } %>
-            </div>
+            </span>
             <span class="cat-card-label"><%= cat.name %></span>
-          </div>
+          </button>
         <% }) %>
       <% } %>
     </nav>
@@ -118,10 +117,10 @@
       <div class="view-switcher">
         <div class="view-switcher-track" role="group" aria-label="نحوه نمایش محصولات">
           <button type="button" class="view-btn active" id="viewGridBtn" aria-label="نمایش کارتی" aria-pressed="true">
-            <i class="bi bi-grid-3x3-gap-fill"></i>
+            <i class="bi bi-grid-3x3-gap-fill" aria-hidden="true"></i>
           </button>
           <button type="button" class="view-btn" id="viewListBtn" aria-label="نمایش لیستی" aria-pressed="false">
-            <i class="bi bi-list-ul"></i>
+            <i class="bi bi-list-ul" aria-hidden="true"></i>
           </button>
         </div>
       </div>
@@ -134,7 +133,7 @@
               <% if (cat.imageUrl) { %>
                 <img src="<%= cat.imageUrl %>" alt="" loading="lazy">
               <% } else { %>
-                <i class="bi <%= cat.icon || 'bi-grid' %>"></i>
+                <i class="bi <%= cat.icon || 'bi-grid' %>" aria-hidden="true"></i>
               <% } %>
             </div>
             <div class="cat-section-texts">
@@ -149,14 +148,12 @@
           <div class="menu-items">
             <% if (!cat.items || cat.items.length === 0) { %>
               <div class="cat-empty">
-                <i class="bi bi-cup"></i>
+                <i class="bi bi-cup" aria-hidden="true"></i>
                 <p>فعلاً محصولی در این دسته‌بندی ثبت نشده است.</p>
               </div>
             <% } else { %>
               <% cat.items.forEach(function (item) { %>
-                <div class="menu-card"
-                     role="button"
-                     tabindex="0"
+                <button type="button" class="menu-card"
                      data-name="<%= item.iteamName %>"
                      data-price="<%= item.iteamPrice %>"
                      data-desc="<%= item.description %>"
@@ -164,24 +161,24 @@
                      data-cat="<%= cat.name %>"
                      data-cat-icon="<%= cat.icon || 'bi-grid' %>"
                      data-swatch="<%= swatchIndex(cat.icon || cat.name) %>">
-                  <div class="menu-card-img">
+                  <span class="menu-card-img">
                     <% if (item.imageUrl) { %>
                       <img src="<%= item.imageUrl %>" alt="<%= item.iteamName %>" loading="lazy">
                     <% } else { %>
-                      <div class="menu-card-placeholder"><i class="bi bi-image"></i></div>
+                      <span class="menu-card-placeholder"><i class="bi bi-image" aria-hidden="true"></i></span>
                     <% } %>
-                  </div>
-                  <div class="menu-card-info">
-                    <p class="menu-card-name"><%= item.iteamName %></p>
-                    <p class="menu-card-desc"><%= item.description %></p>
-                    <div class="menu-card-footer">
-                      <div class="menu-card-price">
+                  </span>
+                  <span class="menu-card-info">
+                    <span class="menu-card-name"><%= item.iteamName %></span>
+                    <span class="menu-card-desc"><%= item.description %></span>
+                    <span class="menu-card-footer">
+                      <span class="menu-card-price">
                         <%= Number(item.iteamPrice).toLocaleString('fa-IR') %>
                         <small>تومان</small>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                      </span>
+                    </span>
+                  </span>
+                </button>
               <% }) %>
             <% } %>
           </div>
@@ -190,7 +187,7 @@
       <% }) %>
     <% } else { %>
       <div class="cat-empty" style="padding:4rem 1rem;">
-        <i class="bi bi-basket2"></i>
+        <i class="bi bi-basket2" aria-hidden="true"></i>
         <p>هنوز دسته‌بندی یا محصولی برای نمایش ثبت نشده است.</p>
       </div>
     <% } %>
@@ -203,7 +200,7 @@
     <p class="footer-text"> فردیس کانال غربی بعد از کوچه 21 <strong>کافه بیکری نان و نان</strong> · رزرو: پر شده است</p>
 
     <div class="footer-socials">
-      <a href="https://www.instagram.com/nanonan_bakery" class="social-dot" aria-label="اینستاگرام"><i class="bi bi-instagram"></i></a>
+      <a href="https://www.instagram.com/nanonan_bakery" class="social-dot" aria-label="اینستاگرام"><i class="bi bi-instagram" aria-hidden="true"></i></a>
       <!-- <a href="#" class="social-dot" aria-label="تلگرام"><i class="bi bi-telegram"></i></a>
       <a href="#" class="social-dot" aria-label="واتس‌اپ"><i class="bi bi-whatsapp"></i></a>
       <a href="#" class="social-dot" aria-label="تلفن"><i class="bi bi-telephone-fill"></i></a> -->
@@ -220,16 +217,16 @@
   <div class="offcanvas offcanvas-bottom product-sheet" tabindex="-1" id="productSheet" aria-labelledby="sheetItemName">
     <div class="sheet-drag-handle" id="sheetDragHandle"><span></span></div>
     <button type="button" class="sheet-close-btn" data-bs-dismiss="offcanvas" aria-label="بستن">
-      <i class="bi bi-x-lg"></i>
+      <i class="bi bi-x-lg" aria-hidden="true"></i>
     </button>
     <div class="offcanvas-body">
       <div class="sheet-media">
         <div class="sheet-media-placeholder" id="sheetMediaPlaceholder">
-          <i class="bi bi-image"></i>
+          <i class="bi bi-image" aria-hidden="true"></i>
         </div>
         <img id="sheetImg" alt="" style="display:none;">
         <span class="sheet-cat-badge icon-swatch-0" id="sheetCatBadge">
-          <i class="bi bi-grid" id="sheetCatIcon"></i>
+          <i class="bi bi-grid" id="sheetCatIcon" aria-hidden="true"></i>
           <span id="sheetCatName"></span>
         </span>
       </div>

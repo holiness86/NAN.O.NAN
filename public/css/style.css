@@ -115,7 +115,9 @@ select {
    ========================================================================= */
 :root {
   --cream-light-value: #F6ECE5;
+  --cream-light-rgb:   246,236,229;
   --cream-dark-value:  #1B120C;
+  --cream-dark-rgb:    27,18,12;
 
   /* فاصله‌ی افقی یکسان برای کل صفحه (Header/دسته‌بندی‌ها/محتوا/فوتر)
      تا هیچ کارتی به لبه‌ی صفحه نچسبد — مقیاس‌پذیر بر اساس اندازه‌ی صفحه */
@@ -166,12 +168,16 @@ select {
   --shadow-sticky:  0 4px 24px rgba(150,67,35,.10);
   --shadow-brand:   0 4px 18px rgba(183,94,61,.26);
 
-  --ease:           cubic-bezier(.22,.68,0,1.2);
-  --ease-std:       cubic-bezier(.2,.8,.2,1);
-  --ease-fall:      cubic-bezier(.55,.06,.68,.19);
+  /* منحنی‌های حرکت طبیعی اپل: دیسلریت نرم برای ورود/جابجایی، ته‌نشینی نرم برای فید/محو،
+     و یک منحنی شتاب‌گیرنده‌ی جدا فقط برای افت فیزیکی کارت‌ها هنگام خروج دسته‌بندی */
+  --ease:           cubic-bezier(.32,.72,0,1);   /* iOS decelerate — ورود/جابجایی/تم */
+  --ease-std:       cubic-bezier(.16,1,.3,1);    /* iOS soft-settle — فید/رنگ/سایه */
+  --ease-fall:      cubic-bezier(.55,.06,.68,.19); /* شتاب گرانشی — فقط خروج فیزیکی کارت */
+  --ease-press:     cubic-bezier(.34,1.1,.64,1); /* فیدبک لمسی آنی — فشردن/رهاسازی */
   --dur-fast:       160ms;
   --dur:            240ms;
-  --dur-slow:       420ms;
+  --dur-slow:       440ms;
+  --dur-press:      100ms;
 
   /* Category swatch gradients — stable per-category via a name hash */
   --sw-0: linear-gradient(135deg,#e8c88a 0%,#c49a3c 100%);
@@ -232,6 +238,15 @@ select {
 *, *::before, *::after { box-sizing: border-box; }
 
 html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+
+/* حذف هایلایت خاکستری پیش‌فرض تاچ روی iOS/Android برای عناصر تعاملی —
+   فیدبک لمسی خودمان (:active) جایگزین آن می‌شود؛ touch-action:manipulation
+   تاخیر ۳۰۰ میلی‌ثانیه‌ای تشخیص دابل-تپ را برای این عناصر خاموش می‌کند تا
+   اولین لمس همیشه بلافاصله کلیک را اجرا کند */
+button, a, [role="button"] {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
 
 body {
   background-color: var(--cream);
@@ -313,10 +328,10 @@ a { color: inherit; }
   animation-iteration-count: infinite;
 }
 @keyframes rain-fall {
-  0%   { opacity: 0; transform: translateY(0) rotate(0deg); }
+  0%   { opacity: 0; transform: translate3d(0,0,0) rotate(0deg); }
   8%   { opacity: .85; }
   86%  { opacity: .55; }
-  100% { opacity: 0; transform: translateY(var(--fall-y, 120vh)) rotate(var(--rotate-end, 20deg)); }
+  100% { opacity: 0; transform: translate3d(0,var(--fall-y, 120vh),0) rotate(var(--rotate-end, 20deg)); }
 }
 
 /* --- 6.b Core: main logo, brand name, tagline, loading dots --- */
@@ -412,8 +427,8 @@ html.app-ready .top-bar        { animation: enter-from-right 620ms var(--ease) 6
 html.app-ready .cat-nav-wrapper{ animation: enter-from-left  620ms var(--ease) 180ms forwards; }
 html.app-ready .menu-main      { animation: enter-from-right 620ms var(--ease) 300ms forwards; }
 html.app-ready .menu-footer    { animation: enter-from-left  620ms var(--ease) 420ms forwards; }
-@keyframes enter-from-right { 0% { opacity: 0; transform: translateX(38px); } 100% { opacity: 1; transform: translateX(0); } }
-@keyframes enter-from-left  { 0% { opacity: 0; transform: translateX(-38px); } 100% { opacity: 1; transform: translateX(0); } }
+@keyframes enter-from-right { 0% { opacity: 0; transform: translate3d(38px,0,0); } 100% { opacity: 1; transform: translate3d(0,0,0); } }
+@keyframes enter-from-left  { 0% { opacity: 0; transform: translate3d(-38px,0,0); } 100% { opacity: 1; transform: translate3d(0,0,0); } }
 @media (prefers-reduced-motion: reduce) {
   .top-bar, .cat-nav-wrapper, .menu-main, .menu-footer { opacity: 1 !important; animation: none !important; transform: none !important; }
 }
@@ -467,6 +482,7 @@ html.app-ready .menu-footer    { animation: enter-from-left  620ms var(--ease) 4
    so the effect is correct on every viewport, not just phones.
    ========================================================================= */
 .theme-btn {
+  -webkit-appearance: none; appearance: none;
   width: 42px; height: 42px;
   border-radius: 50%;
   border: 1.5px solid var(--border-warm);
@@ -478,14 +494,17 @@ html.app-ready .menu-footer    { animation: enter-from-left  620ms var(--ease) 4
   cursor: pointer;
   display: flex; align-items: center; justify-content: center;
   box-shadow: var(--shadow-card);
-  transition: all var(--dur) var(--ease);
+  transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease), border-color var(--dur) var(--ease-std), background var(--dur) var(--ease-std);
   outline: none;
   position: relative;
   z-index: 2;
   flex-shrink: 0;
+  will-change: transform;
 }
-.theme-btn:hover { transform: rotate(22deg) scale(1.1); box-shadow: var(--shadow-brand); border-color: var(--brand); }
-.theme-btn:active { transform: rotate(22deg) scale(.95); }
+@media (hover: hover) and (pointer: fine) {
+  .theme-btn:hover { transform: rotate(22deg) scale(1.1); box-shadow: var(--shadow-brand); border-color: var(--brand); }
+}
+.theme-btn:active { transform: rotate(22deg) scale(.9); transition-duration: var(--dur-press); transition-timing-function: var(--ease-press); }
 .theme-btn i { transition: transform var(--dur-slow) var(--ease), opacity var(--dur) var(--ease-std); }
 .theme-btn.spinning i { animation: theme-spin var(--dur-slow) var(--ease); }
 @keyframes theme-spin {
@@ -504,24 +523,54 @@ html.app-ready .menu-footer    { animation: enter-from-left  620ms var(--ease) 4
   left: var(--bubble-x, 50%);
   width: 0; height: 0;
   border-radius: 50%;
-  background: var(--bubble-color, var(--cream));
-  box-shadow: inset 0 0 60px rgba(255,255,255,.06);
-  transform: translate(-50%, -50%);
+  background: rgba(var(--bubble-color-rgb, 246,236,229), 0);
+  backdrop-filter: blur(0px) saturate(1.3);
+  -webkit-backdrop-filter: blur(0px) saturate(1.3);
+  box-shadow: inset 0 0 80px rgba(255,255,255,.08);
+  opacity: 0;
+  transform: translate3d(-50%, -50%, 0);
   z-index: 3000;
   pointer-events: none;
+  overflow: hidden;
+}
+/* برجستگی نرم و سیال روی سطح حباب — حس شیشه‌ی مایع، نه یک دایره‌ی تخت */
+.theme-bubble::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(circle at 32% 28%, rgba(255,255,255,.22), transparent 55%);
+  mix-blend-mode: overlay;
 }
 .theme-bubble.expanding {
-  transition: width var(--dur-slow) var(--ease), height var(--dur-slow) var(--ease);
+  transition:
+    width var(--dur-slow) var(--ease),
+    height var(--dur-slow) var(--ease),
+    opacity calc(var(--dur-slow) * .45) var(--ease-std),
+    backdrop-filter var(--dur-slow) var(--ease-std);
   width: calc(var(--bubble-radius, 100vmax) * 2);
   height: calc(var(--bubble-radius, 100vmax) * 2);
+  opacity: 1;
+  background: rgba(var(--bubble-color-rgb, 246,236,229), .55);
+  backdrop-filter: blur(24px) saturate(1.3);
+  -webkit-backdrop-filter: blur(24px) saturate(1.3);
 }
 .theme-bubble.retreating {
-  transition: width var(--dur-slow) var(--ease-std), height var(--dur-slow) var(--ease-std), opacity var(--dur-slow) var(--ease-std);
+  transition:
+    width var(--dur-slow) var(--ease-std),
+    height var(--dur-slow) var(--ease-std),
+    opacity var(--dur-slow) var(--ease-std),
+    backdrop-filter var(--dur-slow) var(--ease-std);
   width: 0; height: 0;
   opacity: 0;
+  backdrop-filter: blur(0px) saturate(1.3);
+  -webkit-backdrop-filter: blur(0px) saturate(1.3);
 }
 @media (prefers-reduced-motion: reduce) {
   .theme-bubble.expanding, .theme-bubble.retreating { transition-duration: 1ms !important; }
+}
+/* بک‌آپ برای مرورگرهایی که backdrop-filter را پشتیبانی نمی‌کنند —
+   بدون بلر، صرفاً یک شید نیمه‌شفاف رنگی جابجا می‌شود */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .theme-bubble.expanding { background: rgba(var(--bubble-color-rgb, 246,236,229), .92); }
 }
 
 /* =========================================================================
@@ -556,6 +605,7 @@ html.app-ready .menu-footer    { animation: enter-from-left  620ms var(--ease) 4
 .cat-nav::-webkit-scrollbar { display: none; }
 
 .cat-card {
+  -webkit-appearance: none; appearance: none;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -563,17 +613,25 @@ html.app-ready .menu-footer    { animation: enter-from-left  620ms var(--ease) 4
   flex-shrink: 0;
   width: 84px;
   padding: 10px 8px 12px;
+  margin: 0;
   border-radius: 22px;
   border: 1.5px solid var(--border-warm);
   background: var(--surface);
+  font: inherit;
+  color: inherit;
   cursor: pointer;
   user-select: none;
   outline: none;
-  transition: border-color var(--dur) var(--ease), box-shadow var(--dur) var(--ease), transform var(--dur) var(--ease), background var(--dur) var(--ease);
+  transition: border-color var(--dur) var(--ease-std), box-shadow var(--dur) var(--ease), transform var(--dur) var(--ease), background var(--dur) var(--ease-std);
   text-align: center;
+  transform: translate3d(0,0,0);
+  will-change: transform;
 }
-.cat-card:hover { border-color: var(--steel); box-shadow: 0 8px 22px var(--steel-glow); transform: translateY(-3px); }
-.cat-card.active { border-color: var(--brand); background: var(--brand-soft); box-shadow: var(--shadow-brand); transform: translateY(-3px); }
+.cat-card.active { border-color: var(--brand); background: var(--brand-soft); box-shadow: var(--shadow-brand); transform: translate3d(0,-3px,0); }
+@media (hover: hover) and (pointer: fine) {
+  .cat-card:hover { border-color: var(--steel); box-shadow: 0 8px 22px var(--steel-glow); transform: translate3d(0,-3px,0); }
+}
+.cat-card:active { transform: translate3d(0,-1px,0) scale(.96); transition-duration: var(--dur-press); transition-timing-function: var(--ease-press); }
 
 .cat-card-thumb {
   width: 48px; height: 48px;
@@ -586,7 +644,10 @@ html.app-ready .menu-footer    { animation: enter-from-left  620ms var(--ease) 4
   transition: transform var(--dur) var(--ease);
   box-shadow: 0 4px 12px rgba(0,0,0,.14);
 }
-.cat-card:hover .cat-card-thumb, .cat-card.active .cat-card-thumb { transform: scale(1.1); }
+.cat-card.active .cat-card-thumb { transform: scale(1.1); }
+@media (hover: hover) and (pointer: fine) {
+  .cat-card:hover .cat-card-thumb { transform: scale(1.1); }
+}
 .cat-card-thumb img { width: 100%; height: 100%; object-fit: cover; }
 
 .cat-card-label {
@@ -594,7 +655,10 @@ html.app-ready .menu-footer    { animation: enter-from-left  620ms var(--ease) 4
   line-height: 1.25; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;
   transition: color var(--dur) var(--ease-std);
 }
-.cat-card.active .cat-card-label, .cat-card:hover .cat-card-label { color: var(--brand); }
+.cat-card.active .cat-card-label { color: var(--brand); }
+@media (hover: hover) and (pointer: fine) {
+  .cat-card:hover .cat-card-label { color: var(--brand); }
+}
 
 .icon-swatch-0 { background: var(--sw-0); } .icon-swatch-1 { background: var(--sw-1); }
 .icon-swatch-2 { background: var(--sw-2); } .icon-swatch-3 { background: var(--sw-3); }
@@ -616,10 +680,13 @@ html.app-ready .menu-footer    { animation: enter-from-left  620ms var(--ease) 4
 .view-btn {
   width: 34px; height: 34px; border-radius: 50%; border: none; background: transparent;
   color: var(--ink-muted); display: flex; align-items: center; justify-content: center;
-  font-size: .95rem; cursor: pointer; transition: all var(--dur) var(--ease-std);
+  font-size: .95rem; cursor: pointer; transition: background var(--dur) var(--ease-std), color var(--dur) var(--ease-std), transform var(--dur-press) var(--ease-press);
 }
 .view-btn.active { background: var(--brand); color: #fff; box-shadow: var(--shadow-brand); }
-.view-btn:not(.active):hover { color: var(--steel); background: var(--steel-soft); }
+@media (hover: hover) and (pointer: fine) {
+  .view-btn:not(.active):hover { color: var(--steel); background: var(--steel-soft); }
+}
+.view-btn:active { transform: scale(.88); }
 
 /* =========================================================================
    12. CATEGORY PANELS
@@ -864,6 +931,12 @@ html.app-ready .menu-footer    { animation: enter-from-left  620ms var(--ease) 4
 @media (min-width: 1200px) { .menu-items { grid-template-columns: repeat(5, 1fr); gap: 22px; } }
 
 .menu-card {
+  -webkit-appearance: none; appearance: none;
+  width: 100%;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  text-align: inherit;
   border-radius: 18px;
   background: var(--surface);
   border: 1px solid var(--border-warm);
@@ -874,14 +947,18 @@ html.app-ready .menu-footer    { animation: enter-from-left  620ms var(--ease) 4
   transition: box-shadow var(--dur) var(--ease), border-color var(--dur) var(--ease-std), transform var(--dur) var(--ease);
   cursor: pointer;
   position: relative;
+  transform: translate3d(0,0,0);
+  will-change: transform;
 }
-.menu-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-hover); border-color: var(--brand); }
+@media (hover: hover) and (pointer: fine) {
+  .menu-card:hover { transform: translate3d(0,-5px,0); box-shadow: var(--shadow-hover); border-color: var(--brand); }
+  .menu-card:hover .menu-card-img img { transform: scale(1.06); }
+}
 .menu-card:focus-visible { outline: 2px solid var(--brand); outline-offset: 3px; }
-.menu-card:active { transform: translateY(-2px) scale(.99); }
+.menu-card:active { transform: translate3d(0,-1px,0) scale(.96); transition-duration: var(--dur-press); transition-timing-function: var(--ease-press); }
 
 .menu-card-img { width: 100%; aspect-ratio: 4/3; position: relative; overflow: hidden; background: var(--cream-deep); flex-shrink: 0; }
 .menu-card-img img { width: 100%; height: 100%; object-fit: cover; transition: transform var(--dur-slow) var(--ease-std); }
-.menu-card:hover .menu-card-img img { transform: scale(1.06); }
 .menu-card-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 2.2rem; color: var(--brand); opacity: .45; }
 
 .menu-card-info { padding: 10px 12px 12px; display: flex; flex-direction: column; gap: 3px; flex: 1; min-width: 0; }
@@ -903,18 +980,20 @@ main[data-view="list"] .menu-card { flex-direction: row; align-items: stretch; b
 main[data-view="list"] .menu-card-img { width: 92px; aspect-ratio: 1/1; flex-shrink: 0; }
 main[data-view="list"] .menu-card-info { flex: 1; justify-content: center; padding: 8px 12px; }
 main[data-view="list"] .menu-card-desc { -webkit-line-clamp: 1; }
-main[data-view="list"] .menu-card:hover { transform: translateX(-3px); }
-main[data-view="list"] .menu-card:hover .menu-card-img img { transform: none; }
+@media (hover: hover) and (pointer: fine) {
+  main[data-view="list"] .menu-card:hover { transform: translate3d(-3px,0,0); }
+  main[data-view="list"] .menu-card:hover .menu-card-img img { transform: none; }
+}
 
 /* =========================================================================
    14. CATEGORY-SWITCH CHOREOGRAPHY
    Exit: cards fall down physically & fade. Enter: cards rain in from above.
    ========================================================================= */
-.card-fall-out { animation: card-fall-out 420ms var(--ease-fall) forwards; animation-delay: var(--fall-delay, 0ms); pointer-events: none; }
-@keyframes card-fall-out { 0% { opacity: 1; transform: translateY(0) rotate(0deg) scale(1); } 100% { opacity: 0; transform: translateY(60px) rotate(4deg) scale(.92); } }
+.card-fall-out { animation: card-fall-out 420ms var(--ease-fall) forwards; animation-delay: var(--fall-delay, 0ms); pointer-events: none; will-change: transform, opacity; }
+@keyframes card-fall-out { 0% { opacity: 1; transform: translate3d(0,0,0) rotate(0deg) scale(1); } 100% { opacity: 0; transform: translate3d(0,60px,0) rotate(4deg) scale(.92); } }
 
-.card-cascade-in { animation: card-cascade-in 560ms var(--ease) backwards; animation-delay: var(--cascade-delay, 0ms); }
-@keyframes card-cascade-in { 0% { opacity: 0; transform: translateY(-32px) scale(.94); } 60% { opacity: 1; } 100% { opacity: 1; transform: translateY(0) scale(1); } }
+.card-cascade-in { animation: card-cascade-in 560ms var(--ease) backwards; animation-delay: var(--cascade-delay, 0ms); will-change: transform, opacity; }
+@keyframes card-cascade-in { 0% { opacity: 0; transform: translate3d(0,-32px,0) scale(.94); } 60% { opacity: 1; } 100% { opacity: 1; transform: translate3d(0,0,0) scale(1); } }
 
 /* =========================================================================
    15. GRID ⇄ LIST — FLIP transition
@@ -953,7 +1032,10 @@ main[data-view="list"] .menu-card:hover .menu-card-img img { transform: none; }
   color: rgba(255,255,255,.85); font-size: .95rem; text-decoration: none;
   transition: background var(--dur) var(--ease), border-color var(--dur) var(--ease), color var(--dur) var(--ease), transform var(--dur) var(--ease);
 }
-.social-dot:hover { background: #fff; border-color: #fff; color: var(--brand-dark); transform: translateY(-3px); }
+@media (hover: hover) and (pointer: fine) {
+  .social-dot:hover { background: #fff; border-color: #fff; color: var(--brand-dark); transform: translate3d(0,-3px,0); }
+}
+.social-dot:active { transform: scale(.9); transition-duration: var(--dur-press); }
 
 /* =========================================================================
    17. PRODUCT BOTTOM SHEET — skins Bootstrap's Offcanvas (offcanvas-bottom)
@@ -970,7 +1052,7 @@ main[data-view="list"] .menu-card:hover .menu-card-img img { transform: none; }
   --bs-offcanvas-width: 560px;
   left: 50%;
   right: auto; /* منع تداخل با right:0 پیش‌فرض offcanvas-bottom بوت‌استرپ */
-  transform: translate(-50%, 100%);
+  transform: translate3d(-50%, 100%, 0);
   width: 100%;
   max-width: var(--bs-offcanvas-width);
   max-height: 88vh;
@@ -982,10 +1064,11 @@ main[data-view="list"] .menu-card:hover .menu-card-img img { transform: none; }
   background: var(--surface);
   color: var(--ink);
   transition: transform var(--dur-slow) var(--ease);
+  will-change: transform;
 }
-.offcanvas.product-sheet.show { transform: translate(-50%, 0); }
-.offcanvas.product-sheet.showing { transform: translate(-50%, 0); }
-.offcanvas.product-sheet.hiding  { transform: translate(-50%, 100%); }
+.offcanvas.product-sheet.show { transform: translate3d(-50%, 0, 0); }
+.offcanvas.product-sheet.showing { transform: translate3d(-50%, 0, 0); }
+.offcanvas.product-sheet.hiding  { transform: translate3d(-50%, 100%, 0); }
 .offcanvas.product-sheet.is-dragging { transition: none; }
 
 .sheet-drag-handle {
@@ -1006,7 +1089,10 @@ main[data-view="list"] .menu-card:hover .menu-card-img img { transform: none; }
   font-size: 1.05rem; cursor: pointer; backdrop-filter: blur(6px);
   transition: background var(--dur) var(--ease), transform var(--dur) var(--ease);
 }
-.sheet-close-btn:hover { background: rgba(0,0,0,.7); transform: scale(1.06); }
+@media (hover: hover) and (pointer: fine) {
+  .sheet-close-btn:hover { background: rgba(0,0,0,.7); transform: scale(1.06); }
+}
+.sheet-close-btn:active { transform: scale(.9); transition-duration: var(--dur-press); }
 
 .offcanvas.product-sheet .offcanvas-body {
   padding: 0;

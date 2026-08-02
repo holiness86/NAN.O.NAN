@@ -148,10 +148,9 @@
   }
 
   catCards.forEach(function (card) {
+    // .cat-card is a real <button> — Enter/Space already dispatch a native
+    // 'click' for us, so a single listener covers mouse, touch and keyboard.
     card.addEventListener('click', function () { activateCategory(card.getAttribute('data-target'), card); });
-    card.addEventListener('keydown', function (e) {
-      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); activateCategory(card.getAttribute('data-target'), card); }
-    });
   });
 
   /* =======================================================================
@@ -333,7 +332,7 @@
       bubble.style.setProperty('--bubble-x', x + 'px');
       bubble.style.setProperty('--bubble-y', y + 'px');
       bubble.style.setProperty('--bubble-radius', radius + 'px');
-      bubble.style.setProperty('--bubble-color', next === 'dark' ? 'var(--cream-dark-value)' : 'var(--cream-light-value)');
+      bubble.style.setProperty('--bubble-color-rgb', readCssVar(next === 'dark' ? '--cream-dark-rgb' : '--cream-light-rgb'));
       document.body.appendChild(bubble);
 
       requestAnimationFrame(function () { bubble.classList.add('expanding'); });
@@ -342,7 +341,7 @@
         if (ev.propertyName !== 'width') return;
         bubble.removeEventListener('transitionend', onExpandEnd);
 
-        applyTheme(); // swap the real theme while the bubble fully hides the screen
+        applyTheme(); // swap the real theme while the bubble is at full blur/coverage, masking the change
 
         bubble.classList.remove('expanding');
         bubble.classList.add('retreating');
@@ -401,7 +400,7 @@
 
         card.style.transition = 'none';
         card.style.transitionDelay = '0ms';
-        card.style.transform = 'translate(' + dx + 'px,' + dy + 'px)';
+        card.style.transform = 'translate3d(' + dx + 'px,' + dy + 'px,0)';
         card.classList.add('is-flip-fade');
         void card.offsetWidth; // flush the above before re-enabling transitions
 
@@ -497,15 +496,13 @@
 
     function openFromCard(card) { fillSheet(card.dataset); offcanvas.show(); }
 
-    // Cards are re-rendered/animated constantly, so delegate from document
+    // .menu-card is a real <button> — Enter/Space already dispatch a native
+    // 'click', so a single delegated listener covers mouse, touch and
+    // keyboard. Cards are re-rendered/animated constantly, so we delegate
+    // from document rather than binding per-card.
     document.addEventListener('click', function (e) {
       var card = e.target.closest ? e.target.closest('.menu-card') : null;
       if (card) openFromCard(card);
-    });
-    document.addEventListener('keydown', function (e) {
-      if (e.key !== 'Enter' && e.key !== ' ') return;
-      var card = e.target.closest ? e.target.closest('.menu-card') : null;
-      if (card) { e.preventDefault(); openFromCard(card); }
     });
 
     sheetEl.addEventListener('hidden.bs.offcanvas', function () {
@@ -513,7 +510,7 @@
     });
 
     /* --- drag-to-dismiss --- */
-    var DUR_SLOW = 420; // keep in sync with --dur-slow in style.css
+    var DUR_SLOW = 440; // keep in sync with --dur-slow in style.css
     var dragState = null;
 
     function onDragStart(e) {
@@ -526,7 +523,7 @@
       if (!dragState) return;
       dragState.lastY = e.clientY;
       var delta = Math.max(0, Math.min(dragState.lastY - dragState.startY, window.innerHeight * 1.2));
-      sheetEl.style.transform = 'translate(-50%,' + delta + 'px)';
+      sheetEl.style.transform = 'translate3d(-50%,' + delta + 'px,0)';
     }
     function onDragEnd() {
       if (!dragState) return;
@@ -538,8 +535,8 @@
       sheetEl.classList.remove('is-dragging');
 
       if (dismiss) {
-        sheetEl.style.transition = 'transform ' + DUR_SLOW + 'ms cubic-bezier(.2,.8,.2,1)';
-        sheetEl.style.transform = 'translate(-50%,100%)';
+        sheetEl.style.transition = 'transform ' + DUR_SLOW + 'ms var(--ease-std)';
+        sheetEl.style.transform = 'translate3d(-50%,100%,0)';
         sheetEl.addEventListener('transitionend', function done() {
           sheetEl.removeEventListener('transitionend', done);
           sheetEl.style.transition = '';
@@ -547,7 +544,7 @@
           offcanvas.hide();
         }, { once: true });
       } else {
-        sheetEl.style.transition = 'transform ' + DUR_SLOW + 'ms cubic-bezier(.22,.68,0,1.2)';
+        sheetEl.style.transition = 'transform ' + DUR_SLOW + 'ms var(--ease)';
         sheetEl.style.transform = '';
         sheetEl.addEventListener('transitionend', function done() {
           sheetEl.removeEventListener('transitionend', done);
