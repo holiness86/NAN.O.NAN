@@ -2,11 +2,20 @@ const mongoose = require('mongoose');
 const express = require('express');
 const multer = require('multer');
 const path = require('path');
-const session = require('express-session'); 
+const session = require('express-session');
+const { MongoStore } = require('connect-mongo');
 const rateLimit = require('express-rate-limit');
+const os = require('os');
 require('dotenv').config();
+
 console.log('DEBUG مقدار NODE_ENV:', JSON.stringify(process.env.NODE_ENV));
+
+// آدرس دیتابیس - بالا آورده شد چون هم توسط session store و هم mongoose.connect لازمه
+const urlDB = process.env.MONGO_URL || 'mongodb://localhost:27017/NANONAN';
+const PORT = process.env.PORT || 3000;
+
 const app = express();
+app.set('trust proxy', 1); // چون پشت nginx/reverse proxy هستیم
 
 if (!process.env.SESSION_SECRET) {
     console.error('خطا: SESSION_SECRET در فایل .env تنظیم نشده است. برنامه متوقف شد.');
@@ -18,6 +27,96 @@ const Iteam = require('./models/iteam');
 const Pass = require('./models/pass');
 const Category = require('./models/category')
 
+// ==================== بخش مانیتورینگ - شروع ====================
+
+// ---------- State آمار ----------
+let activeConnections = 0;
+let totalRequests = 0;
+let requestsInLastMinute = [];
+let statusCodeCounts = {};
+let errorCount = 0;
+let eventLoopLag = 0;
+
+setInterval(() => {
+  const start = Date.now();
+  setImmediate(() => { eventLoopLag = Date.now() - start; });
+}, 1000);
+
+setInterval(() => {
+  const oneMinuteAgo = Date.now() - 60000;
+  requestsInLastMinute = requestsInLastMinute.filter(ts => ts > oneMinuteAgo);
+}, 10000);
+
+// ---------- محاسبه درصد CPU ----------
+function getCpuUsagePercent() {
+  return new Promise((resolve) => {
+    const start = os.cpus();
+    setTimeout(() => {
+      const end = os.cpus();
+      let idleDiff = 0, totalDiff = 0;
+      for (let i = 0; i < start.length; i++) {
+        const s = start[i].times, e = end[i].times;
+        const sTotal = Object.values(s).reduce((a, b) => a + b, 0);
+        const eTotal = Object.values(e).reduce((a, b) => a + b, 0);
+        idleDiff += e.idle - s.idle;
+        totalDiff += eTotal - sTotal;
+      }
+      resolve(Math.round((100 - (100 * idleDiff / totalDiff)) * 100) / 100);
+    }, 200);
+  });
+}
+
+function formatUptime(seconds) {
+  const h = Math.floor(seconds / 3600);
+  const m = Math.floor((seconds % 3600) / 60);
+  const s = Math.floor(seconds % 60);
+  return `${h}h ${m}m ${s}s`;
+}
+
+// ---------- تابع اصلی جمع‌آوری داده ----------
+async function getMonitoringData() {
+  const mem = process.memoryUsage();
+  const cpuPercent = await getCpuUsagePercent();
+  const loadAvg = os.loadavg();
+  const totalSystemMem = os.totalmem();
+  const freeSystemMem = os.freemem();
+
+  return {
+    timestamp: new Date().toISOString(),
+    traffic: {
+      activeConnectionsNow: activeConnections,
+      totalRequestsSinceStart: totalRequests,
+      requestsPerMinute: requestsInLastMinute.length,
+      statusCodeBreakdown: statusCodeCounts,
+      errorCount5xx: errorCount,
+    },
+    processMemory: {
+      rss: `${Math.round(mem.rss / 1024 / 1024)} MB`,
+      heapUsed: `${Math.round(mem.heapUsed / 1024 / 1024)} MB`,
+      heapTotal: `${Math.round(mem.heapTotal / 1024 / 1024)} MB`,
+      heapUsedPercent: `${Math.round((mem.heapUsed / mem.heapTotal) * 100)}%`,
+    },
+    systemMemory: {
+      usedPercent: `${Math.round(((totalSystemMem - freeSystemMem) / totalSystemMem) * 100)}%`,
+      total: `${Math.round(totalSystemMem / 1024 / 1024)} MB`,
+      free: `${Math.round(freeSystemMem / 1024 / 1024)} MB`,
+    },
+    cpu: {
+      usagePercent: `${cpuPercent}%`,
+      cores: os.cpus().length,
+      loadAverage1min: loadAvg[0].toFixed(2),
+    },
+    eventLoop: {
+      lagMs: eventLoopLag,
+      status: eventLoopLag < 50 ? 'سالم' : eventLoopLag < 200 ? 'تحت فشار' : 'بحرانی',
+    },
+    uptimeSeconds: Math.round(process.uptime()),
+    uptimeFormatted: formatUptime(process.uptime()),
+  };
+}
+
+// ==================== بخش مانیتورینگ - پایان تعاریف ====================
+
 // میدل ور ها
 app.set('view engine' , 'ejs');
 // اول: مسیر اختصاصی uploads از دیسک persistent (اولویت داره)
@@ -27,6 +126,23 @@ app.use('/uploads', express.static('/uploads'));
 app.use(express.static('public'));
 app.use(express.urlencoded({extended: true}));
 app.use(express.json());
+
+// میدل‌ور ردیابی ترافیک برای مانیتورینگ (باید قبل از روت‌ها ثبت بشه)
+app.use((req, res, next) => {
+  activeConnections++;
+  totalRequests++;
+  requestsInLastMinute.push(Date.now());
+
+  res.on('finish', () => {
+    activeConnections--;
+    const status = res.statusCode;
+    statusCodeCounts[status] = (statusCodeCounts[status] || 0) + 1;
+    if (status >= 500) errorCount++;
+  });
+
+  next();
+});
+
 // جلوگیری از NoSQL Injection: کلیدهای خطرناک ($ و .) رو از داخل آبجکت پاک می‌کنیم
 // (به‌جای reassign کردن req.query که در Express 5 فقط getter هست و ارور می‌ده)
 function sanitizeObject(obj) {
@@ -47,11 +163,16 @@ app.use((req, res, next) => {
     next();
 });
 
-// سشن
+// سشن - حالا روی MongoDB ذخیره میشه (نه RAM) تا بین چند instance مشترک باشه
 app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
+    store: MongoStore.create({
+        mongoUrl: urlDB,
+        collectionName: 'sessions',
+        ttl: 60 * 60 * 24 // ۲۴ ساعت بر حسب ثانیه - هم‌راستا با cookie.maxAge
+    }),
     cookie: { 
         maxAge: 1000 * 60 * 60 * 24,
         httpOnly: true,
@@ -112,8 +233,6 @@ const upload = multer({
 });
 
 // اتصال دیتا بیس
-const urlDB = process.env.MONGO_URL || 'mongodb://localhost:27017/NANONAN';
-const PORT = process.env.PORT || 3000;
 mongoose.connect(urlDB)
 .then(() => {
     console.log('Connected to MongoDB');
@@ -122,6 +241,21 @@ mongoose.connect(urlDB)
     });
 })
 .catch((err) => console.error('Could not connect to MongoDB', err));
+
+
+
+// صفحه داشبورد مانیتورینگ
+app.get('/admin/monitoring', checkAdminLogin, (req, res) => {
+  res.render('monitoring'); // views/monitoring.ejs
+});
+
+// اندپوینت داده‌ای که صفحه هر ۲ ثانیه صداش می‌زنه
+app.get('/admin/monitoring/data', checkAdminLogin, async (req, res) => {
+  const data = await getMonitoringData();
+  res.json(data);
+});
+
+
 
 // روت صفحه اصلی (نمایش منو)
 app.get('/', async (req, res) => {

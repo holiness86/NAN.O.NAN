@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>مانیتورینگ سرور</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: Tahoma, sans-serif;
+    background: linear-gradient(135deg, #1a1a2e, #16213e);
+    color: #eee;
+    margin: 0;
+    padding: 24px;
+  }
+  h1 { text-align: center; font-weight: 400; margin-bottom: 4px; }
+  .subtitle { text-align: center; color: #888; font-size: 13px; margin-bottom: 24px; }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    max-width: 1200px;
+    margin: 0 auto 24px;
+  }
+  .card {
+    background: rgba(255,255,255,0.06);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 14px;
+    padding: 18px;
+  }
+  .card .label { font-size: 13px; color: #aaa; margin-bottom: 6px; }
+  .card .value { font-size: 28px; font-weight: bold; }
+  .card .value.ok { color: #4ade80; }
+  .card .value.warn { color: #facc15; }
+  .card .value.bad { color: #f87171; }
+
+  .charts {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  @media (max-width: 800px) {
+    .charts { grid-template-columns: 1fr; }
+  }
+  .chart-box {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 14px;
+    padding: 16px;
+  }
+  .chart-box h3 { margin-top: 0; font-weight: 400; font-size: 14px; color: #bbb; }
+
+  .live-badge {
+    display: block;
+    text-align: center;
+    font-size: 12px;
+    color: #4ade80;
+    margin-bottom: 16px;
+  }
+</style>
+</head>
+<body>
+
+<h1>📊 مانیتورینگ زنده سرور</h1>
+<div class="subtitle" id="lastUpdate">در حال بارگذاری...</div>
+<div class="live-badge">🟢 به‌روزرسانی خودکار هر ۲ ثانیه</div>
+
+<div class="grid" id="statCards"></div>
+
+<div class="charts">
+  <div class="chart-box">
+    <h3>مصرف RAM پروسه (MB)</h3>
+    <canvas id="memChart" height="180"></canvas>
+  </div>
+  <div class="chart-box">
+    <h3>مصرف CPU (%)</h3>
+    <canvas id="cpuChart" height="180"></canvas>
+  </div>
+  <div class="chart-box">
+    <h3>تعداد ریکوئست در دقیقه</h3>
+    <canvas id="trafficChart" height="180"></canvas>
+  </div>
+  <div class="chart-box">
+    <h3>Event Loop Lag (ms)</h3>
+    <canvas id="lagChart" height="180"></canvas>
+  </div>
+</div>
+
+<script>
+const MAX_POINTS = 30;
+const labels = [];
+const memData = [];
+const cpuData = [];
+const trafficData = [];
+const lagData = [];
+
+function pushCapped(arr, val) {
+  arr.push(val);
+  if (arr.length > MAX_POINTS) arr.shift();
+}
+
+function makeChart(ctx, label, color) {
+  return new Chart(ctx, {
+    type: 'line',
+    data: { labels, datasets: [{ label, data: [], borderColor: color, backgroundColor: color + '33', tension: 0.3, fill: true, pointRadius: 0 }] },
+    options: {
+      responsive: true,
+      animation: false,
+      scales: {
+        x: { ticks: { color: '#888', maxTicksLimit: 6 }, grid: { color: 'rgba(255,255,255,0.05)' } },
+        y: { ticks: { color: '#888' }, grid: { color: 'rgba(255,255,255,0.05)' }, beginAtZero: true }
+      },
+      plugins: { legend: { display: false } }
+    }
+  });
+}
+
+const memChart = makeChart(document.getElementById('memChart'), 'RAM', '#4ade80');
+const cpuChart = makeChart(document.getElementById('cpuChart'), 'CPU', '#facc15');
+const trafficChart = makeChart(document.getElementById('trafficChart'), 'Requests', '#60a5fa');
+const lagChart = makeChart(document.getElementById('lagChart'), 'Lag', '#f87171');
+
+function statusClass(val, warnAt, badAt) {
+  if (val >= badAt) return 'bad';
+  if (val >= warnAt) return 'warn';
+  return 'ok';
+}
+
+async function fetchData() {
+  try {
+    const res = await fetch(window.location.pathname + '/data', { credentials: 'same-origin' });
+    if (!res.ok) throw new Error('unauthorized or error');
+    const d = await res.json();
+
+    document.getElementById('lastUpdate').textContent = 'آخرین به‌روزرسانی: ' + new Date(d.timestamp).toLocaleTimeString('fa-IR');
+
+    const memMB = parseFloat(d.processMemory.rss);
+    const cpuPct = parseFloat(d.cpu.usagePercent);
+    const reqPerMin = d.traffic.requestsPerMinute;
+    const lag = d.eventLoop.lagMs;
+
+    document.getElementById('statCards').innerHTML = `
+      <div class="card">
+        <div class="label">👥 کاربران آنلاین (کانکشن فعال)</div>
+        <div class="value ok">${d.traffic.activeConnectionsNow}</div>
+      </div>
+      <div class="card">
+        <div class="label">📈 ریکوئست در دقیقه</div>
+        <div class="value">${d.traffic.requestsPerMinute}</div>
+      </div>
+      <div class="card">
+        <div class="label">💾 مصرف رم پروسه</div>
+        <div class="value ${statusClass(memMB, 200, 400)}">${d.processMemory.rss}</div>
+      </div>
+      <div class="card">
+        <div class="label">🖥️ مصرف CPU</div>
+        <div class="value ${statusClass(cpuPct, 60, 85)}">${d.cpu.usagePercent}</div>
+      </div>
+      <div class="card">
+        <div class="label">⚡ Event Loop</div>
+        <div class="value ${d.eventLoop.status === 'سالم' ? 'ok' : d.eventLoop.status === 'تحت فشار' ? 'warn' : 'bad'}">${d.eventLoop.status}</div>
+      </div>
+      <div class="card">
+        <div class="label">❌ خطاهای 5xx (کل)</div>
+        <div class="value ${d.traffic.errorCount5xx > 0 ? 'bad' : 'ok'}">${d.traffic.errorCount5xx}</div>
+      </div>
+      <div class="card">
+        <div class="label">⏱️ مدت روشن بودن سرور</div>
+        <div class="value" style="font-size:18px">${d.uptimeFormatted}</div>
+      </div>
+      <div class="card">
+        <div class="label">🗄️ مصرف رم کل سرور</div>
+        <div class="value ${statusClass(parseFloat(d.systemMemory.usedPercent), 70, 90)}">${d.systemMemory.usedPercent}</div>
+      </div>
+    `;
+
+    const now = new Date().toLocaleTimeString('fa-IR', { minute: '2-digit', second: '2-digit' });
+    pushCapped(labels, now);
+    pushCapped(memData, memMB);
+    pushCapped(cpuData, cpuPct);
+    pushCapped(trafficData, reqPerMin);
+    pushCapped(lagData, lag);
+
+    [memChart, cpuChart, trafficChart, lagChart].forEach(c => { c.data.labels = labels; });
+    memChart.data.datasets[0].data = memData;
+    cpuChart.data.datasets[0].data = cpuData;
+    trafficChart.data.datasets[0].data = trafficData;
+    lagChart.data.datasets[0].data = lagData;
+    [memChart, cpuChart, trafficChart, lagChart].forEach(c => c.update());
+
+  } catch (err) {
+    document.getElementById('lastUpdate').textContent = '⚠️ خطا در دریافت اطلاعات — احتمالاً نشست لاگین منقضی شده';
+  }
+}
+
+fetchData();
+setInterval(fetchData, 2000);
+</script>
+
+</body>
+</html>
