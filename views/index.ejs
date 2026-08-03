@@ -95,10 +95,8 @@
                aria-pressed="<%= index === 0 ? 'true' : 'false' %>"
                data-target="cat-<%= cat.enname %>">
             <span class="cat-card-thumb">
-              <% if (isVectorIcon(cat.imageUrl)) { %>
-                <i class="cat-visual-icon" style="--icon-url:url('<%= cat.imageUrl %>')" aria-hidden="true"></i>
-              <% } else if (cat.imageUrl) { %>
-                <img src="<%= cat.imageUrl %>" alt="" loading="lazy">
+              <% if (cat.imageUrl) { %>
+                <img src="<%= cat.imageUrl %>" alt="" loading="lazy" class="<%= isVectorIcon(cat.imageUrl) ? 'is-vector' : '' %>">
               <% } else { %>
                 <i class="bi <%= cat.icon || 'bi-grid' %>" aria-hidden="true"></i>
               <% } %>
@@ -130,10 +128,8 @@
 
           <div class="cat-section-header">
             <div class="cat-thumb">
-              <% if (isVectorIcon(cat.imageUrl)) { %>
-                <i class="cat-visual-icon" style="--icon-url:url('<%= cat.imageUrl %>')" aria-hidden="true"></i>
-              <% } else if (cat.imageUrl) { %>
-                <img src="<%= cat.imageUrl %>" alt="" loading="lazy">
+              <% if (cat.imageUrl) { %>
+                <img src="<%= cat.imageUrl %>" alt="" loading="lazy" class="<%= isVectorIcon(cat.imageUrl) ? 'is-vector' : '' %>">
               <% } else { %>
                 <i class="bi <%= cat.icon || 'bi-grid' %>" aria-hidden="true"></i>
               <% } %>

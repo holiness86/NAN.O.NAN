@@ -472,23 +472,19 @@
     var sheetPrice    = document.getElementById('sheetPrice');
     var sheetDesc     = document.getElementById('sheetDesc');
 
-    // همان منطق isVectorIcon سمت سرور (index.ejs) — SVG تک‌رنگ با mask-image
-    // رنگ‌آمیزی می‌شود تا currentColor (رنگ برند) را بگیرد؛ عکس رستری با <img>
-    // ساده و object-fit:cover؛ در نبود تصویر، آیکون بوت‌استرپ (خودش currentColor است).
+    // همان منطق isVectorIcon سمت سرور (index.ejs) — فقط برای انتخاب object-fit
+    // مناسب (وکتور را کامل و بدون بریدگی نشان می‌دهد، عکس واقعی را کادر پر می‌کند).
+    // خودِ تصویر/آیکون دقیقاً همان فایلی است که در پنل ادمین انتخاب شده — بدون تغییر رنگ.
     function isVectorIconUrl(url) { return !!url && /\.svg(\?.*)?$/i.test(url); }
     function renderCatVisual(container, imgUrl, iconClass) {
       container.textContent = '';
       var node;
-      if (isVectorIconUrl(imgUrl)) {
-        node = document.createElement('i');
-        node.className = 'cat-visual-icon';
-        node.setAttribute('aria-hidden', 'true');
-        node.style.setProperty('--icon-url', "url('" + imgUrl + "')");
-      } else if (imgUrl) {
+      if (imgUrl) {
         node = document.createElement('img');
         node.src = imgUrl;
         node.alt = '';
         node.loading = 'lazy';
+        if (isVectorIconUrl(imgUrl)) node.className = 'is-vector';
       } else {
         node = document.createElement('i');
         node.className = 'bi ' + (iconClass || 'bi-grid');
