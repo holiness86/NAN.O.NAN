@@ -299,7 +299,7 @@ app.get('/admin', checkAdminLogin, async (req , res) => {
 app.get('/admin/category/delete/:id', checkAdminLogin, async (req, res) => {
     try {
         await Category.findByIdAndDelete(req.params.id)
-        res.redirect('/admin')
+        res.redirect('/admin#categoryManage')
     } catch (err) {
         console.error('خطا در حذف دسته‌بندی:', err)
         res.status(500).send('خطا در حذف دسته‌بندی')
@@ -311,12 +311,12 @@ app.get('/admin/category/edit/:id', checkAdminLogin, async (req, res) => {
     try {
         const category = await Category.findById(req.params.id)
         if (!category) {
-            return res.redirect('/admin')
+            return res.redirect('/admin#categoryManage')
         }
         res.render('edit-category', { category })
     } catch (err) {
         console.log(err)
-        res.redirect('/admin')
+        res.redirect('/admin#categoryManage')
     }
 })
 
@@ -342,7 +342,7 @@ app.post('/admin/category/update/:id', checkAdminLogin, upload.single('image'), 
             updateData
         )
 
-        res.redirect('/admin')
+        res.redirect('/admin#categoryManage')
 
     } catch (err) {
         console.log(err)
@@ -423,7 +423,7 @@ app.post('/admin', checkAdminLogin, upload.single('imageUrl'), (req, res) => {
     iteam.save()
         .then(() => {
             console.log('Iteam saved');
-            res.redirect('/admin');
+            res.redirect('/admin#addProduct');
         })
         .catch(err => res.status(500).send('خطا در ذخیره محصول'));
 });
@@ -458,7 +458,7 @@ app.post('/admin/category/add', checkAdminLogin, upload.single('image'), async (
             Iteam.find(),
             Category.find().sort({ createdAt: -1 })
         ])
-        res.render('admin', { iteam, categories })
+        res.render('/admin#categoryManage', { iteam, categories })
 
     } catch (error) {
         console.error(error)
@@ -477,7 +477,7 @@ app.get('/update', checkAdminLogin, (req , res) => {
 app.get('/admin/delete/:id', checkAdminLogin, (req,res) => {
     const id = req.params.id;
     Iteam.findByIdAndDelete(id)
-        .then(() => res.redirect('/admin'))
+        .then(() => res.redirect('/admin#productList'))
         .catch(err => console.error(err));
 });
 
@@ -513,10 +513,10 @@ app.post('/admin/update/:id', checkAdminLogin, upload.single('imageUrl'), async 
         if (req.file) updateData.imageUrl = '/uploads/' + req.file.filename;
 
         await Iteam.findByIdAndUpdate(req.params.id, updateData, { runValidators: true });
-        res.redirect('/admin');
+        res.redirect('/admin#productList');
     } catch (err) {
         console.error('خطا در آپدیت محصول:', err);
-        res.redirect('/admin');
+        res.redirect('/admin#productList');
     }
 });
 
