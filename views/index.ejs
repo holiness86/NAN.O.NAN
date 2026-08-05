@@ -95,10 +95,10 @@
                aria-pressed="<%= index === 0 ? 'true' : 'false' %>"
                data-target="cat-<%= cat.enname %>">
             <span class="cat-card-thumb">
-              <% if (cat.imageUrl) { %>
-                <img src="<%= cat.imageUrl %>" alt="" loading="lazy" class="<%= isVectorIcon(cat.imageUrl) ? 'is-vector' : '' %>">
+              <% if (cat.image) { %>
+                <img src="<%= cat.image %>" alt="<%= cat.name %>" loading="lazy">
               <% } else { %>
-                <i class="bi <%= cat.icon || 'bi-grid' %>" aria-hidden="true"></i>
+                <i class="bi <%= cat.icon || 'bi-grid' %>"></i>
               <% } %>
             </span>
             <span class="cat-card-label"><%= cat.name %></span>
