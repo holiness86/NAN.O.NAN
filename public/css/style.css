@@ -291,36 +291,44 @@ a { color: inherit; }
   overflow: hidden;
 }
 
-/* --- 6.a Background: cafe photo, filling the screen edge-to-edge.
-    مسیر تصویر را با عکس واقعی کافه از پروژه جایگزین کنید؛
-    تا قبل از آن، پس‌زمینه‌ی رنگیِ overlay به‌تنهایی نمایش داده می‌شود. --- */
+/* --- 6.a Background: cafe photo, filling the screen edge-to-edge and kept
+    crisp/clear — no desaturation or dimming here; all the theme feel comes
+    from the thin color-wash overlay on top, not from degrading the photo. */
 .preloader-bg {
   position: absolute;
   inset: 0;
   z-index: 0;
-  background-image: url('../images/backgrounds/cafe-loading.PNG');
+  background-image: url('../images/backgrounds/cafe-loading.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  /* filter: saturate(.92) brightness(.88); */
   transform: scale(1.04); /* حاشیه‌ی ایمنی برای بلور/زوم جزئی بدون افشای لبه */
 }
 
-/* --- 6.b Overlay: theme brand color, faded/blended over the photo so the
-    site's own palette clearly reads on top while the cafe scene stays
-    visible underneath. Sourced entirely from theme tokens, so it switches
-    automatically with light/dark mode. --- */
+/* --- 6.b Overlay: a thin, translucent wash of the theme's own brand color
+    over the photo — just enough tint to visually belong to the site, while
+    the cafe scene stays clearly readable underneath. Sourced entirely from
+    theme tokens, so it switches automatically with light/dark mode. A soft
+    bottom gradient adds only the extra depth needed for the message chip's
+    legibility, without darkening the photo as a whole. --- */
 .preloader-overlay {
   position: absolute;
   inset: 0;
   z-index: 1;
   pointer-events: none;
   background:
-    radial-gradient(circle at 50% 38%, rgba(var(--brand-rgb), .5) 0%, transparent 58%),
     linear-gradient(180deg,
-      rgba(var(--brand-dark-rgb), .80) 0%,
-      rgba(var(--ink-rgb), .90) 62%,
-      rgba(var(--ink-rgb), .96) 100%);
+      rgba(var(--brand-dark-rgb), .30) 0%,
+      rgba(var(--brand-dark-rgb), .22) 40%,
+      rgba(var(--brand-dark-rgb), .30) 70%,
+      rgba(var(--ink-rgb), .55) 100%);
+  mix-blend-mode: color;
+}
+.preloader-overlay::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(var(--ink-rgb), .16); /* لایه‌ی تیرگی خیلی سبک، جدا از mix-blend، برای کنتراست متن */
 }
 
 /* --- 6.c Core: transparent logo, highlighted welcome message, loading dots --- */
@@ -337,7 +345,7 @@ a { color: inherit; }
   object-fit: contain;
   margin: 0 auto 1.4rem;
   display: block;
-  filter: drop-shadow(0 8px 22px rgba(0,0,0,.38));
+  filter: drop-shadow(0 8px 22px rgba(0,0,0,.5)) drop-shadow(0 2px 8px rgba(0,0,0,.35));
   animation: logo-pop 700ms var(--ease) both;
 }
 @keyframes logo-pop { from { transform: scale(.3); opacity: 0; } to { transform: scale(1); opacity: 1; } }
@@ -349,13 +357,13 @@ a { color: inherit; }
   font-size: .92rem;
   line-height: 1.95;
   color: #FFFFFF;
-  background: rgba(var(--ink-rgb), .34);
-  border: 1px solid rgba(255,255,255,.22);
+  background: rgba(var(--ink-rgb), .46);
+  border: 1px solid rgba(255,255,255,.26);
   border-radius: 16px;
-  backdrop-filter: blur(7px);
-  -webkit-backdrop-filter: blur(7px);
-  text-shadow: 0 1px 6px rgba(0,0,0,.4);
-  box-shadow: 0 10px 30px rgba(0,0,0,.22);
+  backdrop-filter: blur(9px);
+  -webkit-backdrop-filter: blur(9px);
+  text-shadow: 0 1px 6px rgba(0,0,0,.5);
+  box-shadow: 0 10px 30px rgba(0,0,0,.28);
 }
 
 .preloader-dots { display: flex; align-items: center; justify-content: center; gap: 7px; }
