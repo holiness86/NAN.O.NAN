@@ -7,7 +7,7 @@
      2. Scroll lock
      3. Shared DOM refs & helpers (cards / active panel)
      4. Category switcher (fall-out exit + rain-in enter)
-     5. Preloader (rain particles + goo/bubble dissolve)
+     5. Preloader (cafe photo + goo/bubble dissolve, 5s hold after full load)
      6. Theme toggle (dynamic-radius liquid bubble)
      7. View switcher — Grid ⇄ List (vanilla FLIP)
      8. Sticky category-bar shadow
@@ -155,11 +155,12 @@
 
   /* =======================================================================
      5. PRELOADER
-     Holds for exactly 2s after full page load, then dissolves: the screen
-     is covered by a grid of overlapping circles (goo-filtered into one
-     seamless liquid sheet), which then shrink away with randomized timing
-     — reading as the loading screen dissolving into bubbles rather than a
-     flat fade. Falling icons rain in from above the viewport throughout.
+     Holds for exactly 5s after the page has *fully* finished loading
+     (window 'load' — all images/fonts/etc. included), then dissolves: the
+     screen is covered by a grid of overlapping circles (goo-filtered into
+     one seamless liquid sheet), which then shrink away with randomized
+     timing — reading as the loading screen dissolving into bubbles rather
+     than a flat fade.
      ======================================================================= */
   (function initPreloader() {
     var preloader = document.getElementById('preloader');
@@ -167,54 +168,10 @@
 
     lockScroll();
 
-    var HOLD_AFTER_LOAD_MS = 2000; // دقیقاً ۲ ثانیه بعد از لود کامل
-    var HARD_TIMEOUT_MS    = 7000; // سقف ایمنی برای اتصال‌های خیلی کند
-    var rainContainer      = document.getElementById('preloaderRain');
+    var HOLD_AFTER_LOAD_MS = 5000;  // دقیقاً ۵ ثانیه بعد از لود کامل تمام ریسورس‌ها
+    var HARD_TIMEOUT_MS    = 10000; // سقف ایمنی برای اتصال‌های خیلی کند (اگر رویداد load هرگز شلیک نشود)
     var dissolveContainer  = document.getElementById('preloaderDissolve');
     var alreadyHidden      = false;
-
-    function spawnRain() {
-      if (!rainContainer || prefersReducedMotion()) return;
-
-      var images = [
-        '/images/logo/Nan.O.Nan-black.png',
-        '/images/logo/Nan.O.Nan-white.png',
-        '/images/logo/Nan.O.Nan-brand.png'
-      ];
-
-      var count = window.innerWidth < 640 ? 10 : 18;
-      var frag = document.createDocumentFragment();
-
-      for (var i = 0; i < count; i++) {
-        var el = document.createElement('span');
-        el.className = 'preloader-rain-item';
-        el.setAttribute('aria-hidden', 'true');
-
-        var size = 14 + Math.random() * 16;
-
-        el.style.setProperty('--size', size.toFixed(1) + 'px');
-        el.style.setProperty('--start-x', (Math.random() * 96 + 2).toFixed(1) + '%');
-        el.style.setProperty('--fall-y', (110 + Math.random() * 30).toFixed(0) + 'vh');
-        el.style.setProperty('--rotate-end', ((Math.random() - 0.5) * 70).toFixed(0) + 'deg');
-        el.style.animationDuration = (4.2 + Math.random() * 3.6).toFixed(2) + 's';
-        el.style.animationDelay = (Math.random() * 3.2).toFixed(2) + 's';
-
-        var randomImage = images[(Math.random() * images.length) | 0];
-
-        el.innerHTML = `
-          <img
-            src="${randomImage}"
-            alt=""
-            aria-hidden="true"
-            style="width:100%;height:100%;object-fit:contain;"
-          >
-        `;
-
-        frag.appendChild(el);
-      }
-
-      rainContainer.appendChild(frag);
-    }
 
     /* Grid of jittered, overlapping circles sized to fully tile the
        viewport (so at rest — scale(1) — the sheet is seamless), which the
@@ -276,7 +233,6 @@
       setTimeout(finishHide, 260 /* max stagger delay */ + 900 /* max bubble duration */ + 60 /* buffer */);
     }
 
-    spawnRain();
     if (document.readyState === 'complete') setTimeout(hidePreloader, HOLD_AFTER_LOAD_MS);
     else window.addEventListener('load', function () { setTimeout(hidePreloader, HOLD_AFTER_LOAD_MS); });
     setTimeout(hidePreloader, HARD_TIMEOUT_MS);

@@ -45,17 +45,18 @@
     </defs>
   </svg>
 
-  <!-- ─── LOADING SCREEN — لوگو + بارش آیکون از بیرون صفحه + محو حبابی/مایع ── -->
+  <!-- ─── LOADING SCREEN — عکس کافه + Overlay رنگ تم + لوگوی ترنسپرنت وسط + محو حبابی/مایع ── -->
   <div class="preloader" id="preloader">
-    <!-- ذرات ریز که از JS، بیرونِ صفحه شروع و به‌آرومی به نقاط تصادفی می‌بارند -->
-    <div class="preloader-rain" id="preloaderRain" aria-hidden="true"></div>
+    <!-- تصویر پس‌زمینه‌ی کافه -->
+    <div class="preloader-bg" aria-hidden="true"></div>
+    <!-- Overlay فیدشده با رنگ اصلی تم، روی عکس کافه (رنگ از توکن‌های CSS تم گرفته می‌شود) -->
+    <div class="preloader-overlay" aria-hidden="true"></div>
 
     <div class="preloader-core" id="preloaderCore">
-      <div class="preloader-ring">
-        <img src="/images/logo/Nan.O.Nan-brand.png" alt="نان و نان">
-      </div>
-      <div class="preloader-brand">نان <span>و نان</span></div>
-      <p class="preloader-tagline">در حال آماده‌سازی منو...</p>
+      <img class="preloader-logo" src="/images/logo/Nan.O.Nan-brand.png" alt="نان و نان">
+      <p class="preloader-message">
+        حضور شما در کنار ما بزرگترین افتخار ماست؛ اما در زمان شلوغی لطفاً با تیم ما همکاری کنید تا همگی بتونیم از این زمان لذت ببریم.
+      </p>
       <div class="preloader-dots"><span></span><span></span><span></span></div>
     </div>
 
