@@ -268,10 +268,6 @@ app.get('/admin/monitoring/data', checkAdminLogin, async (req, res) => {
 // روت صفحه اصلی (نمایش منو)
 app.get('/', async (req, res) => {
     try {
-        if (menuCache && (Date.now() - menuCacheTime < MENU_CACHE_TTL)) {
-            return res.render('index', { categoriesWithItems: menuCache });
-        }
-
         const [categories, allItems] = await Promise.all([
             Category.find().sort({ createdAt: 1 }),
             Iteam.find()
@@ -281,9 +277,6 @@ app.get('/', async (req, res) => {
             ...cat.toObject(),
             items: allItems.filter(i => i.category === cat.name)
         }));
-
-        menuCache = categoriesWithItems;
-        menuCacheTime = Date.now();
 
         res.render('index', { categoriesWithItems });
     } catch (err) {
