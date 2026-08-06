@@ -944,88 +944,265 @@ html.app-ready .menu-footer    { animation: enter-from-left  620ms var(--ease) 4
 @media (min-width: 992px) { .menu-items { grid-template-columns: repeat(4, 1fr); gap: 20px; } }
 @media (min-width: 1200px) { .menu-items { grid-template-columns: repeat(5, 1fr); gap: 22px; } }
 .menu-card {
-  -webkit-appearance: none; appearance: none;
+  -webkit-appearance: none;
+  appearance: none;
+
   width: 100%;
   margin: 0;
+
   font: inherit;
   color: inherit;
   text-align: inherit;
-  border-radius: 22px;
-  corner-shape: superellipse;
+
+  /* iOS Squircle Style */
+  border-radius: 28px;
+  border-radius: max(28px, 1.75rem);
+
   background: var(--surface);
+
   border: 1px solid var(--border-warm);
+
   box-shadow: var(--shadow-card);
+
   overflow: hidden;
+
   display: flex;
   flex-direction: column;
-  transition: box-shadow var(--dur) var(--ease), border-color var(--dur) var(--ease-std), transform var(--dur) var(--ease);
+
+  transition:
+    box-shadow var(--dur) var(--ease),
+    border-color var(--dur) var(--ease-std),
+    transform var(--dur) var(--ease);
+
   cursor: pointer;
+
   position: relative;
+
   transform: translate3d(0,0,0);
+
   will-change: transform;
+
+  isolation: isolate;
 }
+
 @media (hover: hover) and (pointer: fine) {
-  .menu-card:hover { transform: translate3d(0,-5px,0); box-shadow: var(--shadow-hover); border-color: var(--brand); }
-  .menu-card:hover .menu-card-img img { transform: scale(1.06); }
+  .menu-card:hover {
+    transform: translate3d(0,-5px,0);
+    box-shadow: var(--shadow-hover);
+    border-color: var(--brand);
+  }
+
+  .menu-card:hover .menu-card-img img {
+    transform: scale(1.06);
+  }
 }
-.menu-card:focus-visible { outline: 2px solid var(--brand); outline-offset: 3px; }
-.menu-card:active { transform: translate3d(0,-1px,0) scale(.96); transition-duration: var(--dur-press); transition-timing-function: var(--ease-press); }
 
-.menu-card-img { width: 100%; aspect-ratio: 4/3; position: relative; overflow: hidden; background: var(--cream-deep); flex-shrink: 0; }
-.menu-card-img img { width: 100%; height: 100%; object-fit: cover; transition: transform var(--dur-slow) var(--ease-std); }
-.menu-card-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 2.2rem; color: var(--brand); opacity: .45; }
+.menu-card:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 3px;
+}
 
-.menu-card-info { padding: 10px 12px 12px; display: flex; flex-direction: column; gap: 3px; flex: 1; min-width: 0; }
+.menu-card:active {
+  transform: translate3d(0,-1px,0) scale(.96);
+  transition-duration: var(--dur-press);
+  transition-timing-function: var(--ease-press);
+}
+
+.menu-card-img {
+  width: 100%;
+  aspect-ratio: 4/3;
+  position: relative;
+  overflow: hidden;
+  background: var(--cream-deep);
+  flex-shrink: 0;
+}
+
+.menu-card-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--dur-slow) var(--ease-std);
+}
+
+.menu-card-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.2rem;
+  color: var(--brand);
+  opacity: .45;
+}
+
+.menu-card-info {
+  padding: 10px 12px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+  min-width: 0;
+}
+
 .menu-card-name {
-  font-size: .85rem; font-weight: 700; color: var(--ink); margin: 0; line-height: 1.35;
-  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
-}
-.menu-card-desc {
-  font-size: .70rem; color: var(--ink-muted); margin: 0; line-height: 1.45;
-  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
-}
-.menu-card-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 6px; }
-.menu-card-price { font-size: .95rem; font-weight: 800; color: var(--brand); letter-spacing: -.02em; }
-.menu-card-price small { font-size: .60rem; color: var(--ink-muted); font-weight: 500; margin-right: 2px; }
+  font-size: .85rem;
+  font-weight: 700;
+  color: var(--ink);
+  margin: 0;
+  line-height: 1.35;
 
-/* --- List mode: same card, row layout --- */
-main[data-view="list"] .menu-items { display: flex; flex-direction: column; gap: 10px; }
-main[data-view="list"] .menu-card { flex-direction: row; align-items: stretch; border-radius: 18px; corner-shape: superellipse; }
-main[data-view="list"] .menu-card-img { width: 92px; aspect-ratio: 1/1; flex-shrink: 0; }
-main[data-view="list"] .menu-card-info { flex: 1; justify-content: center; padding: 8px 12px; }
-main[data-view="list"] .menu-card-desc { -webkit-line-clamp: 1; }
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.menu-card-desc {
+  font-size: .70rem;
+  color: var(--ink-muted);
+  margin: 0;
+  line-height: 1.45;
+
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.menu-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 6px;
+}
+
+.menu-card-price {
+  font-size: .95rem;
+  font-weight: 800;
+  color: var(--brand);
+  letter-spacing: -.02em;
+}
+
+.menu-card-price small {
+  font-size: .60rem;
+  color: var(--ink-muted);
+  font-weight: 500;
+  margin-right: 2px;
+}
+
+/* ---------- List Mode ---------- */
+
+main[data-view="list"] .menu-items {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+main[data-view="list"] .menu-card {
+  flex-direction: row;
+  align-items: stretch;
+
+  /* iOS Squircle Style */
+  border-radius: 24px;
+  border-radius: max(24px, 1.5rem);
+
+  overflow: hidden;
+}
+
+main[data-view="list"] .menu-card-img {
+  width: 92px;
+  aspect-ratio: 1/1;
+  flex-shrink: 0;
+}
+
+main[data-view="list"] .menu-card-info {
+  flex: 1;
+  justify-content: center;
+  padding: 8px 12px;
+}
+
+main[data-view="list"] .menu-card-desc {
+  -webkit-line-clamp: 1;
+}
+
 @media (hover: hover) and (pointer: fine) {
-  main[data-view="list"] .menu-card:hover { transform: translate3d(-3px,0,0); }
-  main[data-view="list"] .menu-card:hover .menu-card-img img { transform: none; }
+  main[data-view="list"] .menu-card:hover {
+    transform: translate3d(-3px,0,0);
+  }
+
+  main[data-view="list"] .menu-card:hover .menu-card-img img {
+    transform: none;
+  }
 }
 
 /* =========================================================================
    14. CATEGORY-SWITCH CHOREOGRAPHY
-   Exit: cards fall down physically & fade. Enter: cards rain in from above.
    ========================================================================= */
-.card-fall-out { animation: card-fall-out 420ms var(--ease-fall) forwards; animation-delay: var(--fall-delay, 0ms); pointer-events: none; will-change: transform, opacity; }
-@keyframes card-fall-out { 0% { opacity: 1; transform: translate3d(0,0,0) rotate(0deg) scale(1); } 100% { opacity: 0; transform: translate3d(0,60px,0) rotate(4deg) scale(.92); } }
 
-.card-cascade-in { animation: card-cascade-in 560ms var(--ease) backwards; animation-delay: var(--cascade-delay, 0ms); will-change: transform, opacity; }
-@keyframes card-cascade-in { 0% { opacity: 0; transform: translate3d(0,-32px,0) scale(.94); } 60% { opacity: 1; } 100% { opacity: 1; transform: translate3d(0,0,0) scale(1); } }
+.card-fall-out {
+  animation: card-fall-out 420ms var(--ease-fall) forwards;
+  animation-delay: var(--fall-delay, 0ms);
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+@keyframes card-fall-out {
+  0% {
+    opacity: 1;
+    transform: translate3d(0,0,0) rotate(0deg) scale(1);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate3d(0,60px,0) rotate(4deg) scale(.92);
+  }
+}
+
+.card-cascade-in {
+  animation: card-cascade-in 560ms var(--ease) backwards;
+  animation-delay: var(--cascade-delay, 0ms);
+  will-change: transform, opacity;
+}
+
+@keyframes card-cascade-in {
+  0% {
+    opacity: 0;
+    transform: translate3d(0,-32px,0) scale(.94);
+  }
+
+  60% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 1;
+    transform: translate3d(0,0,0) scale(1);
+  }
+}
 
 /* =========================================================================
    15. GRID ⇄ LIST — FLIP transition
-   JS measures each card's rect before the layout class changes, then plays
-   a transform-only "fly to new slot" animation (never scaled, so text and
-   images are never distorted) with a short opacity dip to soften the
-   instant reshape from grid-card ⇄ list-card. See main.js → setView().
    ========================================================================= */
+
 .menu-card.is-flipping {
-  transition: transform var(--dur-slow) var(--ease), opacity var(--dur-slow) var(--ease-std);
+  transition:
+    transform var(--dur-slow) var(--ease),
+    opacity var(--dur-slow) var(--ease-std);
+
   will-change: transform;
+
   z-index: 1;
 }
-.menu-card.is-flip-fade { opacity: .55; }
-@media (prefers-reduced-motion: reduce) {
-  .menu-card.is-flipping { transition-duration: 1ms !important; }
+
+.menu-card.is-flip-fade {
+  opacity: .55;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .menu-card.is-flipping {
+    transition-duration: 1ms !important;
+  }
+}
 /* =========================================================================
    16. FOOTER
    ========================================================================= */
