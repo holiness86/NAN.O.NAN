@@ -290,7 +290,6 @@ a { color: inherit; }
   background: var(--cream); /* پشتوانه، تا قبل از لود شدن عکس هم رنگ تم دیده شود */
   overflow: hidden;
 }
-
 /* --- 6.a Background: cafe photo, filling the screen edge-to-edge and kept
     crisp/clear — no desaturation or dimming here; all the theme feel comes
     from the thin color-wash overlay on top, not from degrading the photo. */
@@ -298,7 +297,7 @@ a { color: inherit; }
   position: absolute;
   inset: 0;
   z-index: 0;
-  background-image: url('../images/backgrounds/cafe-loading.jpg');
+  background-image: url('../images/backgrounds/cafe-loading.PNG');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
