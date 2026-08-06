@@ -294,7 +294,7 @@
       requestAnimationFrame(function () { bubble.classList.add('expanding'); });
 
       bubble.addEventListener('transitionend', function onExpandEnd(ev) {
-        if (ev.propertyName !== 'width') return;
+        if (ev.propertyName !== 'transform') return;
         bubble.removeEventListener('transitionend', onExpandEnd);
 
         applyTheme(); // swap the real theme while the bubble is at full blur/coverage, masking the change
@@ -302,7 +302,7 @@
         bubble.classList.remove('expanding');
         bubble.classList.add('retreating');
         bubble.addEventListener('transitionend', function onRetreatEnd(ev2) {
-          if (ev2.propertyName !== 'width') return;
+          if (ev2.propertyName !== 'transform') return;
           bubble.removeEventListener('transitionend', onRetreatEnd);
           bubble.remove();
           switching = false;

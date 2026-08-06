@@ -298,7 +298,7 @@ a { color: inherit; }
   position: absolute;
   inset: 0;
   z-index: 0;
-  background-image: url('../images/backgrounds/cafe-loading.PNG');
+  background-image: url('../images/backgrounds/cafe-loading.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -507,24 +507,34 @@ html.app-ready .menu-footer    { animation: enter-from-left  620ms var(--ease) 4
 }
 
 /* The liquid/bubble ripple that performs the actual theme swap.
-   width/height are animated to an *exact* pixel radius (set by JS via
-   --bubble-radius), not a guessed transform:scale(), so it always fully
-   covers the viewport regardless of screen size or button position. */
+   PERF: only `transform` (scale) and `opacity` are ever animated — both are
+   compositor-only properties, so the browser never re-lays-out or repaints
+   the page while this runs. The circle's final pixel size (via JS's
+   --bubble-radius) and its backdrop-filter blur are both *fixed* values set
+   once up front, not animated — animating backdrop-filter's blur amount or
+   an element's width/height (the previous approach) forces the browser to
+   recompute the blur/layout on every single frame across a viewport-sized
+   area, which is exactly what caused the lag. Growing/shrinking a
+   already-blurred, GPU-composited layer via scale() is essentially free. */
 .theme-bubble {
   position: fixed;
   top: var(--bubble-y, 50%);
   left: var(--bubble-x, 50%);
-  width: 0; height: 0;
+  width: calc(var(--bubble-radius, 100vmax) * 2);
+  height: calc(var(--bubble-radius, 100vmax) * 2);
   border-radius: 50%;
-  background: rgba(var(--bubble-color-rgb, 246,236,229), 0);
-  backdrop-filter: blur(0px) saturate(1.3);
-  -webkit-backdrop-filter: blur(0px) saturate(1.3);
+  background: rgba(var(--bubble-color-rgb, 246,236,229), .55);
+  backdrop-filter: blur(22px) saturate(1.3);
+  -webkit-backdrop-filter: blur(22px) saturate(1.3);
   box-shadow: inset 0 0 80px rgba(255,255,255,.08);
   opacity: 0;
-  transform: translate3d(-50%, -50%, 0);
+  transform: translate3d(-50%, -50%, 0) scale(0);
+  transform-origin: center center;
   z-index: 3000;
   pointer-events: none;
   overflow: hidden;
+  contain: strict;
+  will-change: transform, opacity;
 }
 /* برجستگی نرم و سیال روی سطح حباب — حس شیشه‌ی مایع، نه یک دایره‌ی تخت */
 .theme-bubble::after {
@@ -535,35 +545,29 @@ html.app-ready .menu-footer    { animation: enter-from-left  620ms var(--ease) 4
 }
 .theme-bubble.expanding {
   transition:
-    width var(--dur-slow) var(--ease),
-    height var(--dur-slow) var(--ease),
-    opacity calc(var(--dur-slow) * .45) var(--ease-std),
-    backdrop-filter var(--dur-slow) var(--ease-std);
-  width: calc(var(--bubble-radius, 100vmax) * 2);
-  height: calc(var(--bubble-radius, 100vmax) * 2);
+    transform var(--dur-slow) var(--ease),
+    opacity calc(var(--dur-slow) * .45) var(--ease-std);
   opacity: 1;
-  background: rgba(var(--bubble-color-rgb, 246,236,229), .55);
-  backdrop-filter: blur(24px) saturate(1.3);
-  -webkit-backdrop-filter: blur(24px) saturate(1.3);
+  transform: translate3d(-50%, -50%, 0) scale(1);
 }
 .theme-bubble.retreating {
   transition:
-    width var(--dur-slow) var(--ease-std),
-    height var(--dur-slow) var(--ease-std),
-    opacity var(--dur-slow) var(--ease-std),
-    backdrop-filter var(--dur-slow) var(--ease-std);
-  width: 0; height: 0;
+    transform var(--dur-slow) var(--ease-std),
+    opacity var(--dur-slow) var(--ease-std);
   opacity: 0;
-  backdrop-filter: blur(0px) saturate(1.3);
-  -webkit-backdrop-filter: blur(0px) saturate(1.3);
+  transform: translate3d(-50%, -50%, 0) scale(0);
 }
 @media (prefers-reduced-motion: reduce) {
   .theme-bubble.expanding, .theme-bubble.retreating { transition-duration: 1ms !important; }
 }
+/* گوشی‌های ضعیف‌تر: بلور کمتر = بار کمتر روی GPU، بدون تغییر در نوع انیمیشن */
+@media (pointer: coarse) {
+  .theme-bubble { backdrop-filter: blur(14px) saturate(1.3); -webkit-backdrop-filter: blur(14px) saturate(1.3); }
+}
 /* بک‌آپ برای مرورگرهایی که backdrop-filter را پشتیبانی نمی‌کنند —
    بدون بلر، صرفاً یک شید نیمه‌شفاف رنگی جابجا می‌شود */
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  .theme-bubble.expanding { background: rgba(var(--bubble-color-rgb, 246,236,229), .92); }
+  .theme-bubble { background: rgba(var(--bubble-color-rgb, 246,236,229), .92); }
 }
 
 /* =========================================================================
@@ -939,7 +943,6 @@ html.app-ready .menu-footer    { animation: enter-from-left  620ms var(--ease) 4
 @media (min-width: 768px) { .menu-items { grid-template-columns: repeat(3, 1fr); gap: 18px; } }
 @media (min-width: 992px) { .menu-items { grid-template-columns: repeat(4, 1fr); gap: 20px; } }
 @media (min-width: 1200px) { .menu-items { grid-template-columns: repeat(5, 1fr); gap: 22px; } }
-
 .menu-card {
   -webkit-appearance: none; appearance: none;
   width: 100%;
@@ -947,7 +950,8 @@ html.app-ready .menu-footer    { animation: enter-from-left  620ms var(--ease) 4
   font: inherit;
   color: inherit;
   text-align: inherit;
-  border-radius: 18px;
+  border-radius: 22px;
+  corner-shape: superellipse;
   background: var(--surface);
   border: 1px solid var(--border-warm);
   box-shadow: var(--shadow-card);
@@ -986,7 +990,7 @@ html.app-ready .menu-footer    { animation: enter-from-left  620ms var(--ease) 4
 
 /* --- List mode: same card, row layout --- */
 main[data-view="list"] .menu-items { display: flex; flex-direction: column; gap: 10px; }
-main[data-view="list"] .menu-card { flex-direction: row; align-items: stretch; border-radius: 16px; }
+main[data-view="list"] .menu-card { flex-direction: row; align-items: stretch; border-radius: 18px; corner-shape: superellipse; }
 main[data-view="list"] .menu-card-img { width: 92px; aspect-ratio: 1/1; flex-shrink: 0; }
 main[data-view="list"] .menu-card-info { flex: 1; justify-content: center; padding: 8px 12px; }
 main[data-view="list"] .menu-card-desc { -webkit-line-clamp: 1; }
