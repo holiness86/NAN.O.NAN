@@ -36,6 +36,14 @@ let requestsInLastMinute = [];
 let statusCodeCounts = {};
 let errorCount = 0;
 let eventLoopLag = 0;
+// ==================== کش منوی صفحه اصلی ====================
+let menuCache = null;
+let menuCacheTime = 0;
+const MENU_CACHE_TTL = 60 * 1000; // ۶۰ ثانیه
+
+function invalidateMenuCache() {
+    menuCache = null;
+}
 
 setInterval(() => {
   const start = Date.now();
@@ -260,15 +268,22 @@ app.get('/admin/monitoring/data', checkAdminLogin, async (req, res) => {
 // روت صفحه اصلی (نمایش منو)
 app.get('/', async (req, res) => {
     try {
-        const categories = await Category.find().sort({ createdAt: 1 });
-        
-        // برای هر دسته‌بندی، آیتم‌هاشو بگیر
-        const categoriesWithItems = await Promise.all(
-            categories.map(async (cat) => {
-                const items = await Iteam.find({ category: cat.name });
-                return { ...cat.toObject(), items };
-            })
-        );
+        if (menuCache && (Date.now() - menuCacheTime < MENU_CACHE_TTL)) {
+            return res.render('index', { categoriesWithItems: menuCache });
+        }
+
+        const [categories, allItems] = await Promise.all([
+            Category.find().sort({ createdAt: 1 }),
+            Iteam.find()
+        ]);
+
+        const categoriesWithItems = categories.map(cat => ({
+            ...cat.toObject(),
+            items: allItems.filter(i => i.category === cat.name)
+        }));
+
+        menuCache = categoriesWithItems;
+        menuCacheTime = Date.now();
 
         res.render('index', { categoriesWithItems });
     } catch (err) {

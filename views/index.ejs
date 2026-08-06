@@ -129,8 +129,8 @@
 
           <div class="cat-section-header">
             <div class="cat-thumb">
-              <% if (cat.imageUrl) { %>
-                <img src="<%= cat.imageUrl %>" alt="" loading="lazy" class="<%= isVectorIcon(cat.imageUrl) ? 'is-vector' : '' %>">
+              <% if (cat.image) { %>
+                <img src="<%= cat.image %>" alt="" loading="lazy" class="<%= isVectorIcon(cat.image) ? 'is-vector' : '' %>">
               <% } else { %>
                 <i class="bi <%= cat.icon || 'bi-grid' %>" aria-hidden="true"></i>
               <% } %>
@@ -159,7 +159,7 @@
                      data-img="<%= item.imageUrl || '' %>"
                      data-cat="<%= cat.name %>"
                      data-cat-icon="<%= cat.icon || 'bi-grid' %>"
-                     data-cat-img="<%= cat.imageUrl || '' %>">
+                     data-cat-img="<%=  || '' %>">
                   <span class="menu-card-img">
                     <% if (item.imageUrl) { %>
                       <img src="<%= item.imageUrl %>" alt="<%= item.iteamName %>" loading="lazy">
