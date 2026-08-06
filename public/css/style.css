@@ -302,7 +302,7 @@ a { color: inherit; }
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  filter: saturate(.92) brightness(.88);
+  /* filter: saturate(.92) brightness(.88); */
   transform: scale(1.04); /* حاشیه‌ی ایمنی برای بلور/زوم جزئی بدون افشای لبه */
 }
 
@@ -316,7 +316,7 @@ a { color: inherit; }
   z-index: 1;
   pointer-events: none;
   background:
-    radial-gradient(circle at 50% 38%, rgba(var(--brand-rgb), .16) 0%, transparent 58%),
+    radial-gradient(circle at 50% 38%, rgba(var(--brand-rgb), .5) 0%, transparent 58%),
     linear-gradient(180deg,
       rgba(var(--brand-dark-rgb), .80) 0%,
       rgba(var(--ink-rgb), .90) 62%,
