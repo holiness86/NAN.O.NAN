@@ -97,8 +97,7 @@
                data-target="cat-<%= cat.enname %>">
             <span class="cat-card-thumb">
               <% if (cat.image) { %>
-                <img class="lazy-img" data-src="<%= cat.image %>" alt="<%= cat.name %>">
-                <noscript><img src="<%= cat.image %>" alt="<%= cat.name %>"></noscript>
+                <img src="<%= cat.image %>" alt="<%= cat.name %>" fetchpriority="high" decoding="async">
               <% } else { %>
                 <i class="bi <%= cat.icon || 'bi-grid' %>"></i>
               <% } %>
@@ -131,8 +130,7 @@
           <div class="cat-section-header">
             <div class="cat-thumb">
               <% if (cat.image) { %>
-                <img class="lazy-img <%= isVectorIcon(cat.image) ? 'is-vector' : '' %>" data-src="<%= cat.image %>" alt="">
-                <noscript><img src="<%= cat.image %>" alt="" class="<%= isVectorIcon(cat.image) ? 'is-vector' : '' %>"></noscript>
+                <img src="<%= cat.image %>" alt="" fetchpriority="high" decoding="async" class="<%= isVectorIcon(cat.image) ? 'is-vector' : '' %>">
               <% } else { %>
                 <i class="bi <%= cat.icon || 'bi-grid' %>" aria-hidden="true"></i>
               <% } %>
@@ -170,7 +168,7 @@
                            پاپ‌آپ باز می‌شود لود خواهد شد — نه زودتر. اگر بک‌اند فیلد
                            thumbUrl را (بدون تغییر نام imageUrl) اضافه کند، همین‌جا خودکار
                            اعمال می‌شود؛ در غیر این صورت با همان imageUrl کار می‌کند. -->
-                      <img class="lazy-img" data-src="<%= item.thumbUrl || item.imageUrl %>" alt="<%= item.iteamName %>">
+                      <img class="lazy-img" data-src="<%= item.thumbUrl || item.imageUrl %>" decoding="async" alt="<%= item.iteamName %>">
                       <noscript><img src="<%= item.thumbUrl || item.imageUrl %>" alt="<%= item.iteamName %>"></noscript>
                     <% } else { %>
                       <span class="menu-card-placeholder"><i class="bi bi-image" aria-hidden="true"></i></span>
@@ -232,7 +230,7 @@
         <div class="sheet-media-placeholder" id="sheetMediaPlaceholder">
           <i class="bi bi-image" aria-hidden="true"></i>
         </div>
-        <img id="sheetImg" class="lazy-img" alt="" style="display:none;">
+        <img id="sheetImg" class="lazy-img" decoding="async" alt="" style="display:none;">
         <span class="sheet-cat-badge" id="sheetCatBadge">
           <span class="sheet-cat-visual" id="sheetCatVisual"><i class="bi bi-grid" aria-hidden="true"></i></span>
           <span id="sheetCatName"></span>

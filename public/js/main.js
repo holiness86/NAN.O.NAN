@@ -63,48 +63,83 @@
 
   /* =======================================================================
      4. LAZY IMAGE LOADING
-     Replaces native loading="lazy" (which was firing 15-20 near-simultaneous
-     fetches the instant a whole cat-panel flipped from display:none to
-     display:block — the exact jank Ali reported). Two mechanisms share one
-     loader:
-       a) A single IntersectionObserver (rootMargin: 200px) lazily loads any
-          <img data-src> as it nears the viewport — covers the cat-nav strip
-          and the first active panel on boot.
-       b) preloadPanelImages() force-starts every image inside a given
-          cat-panel immediately, used by the category switcher the instant a
-          tab is clicked — i.e. *before* the panel is even shown, while the
-          old panel is still mid fall-out animation — so downloads are
-          already in flight (or finished) by the time the new panel becomes
-          visible instead of bursting all at once on the same frame.
-     Elements with display:none never get a layout box, so (a) alone cannot
-     reach a hidden panel's images — hence (b).
+     Category icons (cat-nav strip + cat-panel headers) are NOT part of this
+     system anymore — they're tiny, few, and rendered with a plain eager
+     <img src> straight in the HTML (see index.ejs), so the browser's own
+     preload scanner starts fetching them before any JS even runs. That's
+     the fastest anything can possibly load.
+
+     Product images are the expensive part (15-20 per category, real photos).
+     Two problems had to be solved together:
+       - "دیر لود میشه"  → what's actually on screen must win the race.
+       - "لگ نباشه"      → but firing all 15-20 requests/decodes on the same
+                            frame is what caused the jank in the first place.
+     So instead of either "native lazy" (too late, then bursts) or "load the
+     whole panel at once" (fast but janky), every image goes through one
+     small priority queue with a hard concurrency cap:
+       - preloadPanelImages() is called the instant a category tab is
+         clicked (before the panel is even visible) and marks the first
+         EAGER_BATCH_SIZE images "eager": high fetch priority + jump to the
+         front of the queue, so the part of the grid the user actually sees
+         first is what the limited concurrency slots work on first.
+       - Everything else (rest of that panel + any panel reached by
+         scrolling, via the IntersectionObserver, rootMargin 200px) is
+         queued normally and drains through the same MAX_CONCURRENT_LOADS
+         slots as capacity frees up — so total simultaneous decode/paint
+         work is always bounded, no matter how big the category is.
      ======================================================================= */
   var nanonanLazy = (function initLazyImages() {
     var LAZY_SELECTOR = 'img[data-src]';
+    var MAX_CONCURRENT_LOADS = 8; // hard cap on simultaneous fetch+decode — this is what kills the jank
+    var EAGER_BATCH_SIZE = 8;     // first N images of a clicked category race to the front of the queue
 
-    function loadImage(img) {
-      if (!img || img.dataset.loaded === '1') return;
-      var src = img.getAttribute('data-src');
-      if (!src) return;
-      img.dataset.loaded = '1'; // guard: never fetch the same image twice
+    var activeLoads = 0;
+    var queue = []; // FIFO of <img> elements waiting for a free slot
 
-      function reveal() { img.classList.add('img-loaded'); }
-      if (img.complete && img.currentSrc) {
-        // already cached by the browser — skip the fade, avoid a needless flash
-        reveal();
-      } else {
-        img.addEventListener('load', reveal, { once: true });
-        img.addEventListener('error', reveal, { once: true }); // still reveal the (empty) box, never stay stuck at opacity:0
+    function drainQueue() {
+      while (activeLoads < MAX_CONCURRENT_LOADS && queue.length) {
+        startLoad(queue.shift());
       }
-      img.src = src;
+    }
+
+    function startLoad(img) {
+      var src = img.getAttribute('data-src');
       img.removeAttribute('data-src');
+      if (!src) { img.classList.add('img-loaded'); return; }
+
+      activeLoads++;
+      var settled = false;
+      function settle() {
+        if (settled) return;
+        settled = true;
+        img.removeEventListener('load', settle);
+        img.removeEventListener('error', settle);
+        img.classList.add('img-loaded'); // fade-in trigger, even on error → never stuck at opacity:0
+        activeLoads--;
+        drainQueue();
+      }
+      img.addEventListener('load', settle, { once: true });
+      img.addEventListener('error', settle, { once: true });
+      img.src = src;
+    }
+
+    function enqueue(img, eager) {
+      try { img.fetchPriority = eager ? 'high' : 'low'; } catch (e) { /* unsupported browsers: harmless no-op */ }
+      if (eager) queue.unshift(img); else queue.push(img);
+      drainQueue();
+    }
+
+    function loadImage(img, eager) {
+      if (!img || img.dataset.loaded === '1') return;
+      img.dataset.loaded = '1'; // reserve immediately — never queued/fetched twice
+      enqueue(img, !!eager);
     }
 
     var observer = ('IntersectionObserver' in window)
       ? new IntersectionObserver(function (entries) {
           entries.forEach(function (entry) {
             if (!entry.isIntersecting) return;
-            loadImage(entry.target);
+            loadImage(entry.target, false);
             observer.unobserve(entry.target);
           });
         }, { root: null, rootMargin: '200px 0px', threshold: 0.01 })
@@ -116,7 +151,7 @@
       for (var i = 0; i < imgs.length; i++) {
         if (imgs[i].dataset.loaded === '1') continue;
         if (observer) observer.observe(imgs[i]);
-        else loadImage(imgs[i]); // no IO support → just load it, no lazy story to tell
+        else loadImage(imgs[i], false); // no IO support → just queue it, no lazy story to tell
       }
     }
 
@@ -125,11 +160,11 @@
       var imgs = panel.querySelectorAll(LAZY_SELECTOR);
       for (var i = 0; i < imgs.length; i++) {
         if (observer) observer.unobserve(imgs[i]);
-        loadImage(imgs[i]);
+        loadImage(imgs[i], i < EAGER_BATCH_SIZE);
       }
     }
 
-    observeAll(document); // cat-nav thumbs + the first (server-rendered "active") panel
+    observeAll(document); // the first (server-rendered "active") panel's product images
 
     return { observeAll: observeAll, preloadPanelImages: preloadPanelImages, loadImage: loadImage };
   }());
@@ -177,10 +212,11 @@
     var nextPanel = document.getElementById(targetId);
     if (!nextPanel || nextPanel === currentPanel) return;
 
-    // Start the next category's images downloading right now, while the
-    // panel is still display:none and the current one is mid fall-out —
-    // by the time it actually becomes visible most images are already
-    // loaded (or well underway), instead of 15-20 requests firing at once.
+    // Kick off the new category's product images right now, while the panel
+    // is still display:none and the old one is mid fall-out — the first
+    // EAGER_BATCH_SIZE race to the front of the priority queue so the part
+    // of the grid the user is about to see loads first, capped concurrency
+    // keeps the rest from bursting all at once.
     nanonanLazy.preloadPanelImages(nextPanel);
 
     catSwitching = true;
@@ -558,6 +594,7 @@
         sheetImg.alt = data.name || '';
         sheetImg.style.display = 'block';
         sheetMediaPh.style.display = 'none';
+        try { sheetImg.fetchPriority = 'high'; } catch (e) { /* unsupported browsers: harmless no-op */ }
         sheetImg.addEventListener('load', function onLoad() {
           sheetImg.removeEventListener('load', onLoad);
           if (myToken !== sheetImgToken) return; // a newer product opened before this one finished
