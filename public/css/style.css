@@ -1020,8 +1020,10 @@ html.app-ready .menu-footer    { animation: enter-from-left  620ms var(--ease) 4
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform var(--dur-slow) var(--ease-std);
+  opacity: 0;
+  transition: transform var(--dur-slow) var(--ease-std), opacity var(--dur-slow) var(--ease-std);
 }
+.menu-card-img img.img-loaded { opacity: 1; }
 
 .menu-card-placeholder {
   width: 100%;
@@ -1330,13 +1332,30 @@ main[data-view="list"] .menu-card-desc {
 ::-webkit-scrollbar-thumb:hover { background: var(--brand); }
 
 /* =========================================================================
-   19. MISC FIXES
+   19. LAZY IMAGES — custom IntersectionObserver loader (main.js §4)
+   Compositor-only fade (opacity), never width/height/blur, per the perf
+   rules. img[data-src] is force-hidden until main.js assigns the real
+   `src` and removes `data-src`; that attribute-removal alone flips this
+   back to a normal inline image with zero extra JS — the accompanying
+   <noscript><img src="..."></noscript> siblings are what visitors without
+   JavaScript actually see.
+   ========================================================================= */
+img[data-src] { display: none; }
+
+.lazy-img {
+  opacity: 0;
+  transition: opacity var(--dur-slow) var(--ease-std);
+}
+.lazy-img.img-loaded { opacity: 1; }
+
+/* =========================================================================
+   20. MISC FIXES
    ========================================================================= */
 input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 input[type="number"] { -moz-appearance: textfield; appearance: textfield; }
 
 /* =========================================================================
-   20. RESPONSIVE FINE-TUNING
+   21. RESPONSIVE FINE-TUNING
    ========================================================================= */
 @media (max-width: 380px) {
   .brand-mini-tagline { display: none; }
@@ -1348,7 +1367,7 @@ input[type="number"] { -moz-appearance: textfield; appearance: textfield; }
 }
 
 /* =========================================================================
-   21. REDUCED MOTION & PRINT
+   22. REDUCED MOTION & PRINT
    ========================================================================= */
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }

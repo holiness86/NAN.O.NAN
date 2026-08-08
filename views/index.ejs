@@ -97,7 +97,8 @@
                data-target="cat-<%= cat.enname %>">
             <span class="cat-card-thumb">
               <% if (cat.image) { %>
-                <img src="<%= cat.image %>" alt="<%= cat.name %>" loading="lazy">
+                <img class="lazy-img" data-src="<%= cat.image %>" alt="<%= cat.name %>">
+                <noscript><img src="<%= cat.image %>" alt="<%= cat.name %>"></noscript>
               <% } else { %>
                 <i class="bi <%= cat.icon || 'bi-grid' %>"></i>
               <% } %>
@@ -130,7 +131,8 @@
           <div class="cat-section-header">
             <div class="cat-thumb">
               <% if (cat.image) { %>
-                <img src="<%= cat.image %>" alt="" loading="lazy" class="<%= isVectorIcon(cat.image) ? 'is-vector' : '' %>">
+                <img class="lazy-img <%= isVectorIcon(cat.image) ? 'is-vector' : '' %>" data-src="<%= cat.image %>" alt="">
+                <noscript><img src="<%= cat.image %>" alt="" class="<%= isVectorIcon(cat.image) ? 'is-vector' : '' %>"></noscript>
               <% } else { %>
                 <i class="bi <%= cat.icon || 'bi-grid' %>" aria-hidden="true"></i>
               <% } %>
@@ -157,12 +159,19 @@
                      data-price="<%= item.iteamPrice %>"
                      data-desc="<%= item.description %>"
                      data-img="<%= item.imageUrl || '' %>"
+                     data-full-img="<%= item.imageUrl || '' %>"
                      data-cat="<%= cat.name %>"
                      data-cat-icon="<%= cat.icon || 'bi-grid' %>"
                      data-cat-img="<%= cat.image || '' %>">
                   <span class="menu-card-img">
                     <% if (item.imageUrl) { %>
-                      <img src="<%= item.imageUrl %>" alt="<%= item.iteamName %>" loading="lazy">
+                      <!-- گرید فقط نسخه‌ی سبک (thumbUrl) را در صورت وجود لود می‌کند؛ عکس کامل
+                           (imageUrl) روی خودِ دکمه (data-full-img) نگه داشته می‌شود و فقط وقتی
+                           پاپ‌آپ باز می‌شود لود خواهد شد — نه زودتر. اگر بک‌اند فیلد
+                           thumbUrl را (بدون تغییر نام imageUrl) اضافه کند، همین‌جا خودکار
+                           اعمال می‌شود؛ در غیر این صورت با همان imageUrl کار می‌کند. -->
+                      <img class="lazy-img" data-src="<%= item.thumbUrl || item.imageUrl %>" alt="<%= item.iteamName %>">
+                      <noscript><img src="<%= item.thumbUrl || item.imageUrl %>" alt="<%= item.iteamName %>"></noscript>
                     <% } else { %>
                       <span class="menu-card-placeholder"><i class="bi bi-image" aria-hidden="true"></i></span>
                     <% } %>
@@ -223,7 +232,7 @@
         <div class="sheet-media-placeholder" id="sheetMediaPlaceholder">
           <i class="bi bi-image" aria-hidden="true"></i>
         </div>
-        <img id="sheetImg" alt="" style="display:none;">
+        <img id="sheetImg" class="lazy-img" alt="" style="display:none;">
         <span class="sheet-cat-badge" id="sheetCatBadge">
           <span class="sheet-cat-visual" id="sheetCatVisual"><i class="bi bi-grid" aria-hidden="true"></i></span>
           <span id="sheetCatName"></span>
