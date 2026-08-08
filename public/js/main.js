@@ -180,7 +180,23 @@
   var navInner    = document.querySelector('.cat-nav');
   var catCards    = Array.prototype.slice.call(document.querySelectorAll('.cat-card'));
   var catSwitching = false;
+  var catSwitchToken = 0; // bumped on every activateCategory call — lets a newer click cancel an older one mid-animation
+  var catTimers = [];     // pending setTimeout ids from the in-flight fall-out/cascade-in, cleared on interruption
   var viewSwitching = false; // declared here, used by both §4 and §7 as a mutual guard
+
+  function clearCatTimers() {
+    catTimers.forEach(function (id) { clearTimeout(id); });
+    catTimers = [];
+  }
+
+  function hardResetPanelAnim(panel) {
+    if (!panel) return;
+    cardsOf(panel).forEach(function (el) {
+      el.classList.remove('card-fall-out', 'card-cascade-in');
+      el.style.removeProperty('--fall-delay');
+      el.style.removeProperty('--cascade-delay');
+    });
+  }
 
   function centerCard(card) {
     if (!navInner || !card) return;
@@ -207,10 +223,21 @@
   }
 
   function activateCategory(targetId, card) {
-    if (catSwitching || viewSwitching) return;
+    if (viewSwitching) return; // still guard against the grid⇄list FLIP measuring mid-transition
     var currentPanel = getActivePanel();
     var nextPanel = document.getElementById(targetId);
     if (!nextPanel || nextPanel === currentPanel) return;
+
+    // Every click gets its own token. A click that arrives while the
+    // previous switch is still mid fall-out/cascade-in no longer has to
+    // wait — it bumps the token, which makes every pending timeout /
+    // callback from the older switch a silent no-op, and snaps whatever
+    // was mid-flight back to a clean resting state before starting fresh.
+    // That's what makes rapid tab-tapping actually feel instant instead of
+    // being ignored for ~1-1.5s per switch.
+    var myToken = ++catSwitchToken;
+    clearCatTimers();
+    catSwitching = true;
 
     // Kick off the new category's product images right now, while the panel
     // is still display:none and the old one is mid fall-out — the first
@@ -219,7 +246,6 @@
     // keeps the rest from bursting all at once.
     nanonanLazy.preloadPanelImages(nextPanel);
 
-    catSwitching = true;
     catCards.forEach(function (c) {
       var isActive = c === card;
       c.classList.toggle('active', isActive);
@@ -227,7 +253,14 @@
     });
     centerCard(card);
 
+    // Snap anything left mid-animation from an interrupted switch straight
+    // to its resting state so the new transition starts clean rather than
+    // stacking on top of half-finished transforms.
+    hardResetPanelAnim(currentPanel);
+    hardResetPanelAnim(nextPanel);
+
     function playCascadeIn() {
+      if (myToken !== catSwitchToken) return; // a newer click already took over
       nextPanel.classList.add('active');
       var cards = cardsOf(nextPanel);
       cards.forEach(function (el, i) {
@@ -235,10 +268,11 @@
         el.classList.add('card-cascade-in');
       });
       var settleAfter = Math.min(cards.length, 10) * STAGGER_MS + 580;
-      setTimeout(function () {
+      catTimers.push(setTimeout(function () {
+        if (myToken !== catSwitchToken) return;
         cards.forEach(function (el) { el.classList.remove('card-cascade-in'); el.style.removeProperty('--cascade-delay'); });
         catSwitching = false;
-      }, settleAfter);
+      }, settleAfter));
     }
 
     if (currentPanel) {
@@ -253,11 +287,12 @@
         el.classList.add('card-fall-out');
       });
       var fallTotal = Math.min(outCards.length, 10) * (STAGGER_MS * 0.6) + 440;
-      setTimeout(function () {
+      catTimers.push(setTimeout(function () {
+        if (myToken !== catSwitchToken) return;
         currentPanel.classList.remove('active');
-        outCards.forEach(function (el) { el.classList.remove('card-fall-out'); el.style.removeProperty('--fall-delay'); });
+        hardResetPanelAnim(currentPanel);
         playCascadeIn();
-      }, fallTotal);
+      }, fallTotal));
     } else {
       playCascadeIn();
     }

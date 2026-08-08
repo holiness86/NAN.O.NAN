@@ -958,7 +958,6 @@ html.app-ready .menu-footer    { animation: enter-from-left  620ms var(--ease) 4
   border-radius: max(28px, 1.75rem);
 
   background: var(--surface);
-
   border: 1px solid var(--border-warm);
 
   box-shadow: var(--shadow-card);
@@ -982,6 +981,17 @@ html.app-ready .menu-footer    { animation: enter-from-left  620ms var(--ease) 4
   will-change: transform;
 
   isolation: isolate;
+}
+
+/* True continuous-curvature squircle (Apple's iOS icon curve, superellipse n=2)
+   layered on top of the border-radius fallback above. corner-shape reshapes
+   the same border-radius corner in place — it doesn't touch box-shadow,
+   border, or the image's overflow:hidden clipping, so nothing else here
+   needs to change. Chromium-only today (~65% of users); @supports means
+   Safari/Firefox silently keep the plain rounded-rect fallback, exactly as
+   before. Drop this block the day Baseline catches up. */
+@supports (corner-shape: squircle) {
+  .menu-card { corner-shape: squircle; }
 }
 
 @media (hover: hover) and (pointer: fine) {
