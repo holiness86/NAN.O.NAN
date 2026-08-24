@@ -153,13 +153,13 @@
             <% } else { %>
               <% cat.items.forEach(function (item) { %>
                 <button type="button" class="menu-card"
-                     data-name="<%= item.iteamName %>"
-                     data-price="<%= item.iteamPrice %>"
-                     data-desc="<%= item.description %>"
-                     data-img="<%= item.imageUrl || '' %>"
-                     data-cat="<%= cat.name %>"
-                     data-cat-icon="<%= cat.icon || 'bi-grid' %>"
-                     data-cat-img="<%= cat.image || '' %>">
+                    data-name="<%= item.iteamName %>"
+                    data-price="<%= item.iteamPrice %>"
+                    data-desc="<%= item.description %>"
+                    data-img="<%= item.imageUrl || '' %>"
+                    data-cat="<%= cat.name %>"
+                    data-cat-icon="<%= cat.icon || 'bi-grid' %>"
+                    data-cat-img="<%= cat.image || '' %>">
                   <span class="menu-card-img">
                     <% if (item.imageUrl) { %>
                       <img src="<%= item.imageUrl %>" alt="<%= item.iteamName %>" loading="lazy">
