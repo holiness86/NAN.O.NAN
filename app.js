@@ -10,15 +10,6 @@ require('dotenv').config();
 
 console.log('DEBUG مقدار NODE_ENV:', JSON.stringify(process.env.NODE_ENV));
 
-// اگه یه خطای مدیریت‌نشده باعث کرش پروسه بشه، حداقل قبلش لاگش کن
-// (چون الان که کرش می‌کنه هیچ لاگی ازش نمی‌مونه)
-process.on('uncaughtException', (err) => {
-    console.error('خطای مدیریت‌نشده (uncaughtException):', err);
-});
-process.on('unhandledRejection', (reason) => {
-    console.error('Promise رد شده بدون catch (unhandledRejection):', reason);
-});
-
 // آدرس دیتابیس - بالا آورده شد چون هم توسط session store و هم mongoose.connect لازمه
 const urlDB = process.env.MONGO_URL || 'mongodb://localhost:27017/NANONAN';
 const PORT = process.env.PORT || 3000;
@@ -487,10 +478,7 @@ app.post('/admin/category/add', checkAdminLogin, upload.single('image'), async (
 app.get('/update', checkAdminLogin, (req , res) => {
     Iteam.find()
         .then(iteams => res.render('update', { iteams }))
-        .catch(err => {
-            console.error(err);
-            res.status(500).send('خطا در بارگذاری لیست محصولات');
-        });
+        .catch(err => console.error(err));
 });
 
 // روت حذف محصول
@@ -498,10 +486,7 @@ app.get('/admin/delete/:id', checkAdminLogin, (req,res) => {
     const id = req.params.id;
     Iteam.findByIdAndDelete(id)
         .then(() => res.redirect('/admin#productList'))
-        .catch(err => {
-            console.error(err);
-            res.status(500).send('خطا در حذف محصول');
-        });
+        .catch(err => console.error(err));
 });
 
 // روت نمایش فرم ویرایش
