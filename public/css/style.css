@@ -1,39 +1,3 @@
-/* =========================================================================
-   🥐 نان و نان — NAN.O.NAN — Café & Bakery Digital Menu
-   Minimal · Warm · Bubble/Liquid Motion · Dual Theme · Mobile-First
-   -------------------------------------------------------------------------
-   Contents
-     1.  Web font (self-hosted YekanBakh variable font)
-     2.  Design tokens — Light theme
-     3.  Design tokens — Dark theme
-     4.  Reset & base
-     5.  Preloader — cafe photo + theme overlay + goo/bubble dissolve
-     6.  Page entrance (staggered slide-in after preloader)
-     7.  Top bar (mini hero: logo + name + theme switch)
-     8.  Theme switch button + liquid bubble transition
-     9.  Category row (horizontal, image thumbnails)
-     10. View switcher (grid / list)
-     11. Category panels + section header
-     12. Product cards — shared skin (grid + list share ONE dom node)
-     13. Category-switch enter/exit choreography (fall out / rain in)
-     14. Grid ⇄ List FLIP transition
-     15. Footer
-     16. Product bottom sheet (Bootstrap Offcanvas skin + drag handle)
-     17. Scrollbar, selection, focus ring
-     18. Responsive fine-tuning
-     19. Reduced motion & print
-   ========================================================================= */
-
-/* =========================================================================
-   1. WEB FONT — YekanBakh (self-hosted, variable weight 100–900)
-   Self-hosted on purpose: no Google Fonts / external CDN round-trip, so the
-   menu still renders correctly on slow or filtered connections.
-   License: SIL OFL 1.1 — see css/fonts/YekanBakh/LICENSE-OFL.txt
-   ========================================================================= */
-/* ================================
-   YekanBakh Variable Font
-================================ */
-
 @font-face {
   font-family: 'YekanBakh';
   src: url('../Fonts/YekanBakh-VF.ttf') format('truetype');
@@ -41,10 +5,6 @@
   font-weight: 100 900;
   font-display: swap;
 }
-
-/* ================================
-   Global Typography
-================================ */
 
 html {
   direction: rtl;
@@ -62,14 +22,12 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* اعمال فونت روی تمام المان‌ها و کنترل‌های فرم */
 *,
 *::before,
 *::after {
   font-family: inherit;
 }
 
-/* اطمینان از اعمال فونت روی المان‌هایی که مرورگر معمولاً فونت پیش‌فرض دارند */
 button,
 input,
 textarea,
@@ -79,7 +37,6 @@ optgroup {
   font-family: 'YekanBakh', sans-serif;
 }
 
-/* حفظ ویژگی ارث‌بری فونت برای تمام عناصر */
 h1,
 h2,
 h3,
@@ -106,21 +63,12 @@ select {
   font-family: inherit;
 }
 
-
-/* =========================================================================
-   2. DESIGN TOKENS — always-available brand values (theme-independent)
-   These exist so JS never has to hard-code a hex value (e.g. the theme
-   switch bubble needs to know the *destination* theme's background before
-   that theme is actually applied) — everything is sourced from CSS.
-   ========================================================================= */
 :root {
   --cream-light-value: #F6ECE5;
   --cream-light-rgb:   246,236,229;
   --cream-dark-value:  #1B120C;
   --cream-dark-rgb:    27,18,12;
 
-  /* فاصله‌ی افقی یکسان برای کل صفحه (Header/دسته‌بندی‌ها/محتوا/فوتر)
-     تا هیچ کارتی به لبه‌ی صفحه نچسبد — مقیاس‌پذیر بر اساس اندازه‌ی صفحه */
   --page-pad-x: 16px;
 }
 @media (min-width: 380px)  { :root { --page-pad-x: 18px; } }
@@ -129,25 +77,22 @@ select {
 @media (min-width: 992px)  { :root { --page-pad-x: 40px; } }
 @media (min-width: 1200px) { :root { --page-pad-x: 48px; } }
 
-/* =========================================================================
-   3. DESIGN TOKENS — Light theme (نان و نان)
-   ========================================================================= */
 :root, [data-bs-theme="light"] {
-  --brand:          #B75E3D;   /* آجری/نارنجی سوخته — brand, headings, logo */
+  --brand:          #B75E3D;
   --brand-rgb:      183,94,61;
   --brand-light:    #C97A5A;
   --brand-soft:     rgba(183,94,61,.10);
   --brand-glow:     rgba(183,94,61,.28);
 
-  --brand-dark:     #964323;   /* آجری تیره/شکلاتی — footer, deep accents */
+  --brand-dark:     #964323;
   --brand-dark-rgb: 150,67,35;
 
-  --cream:          var(--cream-light-value); /* پس‌زمینه غالب */
+  --cream:          var(--cream-light-value);
   --cream-deep:     #EFE1D6;
-  --powder:         #E2CEBF;   /* خطوط و کادرهای کم‌رنگ */
+  --powder:         #E2CEBF;
   --powder-rgb:     226,206,191;
 
-  --steel:          #598B9B;   /* رنگ مکمل — هاور/کنتراست */
+  --steel:          #598B9B;
   --steel-rgb:      89,139,155;
   --steel-soft:     rgba(89,139,155,.12);
   --steel-glow:     rgba(89,139,155,.30);
@@ -168,18 +113,15 @@ select {
   --shadow-sticky:  0 4px 24px rgba(150,67,35,.10);
   --shadow-brand:   0 4px 18px rgba(183,94,61,.26);
 
-  /* منحنی‌های حرکت طبیعی اپل: دیسلریت نرم برای ورود/جابجایی، ته‌نشینی نرم برای فید/محو،
-     و یک منحنی شتاب‌گیرنده‌ی جدا فقط برای افت فیزیکی کارت‌ها هنگام خروج دسته‌بندی */
-  --ease:           cubic-bezier(.32,.72,0,1);   /* iOS decelerate — ورود/جابجایی/تم */
-  --ease-std:       cubic-bezier(.16,1,.3,1);    /* iOS soft-settle — فید/رنگ/سایه */
-  --ease-fall:      cubic-bezier(.55,.06,.68,.19); /* شتاب گرانشی — فقط خروج فیزیکی کارت */
-  --ease-press:     cubic-bezier(.34,1.1,.64,1); /* فیدبک لمسی آنی — فشردن/رهاسازی */
+  --ease:           cubic-bezier(.32,.72,0,1);
+  --ease-std:       cubic-bezier(.16,1,.3,1);
+  --ease-fall:      cubic-bezier(.55,.06,.68,.19);
+  --ease-press:     cubic-bezier(.34,1.1,.64,1);
   --dur-fast:       160ms;
   --dur:            240ms;
   --dur-slow:       440ms;
   --dur-press:      100ms;
 
-  /* Category swatch gradients — stable per-category via a name hash */
   --sw-0: linear-gradient(135deg,#e8c88a 0%,#c49a3c 100%);
   --sw-1: linear-gradient(135deg,#f29a82 0%,#c94f30 100%);
   --sw-2: linear-gradient(135deg,#b5d4a8 0%,#4a8a38 100%);
@@ -192,9 +134,6 @@ select {
   --sw-9: linear-gradient(135deg,#d8a878 0%,#8a5a28 100%);
 }
 
-/* =========================================================================
-   4. DESIGN TOKENS — Dark theme (شکلاتی/کافی تیره + متن کرم روشن)
-   ========================================================================= */
 [data-bs-theme="dark"] {
   --brand:          #E08A62;
   --brand-rgb:      224,138,98;
@@ -232,17 +171,10 @@ select {
   --shadow-brand:   0 4px 18px rgba(224,138,98,.20);
 }
 
-/* =========================================================================
-   5. RESET & BASE
-   ========================================================================= */
 *, *::before, *::after { box-sizing: border-box; }
 
 html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
 
-/* حذف هایلایت خاکستری پیش‌فرض تاچ روی iOS/Android برای عناصر تعاملی —
-   فیدبک لمسی خودمان (:active) جایگزین آن می‌شود؛ touch-action:manipulation
-   تاخیر ۳۰۰ میلی‌ثانیه‌ای تشخیص دابل-تپ را برای این عناصر خاموش می‌کند تا
-   اولین لمس همیشه بلافاصله کلیک را اجرا کند */
 button, a, [role="button"] {
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
@@ -263,12 +195,10 @@ body {
 
 ::selection { background: var(--brand); color: #fff; }
 
-/* Locked while the preloader or the bottom sheet owns the screen */
 html.scroll-locked, html.scroll-locked body { overflow: hidden; height: 100%; }
 
 a { color: inherit; }
 
-/* Visible, consistent focus ring for keyboard users everywhere */
 :focus-visible { outline: 2px solid var(--steel); outline-offset: 3px; border-radius: 4px; }
 
 .visually-hidden {
@@ -276,10 +206,6 @@ a { color: inherit; }
   overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
 }
 
-/* =========================================================================
-   6. PRELOADER — cafe photo + theme-color overlay + centered transparent
-   logo + goo/bubble dissolve
-   ========================================================================= */
 .preloader {
   position: fixed;
   inset: 0;
@@ -287,12 +213,10 @@ a { color: inherit; }
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--cream); /* پشتوانه، تا قبل از لود شدن عکس هم رنگ تم دیده شود */
+  background: var(--cream);
   overflow: hidden;
 }
-/* --- 6.a Background: cafe photo, filling the screen edge-to-edge and kept
-    crisp/clear — no desaturation or dimming here; all the theme feel comes
-    from the thin color-wash overlay on top, not from degrading the photo. */
+
 .preloader-bg {
   position: absolute;
   inset: 0;
@@ -301,15 +225,9 @@ a { color: inherit; }
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  transform: scale(1.04); /* حاشیه‌ی ایمنی برای بلور/زوم جزئی بدون افشای لبه */
+  transform: scale(1.04);
 }
 
-/* --- 6.b Overlay: a thin, translucent wash of the theme's own brand color
-    over the photo — just enough tint to visually belong to the site, while
-    the cafe scene stays clearly readable underneath. Sourced entirely from
-    theme tokens, so it switches automatically with light/dark mode. A soft
-    bottom gradient adds only the extra depth needed for the message chip's
-    legibility, without darkening the photo as a whole. --- */
 .preloader-overlay {
   position: absolute;
   inset: 0;
@@ -327,10 +245,9 @@ a { color: inherit; }
   content: '';
   position: absolute;
   inset: 0;
-  background: rgba(var(--ink-rgb), .16); /* لایه‌ی تیرگی خیلی سبک، جدا از mix-blend، برای کنتراست متن */
+  background: rgba(var(--ink-rgb), .16);
 }
 
-/* --- 6.c Core: transparent logo, highlighted welcome message, loading dots --- */
 .preloader-core {
   position: relative;
   z-index: 2;
@@ -371,12 +288,6 @@ a { color: inherit; }
 .preloader-dots span:nth-child(3) { animation-delay: .3s; }
 @keyframes dot-bounce { 0%, 80%, 100% { transform: scale(.55); opacity: .4; } 40% { transform: scale(1); opacity: 1; } }
 
-/* --- 6.d Dissolve layer: JS fills this with overlapping circles that all
-    share the *same* background color as the preloader. An SVG "goo" filter
-    (feGaussianBlur + feColorMatrix, defined inline in the page) blends
-    their edges into one seamless liquid sheet. Shrinking them individually,
-    with randomized timing, reads as the loading screen dissolving into
-    bubbles rather than a flat fade. --- */
 .preloader-dissolve {
   position: absolute;
   inset: 0;
@@ -396,9 +307,6 @@ a { color: inherit; }
   transform: scale(0);
 }
 
-/* The moment the dissolve begins: base background disappears (the bubbles,
-   being the same color and fully tiled, keep the screen visually covered
-   with zero flash), and the photo/overlay/core fade out quickly out of the way. */
 .preloader.is-dissolving { background: transparent; }
 .preloader.is-dissolving .preloader-bg,
 .preloader.is-dissolving .preloader-overlay { opacity: 0; transition: opacity 220ms var(--ease-std); }
@@ -411,9 +319,6 @@ a { color: inherit; }
   .preloader-bubble.pop { transition-duration: 1ms !important; }
 }
 
-/* =========================================================================
-   7. PAGE ENTRANCE — staggered slide-in once the preloader clears
-   ========================================================================= */
 .top-bar, .cat-nav-wrapper, .menu-main, .menu-footer { opacity: 0; }
 html.app-ready .top-bar        { animation: enter-from-right 620ms var(--ease) 60ms  forwards; }
 html.app-ready .cat-nav-wrapper{ animation: enter-from-left  620ms var(--ease) 180ms forwards; }
@@ -425,9 +330,6 @@ html.app-ready .menu-footer    { animation: enter-from-left  620ms var(--ease) 4
   .top-bar, .cat-nav-wrapper, .menu-main, .menu-footer { opacity: 1 !important; animation: none !important; transform: none !important; }
 }
 
-/* =========================================================================
-   8. TOP BAR — tiny mini-hero: logo + name + theme toggle only
-   ========================================================================= */
 .top-bar {
   display: flex;
   align-items: center;
@@ -467,12 +369,6 @@ html.app-ready .menu-footer    { animation: enter-from-left  620ms var(--ease) 4
   white-space: nowrap;
 }
 
-/* =========================================================================
-   9. THEME TOGGLE + LIQUID BUBBLE TRANSITION
-   The button sits above a fixed bubble spawned at the exact click point.
-   JS computes the exact radius needed to cover the farthest screen corner
-   so the effect is correct on every viewport, not just phones.
-   ========================================================================= */
 .theme-btn {
   -webkit-appearance: none; appearance: none;
   width: 42px; height: 42px;
@@ -505,16 +401,6 @@ html.app-ready .menu-footer    { animation: enter-from-left  620ms var(--ease) 4
   100% { transform: rotate(360deg) scale(1); opacity: 1; }
 }
 
-/* The liquid/bubble ripple that performs the actual theme swap.
-   PERF: only `transform` (scale) and `opacity` are ever animated — both are
-   compositor-only properties, so the browser never re-lays-out or repaints
-   the page while this runs. The circle's final pixel size (via JS's
-   --bubble-radius) and its backdrop-filter blur are both *fixed* values set
-   once up front, not animated — animating backdrop-filter's blur amount or
-   an element's width/height (the previous approach) forces the browser to
-   recompute the blur/layout on every single frame across a viewport-sized
-   area, which is exactly what caused the lag. Growing/shrinking a
-   already-blurred, GPU-composited layer via scale() is essentially free. */
 .theme-bubble {
   position: fixed;
   top: var(--bubble-y, 50%);
@@ -535,7 +421,7 @@ html.app-ready .menu-footer    { animation: enter-from-left  620ms var(--ease) 4
   contain: strict;
   will-change: transform, opacity;
 }
-/* برجستگی نرم و سیال روی سطح حباب — حس شیشه‌ی مایع، نه یک دایره‌ی تخت */
+
 .theme-bubble::after {
   content: '';
   position: absolute; inset: 0;
@@ -559,19 +445,15 @@ html.app-ready .menu-footer    { animation: enter-from-left  620ms var(--ease) 4
 @media (prefers-reduced-motion: reduce) {
   .theme-bubble.expanding, .theme-bubble.retreating { transition-duration: 1ms !important; }
 }
-/* گوشی‌های ضعیف‌تر: بلور کمتر = بار کمتر روی GPU، بدون تغییر در نوع انیمیشن */
+
 @media (pointer: coarse) {
   .theme-bubble { backdrop-filter: blur(14px) saturate(1.3); -webkit-backdrop-filter: blur(14px) saturate(1.3); }
 }
-/* بک‌آپ برای مرورگرهایی که backdrop-filter را پشتیبانی نمی‌کنند —
-   بدون بلر، صرفاً یک شید نیمه‌شفاف رنگی جابجا می‌شود */
+
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   .theme-bubble { background: rgba(var(--bubble-color-rgb, 246,236,229), .92); }
 }
 
-/* =========================================================================
-   10. CATEGORY ROW — horizontal, sticky, image thumbnail + label
-   ========================================================================= */
 .cat-nav-wrapper {
   position: sticky;
   top: 0;
@@ -660,10 +542,6 @@ html.app-ready .menu-footer    { animation: enter-from-left  620ms var(--ease) 4
   .cat-card:hover .cat-card-label { color: var(--brand); }
 }
 
-/* آیکون/عکس برداری (SVG) — همان فایلی که در پنل ادمین انتخاب یا آپلود شده، با
-   تمام رنگ‌ها و جزئیات اصلی‌اش نمایش داده می‌شود؛ فقط به‌جای cover از contain
-   به‌همراه کمی فاصله‌ی داخلی استفاده می‌کنیم تا هیچ بخشی از وکتور بریده نشود
-   و داخل فریم شیشه‌ای به‌شکل متوازن بنشیند. */
 .cat-card-thumb img.is-vector,
 .cat-thumb img.is-vector,
 .sheet-cat-visual img.is-vector {
@@ -672,13 +550,6 @@ html.app-ready .menu-footer    { animation: enter-from-left  620ms var(--ease) 4
   padding: 20%;
 }
 
-/* توکن‌های --sw-0..9 بالا برای این صفحه دیگر استفاده نمی‌شوند —
-   خودِ کلاس‌های icon-swatch-N (پس‌زمینه‌های رنگی متفرقه) عمداً از این‌جا حذف شده‌اند؛
-   توکن‌ها فقط برای سازگاری با پنل ادمین (/admin) نگه داشته شده‌اند. */
-
-/* =========================================================================
-   11. MAIN LAYOUT + VIEW SWITCHER (grid / list)
-   ========================================================================= */
 .menu-main { padding: 1.8rem var(--page-pad-x) 5rem; max-width: 1180px; }
 
 .view-switcher { display: flex; align-items: center; justify-content: flex-end; margin-bottom: 1.3rem; }
@@ -698,15 +569,8 @@ html.app-ready .menu-footer    { animation: enter-from-left  620ms var(--ease) 4
 }
 .view-btn:active { transform: scale(.88); }
 
-/* =========================================================================
-   12. CATEGORY PANELS
-   ========================================================================= */
 .cat-panel { display: none; }
 .cat-panel.active { display: block; }
-
-/* =========================================================
-   CATEGORY SECTION HEADER
-========================================================= */
 
 .cat-section-header {
   display: flex;
@@ -715,11 +579,6 @@ html.app-ready .menu-footer    { animation: enter-from-left  620ms var(--ease) 4
   margin-bottom: 1.3rem;
   padding: 0 2px;
 }
-
-
-/* =========================
-   Category Thumbnail
-========================= */
 
 .cat-thumb {
   width: 48px;
@@ -758,11 +617,6 @@ html.app-ready .menu-footer    { animation: enter-from-left  620ms var(--ease) 4
   display: block;
 }
 
-
-/* =========================================================
-   TEXT CONTAINER
-========================================================= */
-
 .cat-section-texts {
   flex: 1;
   min-width: 0;
@@ -777,12 +631,6 @@ html.app-ready .menu-footer    { animation: enter-from-left  620ms var(--ease) 4
 
   overflow: hidden;
 }
-
-
-/* =========================================================
-   ENGLISH
-   Large / Faded / Centered Background
-========================================================= */
 
 .cat-section-title {
   position: absolute;
@@ -818,12 +666,6 @@ html.app-ready .menu-footer    { animation: enter-from-left  620ms var(--ease) 4
   user-select: none;
 }
 
-
-/* =========================================================
-   PERSIAN
-   Center of English Text
-========================================================= */
-
 .cat-section-sub {
   position: absolute;
 
@@ -855,20 +697,11 @@ html.app-ready .menu-footer    { animation: enter-from-left  620ms var(--ease) 4
 
   text-align: center;
 
-  /*
-   * باعث می شود فارسی دقیقا
-   * در مرکز انگلیسی قرار بگیرد
-   */
   width: max-content;
 
   text-shadow:
     0 1px 2px rgba(246, 236, 229, .35);
 }
-
-
-/* =========================================================
-   DARK THEME
-========================================================= */
 
 [data-bs-theme="dark"] .cat-section-title {
   opacity: .14;
@@ -878,11 +711,6 @@ html.app-ready .menu-footer    { animation: enter-from-left  620ms var(--ease) 4
   text-shadow:
     0 1px 3px rgba(0, 0, 0, .45);
 }
-
-
-/* =========================================================
-   SMALL MOBILE
-========================================================= */
 
 @media (max-width: 380px) {
 
@@ -899,11 +727,6 @@ html.app-ready .menu-footer    { animation: enter-from-left  620ms var(--ease) 4
   }
 
 }
-
-
-/* =========================================================
-   DESKTOP
-========================================================= */
 
 @media (min-width: 768px) {
 
@@ -927,10 +750,6 @@ html.app-ready .menu-footer    { animation: enter-from-left  620ms var(--ease) 4
 .cat-empty i { font-size: 1.8rem; color: var(--brand); opacity: .55; }
 .cat-empty p { margin: 0; font-size: .85rem; }
 
-/* =========================================================================
-   13. PRODUCT CARDS — ONE dom node per product, shared by grid + list.
-   Layout is driven entirely by the parent's mode: main[data-view=…] below.
-   ========================================================================= */
 .menu-items {
   position: relative;
   display: grid;
@@ -953,7 +772,6 @@ html.app-ready .menu-footer    { animation: enter-from-left  620ms var(--ease) 4
   color: inherit;
   text-align: inherit;
 
-  /* iOS Squircle Style */
   border-radius: 28px;
   border-radius: max(28px, 1.75rem);
 
@@ -983,13 +801,6 @@ html.app-ready .menu-footer    { animation: enter-from-left  620ms var(--ease) 4
   isolation: isolate;
 }
 
-/* True continuous-curvature squircle (Apple's iOS icon curve, superellipse n=2)
-   layered on top of the border-radius fallback above. corner-shape reshapes
-   the same border-radius corner in place — it doesn't touch box-shadow,
-   border, or the image's overflow:hidden clipping, so nothing else here
-   needs to change. Chromium-only today (~65% of users); @supports means
-   Safari/Firefox silently keep the plain rounded-rect fallback, exactly as
-   before. Drop this block the day Baseline catches up. */
 @supports (corner-shape: squircle) {
   .menu-card { corner-shape: squircle; }
 }
@@ -1101,8 +912,6 @@ html.app-ready .menu-footer    { animation: enter-from-left  620ms var(--ease) 4
   margin-right: 2px;
 }
 
-/* ---------- List Mode ---------- */
-
 main[data-view="list"] .menu-items {
   display: flex;
   flex-direction: column;
@@ -1113,7 +922,6 @@ main[data-view="list"] .menu-card {
   flex-direction: row;
   align-items: stretch;
 
-  /* iOS Squircle Style */
   border-radius: 24px;
   border-radius: max(24px, 1.5rem);
 
@@ -1145,10 +953,6 @@ main[data-view="list"] .menu-card-desc {
     transform: none;
   }
 }
-
-/* =========================================================================
-   14. CATEGORY-SWITCH CHOREOGRAPHY
-   ========================================================================= */
 
 .card-fall-out {
   animation: card-fall-out 420ms var(--ease-fall) forwards;
@@ -1191,10 +995,6 @@ main[data-view="list"] .menu-card-desc {
   }
 }
 
-/* =========================================================================
-   15. GRID ⇄ LIST — FLIP transition
-   ========================================================================= */
-
 .menu-card.is-flipping {
   transition:
     transform var(--dur-slow) var(--ease),
@@ -1214,9 +1014,7 @@ main[data-view="list"] .menu-card-desc {
     transition-duration: 1ms !important;
   }
 }
-/* =========================================================================
-   16. FOOTER
-   ========================================================================= */
+
 .menu-footer {
   background: var(--brand-dark);
   color: #fff;
@@ -1239,11 +1037,6 @@ main[data-view="list"] .menu-card-desc {
 }
 .social-dot:active { transform: scale(.9); transition-duration: var(--dur-press); }
 
-/* =========================================================================
-   17. PRODUCT BOTTOM SHEET — skins Bootstrap's Offcanvas (offcanvas-bottom)
-   Bootstrap supplies show/hide, backdrop, ESC-to-close, focus trap and
-   scroll-lock; this file only restyles it and adds the drag handle.
-   ========================================================================= */
 .offcanvas-backdrop { background: var(--backdrop); }
 .offcanvas-backdrop.show { opacity: 1; }
 @supports (backdrop-filter: blur(1px)) {
@@ -1253,7 +1046,7 @@ main[data-view="list"] .menu-card-desc {
 .offcanvas.product-sheet {
   --bs-offcanvas-width: 560px;
   left: 50%;
-  right: auto; /* منع تداخل با right:0 پیش‌فرض offcanvas-bottom بوت‌استرپ */
+  right: auto;
   transform: translate3d(-50%, 100%, 0);
   width: 100%;
   max-width: var(--bs-offcanvas-width);
@@ -1333,23 +1126,11 @@ main[data-view="list"] .menu-card-desc {
 .sheet-price-unit { font-size: .78rem; color: var(--ink-muted); font-weight: 500; }
 .sheet-desc { font-size: .88rem; line-height: 1.75; color: var(--ink-muted); margin: 0; white-space: pre-line; }
 
-/* =========================================================================
-   18. SCROLLBAR
-   ========================================================================= */
 ::-webkit-scrollbar { width: 5px; }
 ::-webkit-scrollbar-track { background: var(--cream); }
 ::-webkit-scrollbar-thumb { background: var(--border-warm); border-radius: 5px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--brand); }
 
-/* =========================================================================
-   19. LAZY IMAGES — custom IntersectionObserver loader (main.js §4)
-   Compositor-only fade (opacity), never width/height/blur, per the perf
-   rules. img[data-src] is force-hidden until main.js assigns the real
-   `src` and removes `data-src`; that attribute-removal alone flips this
-   back to a normal inline image with zero extra JS — the accompanying
-   <noscript><img src="..."></noscript> siblings are what visitors without
-   JavaScript actually see.
-   ========================================================================= */
 img[data-src] { display: none; }
 
 .lazy-img {
@@ -1358,15 +1139,9 @@ img[data-src] { display: none; }
 }
 .lazy-img.img-loaded { opacity: 1; }
 
-/* =========================================================================
-   20. MISC FIXES
-   ========================================================================= */
 input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 input[type="number"] { -moz-appearance: textfield; appearance: textfield; }
 
-/* =========================================================================
-   21. RESPONSIVE FINE-TUNING
-   ========================================================================= */
 @media (max-width: 380px) {
   .brand-mini-tagline { display: none; }
   .cat-card { width: 74px; }
@@ -1376,9 +1151,6 @@ input[type="number"] { -moz-appearance: textfield; appearance: textfield; }
   .cat-card { width: 96px; }
 }
 
-/* =========================================================================
-   22. REDUCED MOTION & PRINT
-   ========================================================================= */
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }

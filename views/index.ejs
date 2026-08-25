@@ -5,14 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <meta name="description" content="منوی آنلاین کافه و بیکری نان و نان">
   <meta name="color-scheme" content="light dark">
-  <!-- رنگ نوار مرورگر موبایل — مقدار واقعی را اسکریپت ضدفلاش زیر، هم‌زمان با
-       تعیین تم، قبل از اولین رندر ست می‌کند و main.js بعد از هر تغییر تم آن
-       را به‌روز نگه می‌دارد (یک تگ واحد، بدون media، تنها منبع حقیقت) -->
+
   <meta name="theme-color" content="#F6ECE5">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%A5%90%3C/text%3E%3C/svg%3E">
   <title>نان و نان — منو</title>
 
-  <!-- جلوگیری از فلاش تم اشتباه قبل از رندر اول صفحه -->
   <script>
     (function () {
       try {
@@ -25,16 +22,14 @@
     })();
   </script>
 
-  <!-- Bootstrap 5 RTL -->
   <link href="css/bootstrap.rtl.min.css" rel="stylesheet">
-  <!-- Bootstrap Icons -->
+
   <link rel="stylesheet" href="css/icons-1.13.1/font/bootstrap-icons.min.css">
-  <!-- Custom CSS (توکن‌های رنگی، فونت وزیرمتن، انیمیشن‌ها) -->
+
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
-  <!-- تعریف فیلتر SVG «Goo» — پایه‌ی افکت حبابی/مایع محو شدن لودینگ -->
   <svg class="visually-hidden" aria-hidden="true" focusable="false">
     <defs>
       <filter id="nan-goo">
@@ -45,11 +40,10 @@
     </defs>
   </svg>
 
-  <!-- ─── LOADING SCREEN — عکس کافه + Overlay رنگ تم + لوگوی ترنسپرنت وسط + محو حبابی/مایع ── -->
   <div class="preloader" id="preloader">
-    <!-- تصویر پس‌زمینه‌ی کافه -->
+
     <div class="preloader-bg" aria-hidden="true"></div>
-    <!-- Overlay فیدشده با رنگ اصلی تم، روی عکس کافه (رنگ از توکن‌های CSS تم گرفته می‌شود) -->
+
     <div class="preloader-overlay" aria-hidden="true"></div>
 
     <div class="preloader-core" id="preloaderCore">
@@ -60,20 +54,14 @@
       <div class="preloader-dots"><span></span><span></span><span></span></div>
     </div>
 
-    <!-- لایه‌ی محو حبابی: JS این کانتینر را با دایره‌های هم‌پوشان پر می‌کند -->
     <div class="preloader-dissolve" id="preloaderDissolve" aria-hidden="true"></div>
   </div>
 
   <%
-    // تشخیص آیکون برداری (SVG) در برابر عکس رستری — صرفاً برای انتخاب object-fit
-    // مناسب (contain برای وکتور تا کادر نبرد، cover برای عکس واقعی محصول/دسته)؛
-    // خودِ فایل با تمام رنگ‌ها و جزئیاتش، دقیقاً همان‌طور که در پنل ادمین
-    // آپلود/انتخاب شده، به‌صورت <img> واقعی نمایش داده می‌شود.
     function isVectorIcon(url) { return !!url && /\.svg(\?.*)?$/i.test(url); }
     var hasCategories = typeof categoriesWithItems !== 'undefined' && categoriesWithItems && categoriesWithItems.length > 0;
   %>
 
-  <!-- ─── TOP BAR — هیرو مینیمال: فقط لوگو + نام + دکمه تم ─────── -->
   <header class="top-bar">
     <div class="brand-mini">
       <div class="brand-mini-logo"><img src="/images/logo/Nan.O.Nan-brand.png" alt="نان و نان"></div>
@@ -87,7 +75,6 @@
     </button>
   </header>
 
-  <!-- ─── ردیف دسته‌بندی‌ها (استیکی، تصویری/داینامیک) ───────────────── -->
   <div class="cat-nav-wrapper" id="catNav">
     <nav class="cat-nav" aria-label="دسته‌بندی منو">
       <% if (hasCategories) { %>
@@ -109,7 +96,6 @@
     </nav>
   </div>
 
-  <!-- ─── محتوای اصلی منو ─────────────────────────────── -->
   <main class="menu-main container" id="menuMain" data-view="grid">
 
     <% if (hasCategories) { %>
@@ -141,9 +127,6 @@
             </div>
           </div>
 
-
-          <!-- یک مجموعه‌ی واحد از کارت‌ها؛ چیدمان کارتی/لیستی صرفاً با CSS
-               (بر اساس menuMain[data-view]) کنترل می‌شود — بدون دوبار رندر تصاویر -->
           <div class="menu-items">
             <% if (!cat.items || cat.items.length === 0) { %>
               <div class="cat-empty">
@@ -163,11 +146,7 @@
                      data-cat-img="<%= cat.image || '' %>">
                   <span class="menu-card-img">
                     <% if (item.imageUrl) { %>
-                      <!-- گرید فقط نسخه‌ی سبک (thumbUrl) را در صورت وجود لود می‌کند؛ عکس کامل
-                           (imageUrl) روی خودِ دکمه (data-full-img) نگه داشته می‌شود و فقط وقتی
-                           پاپ‌آپ باز می‌شود لود خواهد شد — نه زودتر. اگر بک‌اند فیلد
-                           thumbUrl را (بدون تغییر نام imageUrl) اضافه کند، همین‌جا خودکار
-                           اعمال می‌شود؛ در غیر این صورت با همان imageUrl کار می‌کند. -->
+
                       <img class="lazy-img" data-src="<%= item.thumbUrl || item.imageUrl %>" decoding="async" alt="<%= item.iteamName %>">
                       <noscript><img src="<%= item.thumbUrl || item.imageUrl %>" alt="<%= item.iteamName %>"></noscript>
                     <% } else { %>
@@ -200,16 +179,13 @@
 
   </main>
 
-  <!-- ─── فوتر ─────────────────────────────── -->
   <footer class="menu-footer">
     <div class="footer-brand">نان و نان</div>
     <p class="footer-text"> فردیس کانال غربی بعد از کوچه 21 <strong>کافه بیکری نان و نان</strong></p>
 
     <div class="footer-socials">
       <a href="https://www.instagram.com/nanonan_bakery" class="social-dot" aria-label="اینستاگرام"><i class="bi bi-instagram" aria-hidden="true"></i></a>
-      <!-- <a href="#" class="social-dot" aria-label="تلگرام"><i class="bi bi-telegram"></i></a>
-      <a href="#" class="social-dot" aria-label="واتس‌اپ"><i class="bi bi-whatsapp"></i></a>
-      <a href="#" class="social-dot" aria-label="تلفن"><i class="bi bi-telephone-fill"></i></a> -->
+
     </div>
 
     <p class="footer-text mt-3" style="font-size:.72rem;opacity:.7;">© 2026 نان و نان</p>
@@ -219,7 +195,6 @@
     </p>
   </footer>
 
-  <!-- ─── پاپ‌آپ جزئیات محصول (Bottom Sheet) — روی Bootstrap Offcanvas ── -->
   <div class="offcanvas offcanvas-bottom product-sheet" tabindex="-1" id="productSheet" aria-labelledby="sheetItemName">
     <div class="sheet-drag-handle" id="sheetDragHandle"><span></span></div>
     <button type="button" class="sheet-close-btn" data-bs-dismiss="offcanvas" aria-label="بستن">
@@ -247,15 +222,13 @@
     </div>
   </div>
 
-  <!-- بدون جاوااسکریپت: حداقل محتوای منو دیده شود -->
   <noscript>
     <style>.preloader{display:none!important;} .top-bar,.cat-nav-wrapper,.menu-main,.menu-footer{opacity:1!important;}</style>
   </noscript>
 
-  <!-- Bootstrap JS -->
   <script src="js/jquery-3.7.1.min.js"></script>
   <script src="js/bootstrap.bundle.min.js"></script>
-  <!-- منطق منو: لودینگ، سوییچ تم، دسته‌بندی، نمایش کارتی/لیستی (FLIP)، پاپ‌آپ محصول -->
+
   <script src="js/main.js"></script>
 </body>
 </html>

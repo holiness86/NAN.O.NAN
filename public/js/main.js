@@ -1,28 +1,9 @@
-/* =========================================================================
-   🥐 نان و نان — NAN.O.NAN — Menu interactions
-   Vanilla JS, no framework, built to sit on top of Bootstrap 5 RTL.
-   -------------------------------------------------------------------------
-   Sections
-     1. Utilities
-     2. Scroll lock
-     3. Shared DOM refs & helpers (cards / active panel)
-     4. Lazy image loading (custom IntersectionObserver + eager panel preload)
-     5. Category switcher (fall-out exit + rain-in enter)
-     6. Preloader (cafe photo + goo/bubble dissolve, 5s hold after full load)
-     7. Theme toggle (dynamic-radius liquid bubble)
-     8. View switcher — Grid ⇄ List (vanilla FLIP)
-     9. Sticky category-bar shadow
-     10. Product bottom sheet (Bootstrap Offcanvas + drag-to-dismiss + full-size swap)
-     11. Boot: restore saved preferences
-   ========================================================================= */
 (function () {
   'use strict';
 
   var html = document.documentElement;
 
-  /* =======================================================================
-     1. UTILITIES
-     ======================================================================= */
+
   function prefersReducedMotion() {
     return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
   }
@@ -37,17 +18,12 @@
     meta.setAttribute('content', readCssVar(mode === 'dark' ? '--cream-dark-value' : '--cream-light-value'));
   }
 
-  /* =======================================================================
-     2. SCROLL LOCK — reference-counted so the preloader and any future
-     caller can both hold a lock without stepping on each other.
-     ======================================================================= */
+
   var lockCount = 0;
   function lockScroll() { lockCount++; html.classList.add('scroll-locked'); }
   function unlockScroll() { lockCount = Math.max(0, lockCount - 1); if (lockCount === 0) html.classList.remove('scroll-locked'); }
 
-  /* =======================================================================
-     3. SHARED DOM REFS & HELPERS
-     ======================================================================= */
+
   var menuMain = document.getElementById('menuMain');
   var panels   = Array.prototype.slice.call(document.querySelectorAll('[data-cat-panel]'));
 
@@ -61,40 +37,14 @@
 
   var STAGGER_MS = 45;
 
-  /* =======================================================================
-     4. LAZY IMAGE LOADING
-     Category icons (cat-nav strip + cat-panel headers) are NOT part of this
-     system anymore — they're tiny, few, and rendered with a plain eager
-     <img src> straight in the HTML (see index.ejs), so the browser's own
-     preload scanner starts fetching them before any JS even runs. That's
-     the fastest anything can possibly load.
 
-     Product images are the expensive part (15-20 per category, real photos).
-     Two problems had to be solved together:
-       - "دیر لود میشه"  → what's actually on screen must win the race.
-       - "لگ نباشه"      → but firing all 15-20 requests/decodes on the same
-                            frame is what caused the jank in the first place.
-     So instead of either "native lazy" (too late, then bursts) or "load the
-     whole panel at once" (fast but janky), every image goes through one
-     small priority queue with a hard concurrency cap:
-       - preloadPanelImages() is called the instant a category tab is
-         clicked (before the panel is even visible) and marks the first
-         EAGER_BATCH_SIZE images "eager": high fetch priority + jump to the
-         front of the queue, so the part of the grid the user actually sees
-         first is what the limited concurrency slots work on first.
-       - Everything else (rest of that panel + any panel reached by
-         scrolling, via the IntersectionObserver, rootMargin 200px) is
-         queued normally and drains through the same MAX_CONCURRENT_LOADS
-         slots as capacity frees up — so total simultaneous decode/paint
-         work is always bounded, no matter how big the category is.
-     ======================================================================= */
   var nanonanLazy = (function initLazyImages() {
     var LAZY_SELECTOR = 'img[data-src]';
-    var MAX_CONCURRENT_LOADS = 8; // hard cap on simultaneous fetch+decode — this is what kills the jank
-    var EAGER_BATCH_SIZE = 8;     // first N images of a clicked category race to the front of the queue
+    var MAX_CONCURRENT_LOADS = 8;
+    var EAGER_BATCH_SIZE = 8;
 
     var activeLoads = 0;
-    var queue = []; // FIFO of <img> elements waiting for a free slot
+    var queue = [];
 
     function drainQueue() {
       while (activeLoads < MAX_CONCURRENT_LOADS && queue.length) {
@@ -114,7 +64,7 @@
         settled = true;
         img.removeEventListener('load', settle);
         img.removeEventListener('error', settle);
-        img.classList.add('img-loaded'); // fade-in trigger, even on error → never stuck at opacity:0
+        img.classList.add('img-loaded');
         activeLoads--;
         drainQueue();
       }
@@ -124,14 +74,14 @@
     }
 
     function enqueue(img, eager) {
-      try { img.fetchPriority = eager ? 'high' : 'low'; } catch (e) { /* unsupported browsers: harmless no-op */ }
+      try { img.fetchPriority = eager ? 'high' : 'low'; } catch (e) {  }
       if (eager) queue.unshift(img); else queue.push(img);
       drainQueue();
     }
 
     function loadImage(img, eager) {
       if (!img || img.dataset.loaded === '1') return;
-      img.dataset.loaded = '1'; // reserve immediately — never queued/fetched twice
+      img.dataset.loaded = '1';
       enqueue(img, !!eager);
     }
 
@@ -151,7 +101,7 @@
       for (var i = 0; i < imgs.length; i++) {
         if (imgs[i].dataset.loaded === '1') continue;
         if (observer) observer.observe(imgs[i]);
-        else loadImage(imgs[i], false); // no IO support → just queue it, no lazy story to tell
+        else loadImage(imgs[i], false);
       }
     }
 
@@ -164,25 +114,26 @@
       }
     }
 
-    observeAll(document); // the first (server-rendered "active") panel's product images
+    observeAll(document);
 
-    return { observeAll: observeAll, preloadPanelImages: preloadPanelImages, loadImage: loadImage };
+    function preloadInitialPanel(panel) {
+      var target = panel || document.querySelector('[data-cat-panel].active');
+      if (!target) return;
+      preloadPanelImages(target);
+    }
+
+    preloadInitialPanel();
+
+    return { observeAll: observeAll, preloadPanelImages: preloadPanelImages, loadImage: loadImage, preloadInitialPanel: preloadInitialPanel };
   }());
 
-  /* =======================================================================
-     5. CATEGORY SWITCHER
-     Exit: current cards fall down & fade (staggered).
-     Enter: next category's cards rain in from above (staggered).
-     Single set of DOM nodes per category — the grid/list layout is a pure
-     CSS concern driven by menuMain[data-view], so switching category never
-     duplicates or re-fetches product images.
-     ======================================================================= */
+
   var navInner    = document.querySelector('.cat-nav');
   var catCards    = Array.prototype.slice.call(document.querySelectorAll('.cat-card'));
   var catSwitching = false;
-  var catSwitchToken = 0; // bumped on every activateCategory call — lets a newer click cancel an older one mid-animation
-  var catTimers = [];     // pending setTimeout ids from the in-flight fall-out/cascade-in, cleared on interruption
-  var viewSwitching = false; // declared here, used by both §4 and §7 as a mutual guard
+  var catSwitchToken = 0;
+  var catTimers = [];
+  var viewSwitching = false;
 
   function clearCatTimers() {
     catTimers.forEach(function (id) { clearTimeout(id); });
@@ -223,27 +174,27 @@
   }
 
   function activateCategory(targetId, card) {
-    if (viewSwitching) return; // still guard against the grid⇄list FLIP measuring mid-transition
+    if (viewSwitching) return;
     var currentPanel = getActivePanel();
     var nextPanel = document.getElementById(targetId);
     if (!nextPanel || nextPanel === currentPanel) return;
 
-    // Every click gets its own token. A click that arrives while the
-    // previous switch is still mid fall-out/cascade-in no longer has to
-    // wait — it bumps the token, which makes every pending timeout /
-    // callback from the older switch a silent no-op, and snaps whatever
-    // was mid-flight back to a clean resting state before starting fresh.
-    // That's what makes rapid tab-tapping actually feel instant instead of
-    // being ignored for ~1-1.5s per switch.
+
+
+
+
+
+
+
     var myToken = ++catSwitchToken;
     clearCatTimers();
     catSwitching = true;
 
-    // Kick off the new category's product images right now, while the panel
-    // is still display:none and the old one is mid fall-out — the first
-    // EAGER_BATCH_SIZE race to the front of the priority queue so the part
-    // of the grid the user is about to see loads first, capped concurrency
-    // keeps the rest from bursting all at once.
+
+
+
+
+
     nanonanLazy.preloadPanelImages(nextPanel);
 
     catCards.forEach(function (c) {
@@ -253,14 +204,14 @@
     });
     centerCard(card);
 
-    // Snap anything left mid-animation from an interrupted switch straight
-    // to its resting state so the new transition starts clean rather than
-    // stacking on top of half-finished transforms.
+
+
+
     hardResetPanelAnim(currentPanel);
     hardResetPanelAnim(nextPanel);
 
     function playCascadeIn() {
-      if (myToken !== catSwitchToken) return; // a newer click already took over
+      if (myToken !== catSwitchToken) return;
       nextPanel.classList.add('active');
       var cards = cardsOf(nextPanel);
       cards.forEach(function (el, i) {
@@ -299,34 +250,24 @@
   }
 
   catCards.forEach(function (card) {
-    // .cat-card is a real <button> — Enter/Space already dispatch a native
-    // 'click' for us, so a single listener covers mouse, touch and keyboard.
+
+
     card.addEventListener('click', function () { activateCategory(card.getAttribute('data-target'), card); });
   });
 
-  /* =======================================================================
-     6. PRELOADER
-     Holds for exactly 5s after the page has *fully* finished loading
-     (window 'load' — all images/fonts/etc. included), then dissolves: the
-     screen is covered by a grid of overlapping circles (goo-filtered into
-     one seamless liquid sheet), which then shrink away with randomized
-     timing — reading as the loading screen dissolving into bubbles rather
-     than a flat fade.
-     ======================================================================= */
+
   (function initPreloader() {
     var preloader = document.getElementById('preloader');
-    if (!preloader) { html.classList.add('app-ready'); cascadeInitialCards(0); return; }
+    if (!preloader) { html.classList.add('app-ready'); nanonanLazy.preloadInitialPanel(); cascadeInitialCards(0); return; }
 
     lockScroll();
 
-    var HOLD_AFTER_LOAD_MS = 5000;  // دقیقاً ۵ ثانیه بعد از لود کامل تمام ریسورس‌ها
-    var HARD_TIMEOUT_MS    = 10000; // سقف ایمنی برای اتصال‌های خیلی کند (اگر رویداد load هرگز شلیک نشود)
+    var HOLD_AFTER_LOAD_MS = 5000;
+    var HARD_TIMEOUT_MS    = 10000;
     var dissolveContainer  = document.getElementById('preloaderDissolve');
     var alreadyHidden      = false;
 
-    /* Grid of jittered, overlapping circles sized to fully tile the
-       viewport (so at rest — scale(1) — the sheet is seamless), which the
-       inline SVG "goo" filter blends into one liquid surface. */
+
     function spawnGooBubbles() {
       if (!dissolveContainer) return [];
       var vw = window.innerWidth, vh = window.innerHeight;
@@ -360,7 +301,8 @@
       preloader.classList.add('is-hidden');
       unlockScroll();
       html.classList.add('app-ready');
-      cascadeInitialCards(520); // let the top-bar/nav slide-in lead, then rain the first products in
+      nanonanLazy.preloadInitialPanel();
+      cascadeInitialCards(520);
       setTimeout(function () {
         if (preloader.parentNode) preloader.parentNode.removeChild(preloader);
       }, 60);
@@ -373,7 +315,7 @@
       if (prefersReducedMotion()) { preloader.classList.add('is-hidden'); finishHide(); return; }
 
       var bubbles = spawnGooBubbles();
-      preloader.classList.add('is-dissolving'); // base bg drops out; bubbles (same color) keep full coverage → zero flash
+      preloader.classList.add('is-dissolving');
 
       requestAnimationFrame(function () {
         requestAnimationFrame(function () {
@@ -381,7 +323,7 @@
         });
       });
 
-      setTimeout(finishHide, 260 /* max stagger delay */ + 900 /* max bubble duration */ + 60 /* buffer */);
+      setTimeout(finishHide, 260  + 900  + 60 );
     }
 
     if (document.readyState === 'complete') setTimeout(hidePreloader, HOLD_AFTER_LOAD_MS);
@@ -389,12 +331,7 @@
     setTimeout(hidePreloader, HARD_TIMEOUT_MS);
   }());
 
-  /* =======================================================================
-     7. THEME TOGGLE — liquid bubble grown from the exact click point.
-     The radius is computed from the button's position against the actual
-     viewport size, so the bubble always fully covers the screen — including
-     on wide desktop monitors, not just phones.
-     ======================================================================= */
+
   (function initThemeToggle() {
     var themeBtn = document.getElementById('themeBtn');
     var themeIcon = document.getElementById('themeIcon');
@@ -448,7 +385,7 @@
         if (ev.propertyName !== 'transform') return;
         bubble.removeEventListener('transitionend', onExpandEnd);
 
-        applyTheme(); // swap the real theme while the bubble is at full blur/coverage, masking the change
+        applyTheme();
 
         bubble.classList.remove('expanding');
         bubble.classList.add('retreating');
@@ -462,14 +399,7 @@
     });
   }());
 
-  /* =======================================================================
-     8. VIEW SWITCHER — Grid ⇄ List, vanilla FLIP
-     First: record each visible card's rect. Toggle the layout (Last).
-     Invert: jump each card back to its first position with transitions
-     off. Play: clear the offset with transitions on, so the browser
-     animates the *position* change. Never scales the box, so text and
-     images are never distorted — only translated into their new slot.
-     ======================================================================= */
+
   (function initViewSwitcher() {
     var viewGridBtn = document.getElementById('viewGridBtn');
     var viewListBtn = document.getElementById('viewListBtn');
@@ -509,7 +439,7 @@
         card.style.transitionDelay = '0ms';
         card.style.transform = 'translate3d(' + dx + 'px,' + dy + 'px,0)';
         card.classList.add('is-flip-fade');
-        void card.offsetWidth; // flush the above before re-enabling transitions
+        void card.offsetWidth;
 
         requestAnimationFrame(function () {
           card.style.transitionDelay = Math.min(i, 12) * 12 + 'ms';
@@ -531,19 +461,17 @@
           settle();
         }
         card.addEventListener('transitionend', cleanup);
-        setTimeout(cleanup, 700); // safety net in case transitionend never fires
+        setTimeout(cleanup, 700);
       });
     }
 
     viewGridBtn.addEventListener('click', function () { setView('grid', true); });
     viewListBtn.addEventListener('click', function () { setView('list', true); });
 
-    window.__nanonanSetView = setView; // exposed for the boot step below
+    window.__nanonanSetView = setView;
   }());
 
-  /* =======================================================================
-     9. STICKY CATEGORY BAR — shadow once it has actually docked to the top
-     ======================================================================= */
+
   (function initStickyShadow() {
     var wrapper = document.getElementById('catNav');
     if (!wrapper || !wrapper.parentNode || !('IntersectionObserver' in window)) return;
@@ -556,12 +484,7 @@
     }, { threshold: 0 }).observe(sentinel);
   }());
 
-  /* =======================================================================
-     10. PRODUCT BOTTOM SHEET — Bootstrap Offcanvas (offcanvas-bottom) skin,
-     plus a custom drag-to-dismiss layer on the handle + image header.
-     Bootstrap already provides show/hide, backdrop, ESC-to-close, focus
-     trap and scroll-lock — this only supplies content + the drag gesture.
-     ======================================================================= */
+
   (function initBottomSheet() {
     var sheetEl = document.getElementById('productSheet');
     if (!sheetEl || !window.bootstrap || !window.bootstrap.Offcanvas) return;
@@ -579,9 +502,9 @@
     var sheetPrice    = document.getElementById('sheetPrice');
     var sheetDesc     = document.getElementById('sheetDesc');
 
-    // همان منطق isVectorIcon سمت سرور (index.ejs) — فقط برای انتخاب object-fit
-    // مناسب (وکتور را کامل و بدون بریدگی نشان می‌دهد، عکس واقعی را کادر پر می‌کند).
-    // خودِ تصویر/آیکون دقیقاً همان فایلی است که در پنل ادمین انتخاب شده — بدون تغییر رنگ.
+
+
+
     function isVectorIconUrl(url) { return !!url && /\.svg(\?.*)?$/i.test(url); }
     function renderCatVisual(container, imgUrl, iconClass) {
       container.textContent = '';
@@ -606,9 +529,9 @@
       container.appendChild(node);
     }
 
-    // Bump every time the sheet is (re)opened so a slow-loading image from a
-    // previously opened product can never land on top of the one the user
-    // is currently looking at (classic race when tapping cards quickly).
+
+
+
     var sheetImgToken = 0;
 
     function fillSheet(data) {
@@ -629,10 +552,10 @@
         sheetImg.alt = data.name || '';
         sheetImg.style.display = 'block';
         sheetMediaPh.style.display = 'none';
-        try { sheetImg.fetchPriority = 'high'; } catch (e) { /* unsupported browsers: harmless no-op */ }
+        try { sheetImg.fetchPriority = 'high'; } catch (e) {  }
         sheetImg.addEventListener('load', function onLoad() {
           sheetImg.removeEventListener('load', onLoad);
-          if (myToken !== sheetImgToken) return; // a newer product opened before this one finished
+          if (myToken !== sheetImgToken) return;
           sheetImg.classList.add('img-loaded');
         }, { once: true });
         sheetImg.src = fullImg;
@@ -646,22 +569,22 @@
 
     function openFromCard(card) { fillSheet(card.dataset); offcanvas.show(); }
 
-    // .menu-card is a real <button> — Enter/Space already dispatch a native
-    // 'click', so a single delegated listener covers mouse, touch and
-    // keyboard. Cards are re-rendered/animated constantly, so we delegate
-    // from document rather than binding per-card.
+
+
+
+
     document.addEventListener('click', function (e) {
       var card = e.target.closest ? e.target.closest('.menu-card') : null;
       if (card) openFromCard(card);
     });
 
     sheetEl.addEventListener('hidden.bs.offcanvas', function () {
-      sheetImg.removeAttribute('src'); // stop holding the decoded image once closed
+      sheetImg.removeAttribute('src');
       sheetImg.classList.remove('img-loaded');
     });
 
-    /* --- drag-to-dismiss --- */
-    var DUR_SLOW = 440; // keep in sync with --dur-slow in style.css
+
+    var DUR_SLOW = 440;
     var dragState = null;
 
     function onDragStart(e) {
@@ -713,10 +636,7 @@
     });
   }());
 
-  /* =======================================================================
-     11. BOOT — restore the visitor's saved view preference (no animation
-     on first paint since there is nothing to FLIP *from* yet).
-     ======================================================================= */
+
   try {
     var savedView = localStorage.getItem('nanonan-view');
     if ((savedView === 'list' || savedView === 'grid') && typeof window.__nanonanSetView === 'function') {
