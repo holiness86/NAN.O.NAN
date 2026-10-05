@@ -3,13 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ورود به مدیریت | کافه و بیکری نان و نان</title>
+    <title>ورود به مدیریت | کافه بابل تیله رزکان</title>
 
-    <!-- جلوگیری از فلاش تم اشتباه — دقیقاً هماهنگ با index.ejs (کلید مشتaرک) -->
     <script>
       (function () {
         try {
-          var t = localStorage.getItem('nanonan-theme');
+          var t = localStorage.getItem('bubbleteale-theme');
           if (!t) t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
           document.documentElement.setAttribute('data-bs-theme', t);
         } catch (e) {}
@@ -20,60 +19,95 @@
     <link rel="stylesheet" href="/css/icons-1.13.1/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="/css/style.css">
     <style>
-        /* توکن‌های محلی صرفاً alias به توکن‌های اصلی style.css هستند
-           تا پالت رنگی و تم روشن/تاریک دقیقاً مثل صفحه اصلی باشد. */
         :root, [data-bs-theme="light"] {
-            --bg-gradient-1: var(--cream);
-            --bg-gradient-2: var(--cream-deep);
-            --bg-gradient-3: var(--surface-raised);
             --glass-bg: var(--surface-glass);
             --glass-border: var(--border-warm);
-            --glass-shadow: rgba(var(--ink-rgb), .08);
+            --glass-shadow: rgba(var(--ink-rgb), .10);
             --text-main: var(--ink);
             --text-muted: var(--ink-muted);
             --input-bg: rgba(255, 255, 255, 0.65);
             --input-focus: rgba(255, 255, 255, 0.92);
             --accent-color: var(--brand);
             --accent-hover: var(--brand-dark);
+            --overlay-tint: rgba(var(--brand-rgb), .16);
         }
         [data-bs-theme="dark"] {
-            --bg-gradient-1: var(--cream);
-            --bg-gradient-2: var(--cream-deep);
-            --bg-gradient-3: var(--surface-raised);
             --glass-bg: var(--surface-glass);
             --glass-border: var(--border-warm);
             --glass-shadow: rgba(0, 0, 0, 0.5);
             --text-main: var(--ink);
             --text-muted: var(--ink-muted);
-            --input-bg: rgba(0, 0, 0, 0.3);
+            --input-bg: rgba(0, 0, 0, 0.32);
             --input-focus: rgba(0, 0, 0, 0.5);
             --accent-color: var(--brand);
             --accent-hover: var(--brand-dark);
+            --overlay-tint: rgba(var(--cream-dark-rgb), .38);
         }
+
+        html, body { height: 100%; }
         body {
-            background: linear-gradient(-45deg, var(--bg-gradient-1), var(--bg-gradient-2), var(--bg-gradient-3));
-            background-size: 400% 400%;
-            animation: gradientBG 10s ease infinite;
+            position: relative;
+            overflow: hidden;
             color: var(--text-main);
-            font-family: 'Vazirmatn', Tahoma, sans-serif;
+            font-family: 'YekanBakh', Tahoma, sans-serif;
             min-height: 100vh;
+            min-height: 100svh;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 1.5rem;
         }
-        @keyframes gradientBG {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+
+        .login-bg {
+            position: fixed;
+            inset: 0;
+            z-index: -3;
+            background-image: url('/images/backgrounds/cafe-loading.PNG');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            transform: scale(1.03);
         }
+        .login-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: -2;
+            pointer-events: none;
+            background: var(--overlay-tint);
+        }
+
+        .login-bubbles { position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; }
+        .login-bubble {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle at 32% 26%, rgba(255,255,255,.55), rgba(255,255,255,.04) 68%);
+            border: 1px solid rgba(255,255,255,.25);
+            will-change: transform;
+            animation: bubbleDrift 15s ease-in-out infinite;
+        }
+        .login-bubble:nth-child(1) { width: 70px; height: 70px; left: 6%;  top: 14%; animation-duration: 13s;   animation-delay: 0s; }
+        .login-bubble:nth-child(2) { width: 40px; height: 40px; left: 20%; top: 68%; animation-duration: 16.5s; animation-delay: 1.1s; }
+        .login-bubble:nth-child(3) { width: 96px; height: 96px; left: 84%; top: 10%; animation-duration: 19s;   animation-delay: .4s; }
+        .login-bubble:nth-child(4) { width: 30px; height: 30px; left: 70%; top: 76%; animation-duration: 11.5s; animation-delay: 1.8s; }
+        .login-bubble:nth-child(5) { width: 54px; height: 54px; left: 46%; top: 6%;  animation-duration: 15s;   animation-delay: .7s; }
+        .login-bubble:nth-child(6) { width: 24px; height: 24px; left: 92%; top: 46%; animation-duration: 12s;   animation-delay: 1.4s; }
+        .login-bubble:nth-child(7) { width: 78px; height: 78px; left: 3%;  top: 80%; animation-duration: 18s;   animation-delay: 2.2s; }
+        .login-bubble:nth-child(8) { width: 46px; height: 46px; left: 58%; top: 38%; animation-duration: 14s;   animation-delay: .5s; }
+        @keyframes bubbleDrift {
+            0%, 100% { transform: translate3d(0,0,0); opacity: .5; }
+            50%      { transform: translate3d(16px,-26px,0); opacity: .85; }
+        }
+        @media (prefers-reduced-motion: reduce) { .login-bubble { animation: none; opacity: .6; } }
+
         .login-card {
+            position: relative;
             background: var(--glass-bg);
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
+            backdrop-filter: blur(26px) saturate(1.3);
+            -webkit-backdrop-filter: blur(26px) saturate(1.3);
             border: 1px solid var(--glass-border);
-            border-radius: 28px;
-            box-shadow: 0 12px 40px var(--glass-shadow);
+            border-radius: 34px;
+            border-radius: max(34px, 2.1rem);
+            box-shadow: 0 20px 55px var(--glass-shadow);
             width: 100%;
             max-width: 440px;
             padding: 3rem 2.5rem;
@@ -81,7 +115,7 @@
         .brand-icon-wrapper {
             width: 75px;
             height: 75px;
-            border-radius: 50%;
+            border-radius: 28px;
             background: var(--glass-bg);
             border: 1px solid var(--glass-border);
             display: flex;
@@ -96,32 +130,30 @@
             background: var(--input-bg) !important;
             border: 1px solid var(--glass-border) !important;
             color: var(--text-main) !important;
-            border-radius: 14px;
-            padding: 0.8rem 1.2rem;
+            border-radius: 18px !important;
+            padding: 0.85rem 1.2rem;
             transition: all 0.3s ease;
         }
         .glass-input:focus {
-            box-shadow: 0 0 0 3px rgba(184, 134, 11, 0.2) !important;
+            box-shadow: 0 0 0 4px rgba(87,45,119, 0.2) !important;
             border-color: var(--accent-color) !important;
             background: var(--input-focus) !important;
         }
         .btn-accent {
             background: linear-gradient(135deg, var(--accent-color), var(--accent-hover));
-            color: #1A1208 !important;
+            color: #FFFFFF !important;
             border: none;
-            border-radius: 14px;
-            padding: 0.8rem 1.5rem;
+            border-radius: 20px;
+            padding: 0.85rem 1.5rem;
             font-weight: 600;
             width: 100%;
-            box-shadow: 0 4px 15px rgba(184, 134, 11, 0.2);
+            box-shadow: 0 4px 15px rgba(87,45,119, 0.2);
             transition: all 0.3s ease;
         }
-        [data-bs-theme="dark"] .btn-accent {
-            color: #120C05 !important;
-        }
+        [data-bs-theme="dark"] .btn-accent { color: #FFFFFF !important; }
         .btn-accent:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(184, 134, 11, 0.3);
+            box-shadow: 0 6px 20px rgba(87,45,119, 0.3);
         }
         .password-toggle {
             position: absolute;
@@ -135,36 +167,20 @@
             padding: 0;
             z-index: 5;
         }
-        .text-muted{
-            color: var(--text-muted) !important;
+        .text-muted { color: var(--text-muted) !important; }
+        .input-password-wrap { position: relative; }
+        .input-password-wrap .glass-input { padding-left: 44px; }
+
+        input::placeholder,
+        textarea::placeholder {
+            color: var(--text-main) !important;
+            opacity: 1;
         }
-        .input-password-wrap {
-            position: relative;
-        }
-        .input-password-wrap .glass-input {
-            padding-left: 44px;
-        }
+        input:-ms-input-placeholder,
+        textarea:-ms-input-placeholder { color: var(--text-main) !important; }
+        input::-ms-input-placeholder,
+        textarea::-ms-input-placeholder { color: var(--text-main) !important; }
 
-        /* مرورگرهای مدرن (Chrome, Firefox, Safari, Edge) */
- input::placeholder,
- textarea::placeholder {
-  color: var(--text-main) !important;
-  opacity: 1; /* برای فیکس کردن رنگ سفید خالص در فایرفاکس */
-}
-
-/* مرورگر Internet Explorer 10-11 */
- input:-ms-input-placeholder,
-textarea:-ms-input-placeholder {
-  color: var(--text-main) !important;
-}
-
-/* نسخه قدیمی مرورگر Edge */
- input::-ms-input-placeholder,
-textarea::-ms-input-placeholder {
-  color: var(--text-main) !important;
-}
-
-        /* ── ورود کارت + عناصر (Cascade / Slide-in) ──────────────── */
         @keyframes cardPop {
             0%   { opacity: 0; transform: translateY(28px) scale(.96); }
             100% { opacity: 1; transform: translateY(0) scale(1); }
@@ -195,7 +211,6 @@ textarea::-ms-input-placeholder {
             50%      { transform: translateY(-6px); }
         }
 
-        /* ── دکمه ورود + وضعیت لودینگ ─────────────────────────────── */
         .btn-accent { position: relative; overflow: hidden; }
         .btn-accent:active { transform: translateY(0) scale(.98); }
         .btn-accent .btn-spinner {
@@ -220,12 +235,25 @@ textarea::-ms-input-placeholder {
 </head>
 <body>
 
+<div class="login-bg" aria-hidden="true"></div>
+<div class="login-overlay" aria-hidden="true"></div>
+<div class="login-bubbles" aria-hidden="true">
+    <span class="login-bubble"></span>
+    <span class="login-bubble"></span>
+    <span class="login-bubble"></span>
+    <span class="login-bubble"></span>
+    <span class="login-bubble"></span>
+    <span class="login-bubble"></span>
+    <span class="login-bubble"></span>
+    <span class="login-bubble"></span>
+</div>
+
 <div class="login-card">
     <div class="brand-icon-wrapper">
         <i class="bi bi-cup-hot-fill"></i>
     </div>
-    <h4 class="fw-bold text-center mb-1">کافه و بیکری نان و نان</h4>
-    <p class="text-center text-muted small mb-4">NAN.O.NAN | پنل مدیریت هوشمند</p>
+    <h4 class="fw-bold text-center mb-1">کافه بابل تیله رزکان</h4>
+    <p class="text-center text-muted small mb-4">بابل تیله رزکان | پنل مدیریت هوشمند</p>
 
     <form action="/log" method="POST" class="row g-3" id="loginForm">
         <div class="col-12">
@@ -265,9 +293,6 @@ textarea::-ms-input-placeholder {
         }
     });
 
-    // نکته: تم پیش از رندر توسط اسکریپت ضدفلاش در <head> ست شده (کلید مشترک nanonan-theme)
-
-    // --- لودینگ تعاملی هنگام ارسال فرم ورود ---
     const loginForm = document.getElementById('loginForm');
     const loginSubmitBtn = document.getElementById('loginSubmitBtn');
     if (loginForm && loginSubmitBtn) {

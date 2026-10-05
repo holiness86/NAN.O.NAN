@@ -1,70 +1,59 @@
 <!DOCTYPE html>
-<html lang="fa" dir="rtl" data-bs-theme="light">
+<html lang="fa" dir="rtl" data-bs-theme="light" data-view="grid">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="description" content="منوی آنلاین کافه و بیکری نان و نان">
   <meta name="color-scheme" content="light dark">
-
   <meta name="theme-color" content="#F6ECE5">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%A5%90%3C/text%3E%3C/svg%3E">
   <title>نان و نان — منو</title>
 
   <script>
     (function () {
+      var d = document.documentElement;
       try {
         var t = localStorage.getItem('nanonan-theme');
-        if (!t) t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-        document.documentElement.setAttribute('data-bs-theme', t);
-        var mc = document.querySelector('meta[name="theme-color"]');
-        if (mc) mc.setAttribute('content', t === 'dark' ? '#1B120C' : '#F6ECE5');
+        if (t !== 'dark' && t !== 'light') t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        d.setAttribute('data-bs-theme', t);
+        var v = localStorage.getItem('nanonan-view');
+        if (v === 'list' || v === 'grid') d.setAttribute('data-view', v);
+        var m = document.querySelector('meta[name="theme-color"]');
+        if (m) m.setAttribute('content', t === 'dark' ? '#1B120C' : '#F6ECE5');
       } catch (e) {}
     })();
   </script>
 
+  <link rel="preload" href="/Fonts/YekanBakh-VF.ttf" as="font" type="font/ttf" crossorigin>
+  <link rel="preload" href="/images/backgrounds/cafe-loading.PNG" as="image" fetchpriority="high">
+
   <link href="css/bootstrap.rtl.min.css" rel="stylesheet">
-
   <link rel="stylesheet" href="css/icons-1.13.1/font/bootstrap-icons.min.css">
-
   <link rel="stylesheet" href="css/style.css">
+
+  <script src="js/bootstrap.bundle.min.js" defer></script>
+  <script src="js/main.js" defer></script>
 </head>
 <body>
 
-  <svg class="visually-hidden" aria-hidden="true" focusable="false">
-    <defs>
-      <filter id="nan-goo">
-        <feGaussianBlur in="SourceGraphic" stdDeviation="9" result="blur" />
-        <feColorMatrix in="blur" mode="matrix"
-          values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 21 -9" result="goo" />
-      </filter>
-    </defs>
-  </svg>
-
   <div class="preloader" id="preloader">
-
     <div class="preloader-bg" aria-hidden="true"></div>
-
-    <div class="preloader-overlay" aria-hidden="true"></div>
-
     <div class="preloader-core" id="preloaderCore">
-      <img class="preloader-logo" src="/images/logo/Nan.O.Nan-brand.png" alt="نان و نان">
-      <p class="preloader-message">
-        حضور شما در کنار ما بزرگترین افتخار ماست؛ اما در زمان شلوغی لطفاً با تیم ما همکاری کنید تا همگی بتونیم از این زمان لذت ببریم.
-      </p>
-      <div class="preloader-dots"><span></span><span></span><span></span></div>
+      <img class="preloader-logo" src="/images/logo/Nan.O.Nan-brand.png" width="96" height="96" alt="نان و نان" fetchpriority="high" decoding="async">
+      <p class="preloader-message">حضور شما در کنار ما بزرگترین افتخار ماست؛ اما در زمان شلوغی لطفاً با تیم ما همکاری کنید تا همگی بتونیم از این زمان لذت ببریم.</p>
+      <div class="preloader-dots" aria-hidden="true"><span></span><span></span><span></span></div>
     </div>
-
-    <div class="preloader-dissolve" id="preloaderDissolve" aria-hidden="true"></div>
   </div>
 
   <%
     function isVectorIcon(url) { return !!url && /\.svg(\?.*)?$/i.test(url); }
+    function fa(n) { return Number(n).toLocaleString('fa-IR'); }
     var hasCategories = typeof categoriesWithItems !== 'undefined' && categoriesWithItems && categoriesWithItems.length > 0;
   %>
 
   <header class="top-bar">
     <div class="brand-mini">
-      <div class="brand-mini-logo"><img src="/images/logo/Nan.O.Nan-brand.png" alt="نان و نان"></div>
+      <div class="brand-mini-logo"><img src="/images/logo/Nan.O.Nan-brand.png" width="60" height="60" alt="نان و نان" decoding="async"></div>
       <div class="brand-mini-text">
         <h1 class="brand-mini-name">نان <span>و نان</span></h1>
         <p class="brand-mini-tagline">Café &amp; Bakery</p>
@@ -75,18 +64,18 @@
     </button>
   </header>
 
+  <div class="nav-sentinel" id="navSentinel" aria-hidden="true"></div>
+
   <div class="cat-nav-wrapper" id="catNav">
     <nav class="cat-nav" aria-label="دسته‌بندی منو">
       <% if (hasCategories) { %>
         <% categoriesWithItems.forEach(function (cat, index) { %>
-          <button type="button" class="cat-card <%= index === 0 ? 'active' : '' %>"
-               aria-pressed="<%= index === 0 ? 'true' : 'false' %>"
-               data-target="cat-<%= cat.enname %>">
+          <button type="button" class="cat-card<%= index === 0 ? ' active' : '' %>" aria-pressed="<%= index === 0 ? 'true' : 'false' %>" data-target="cat-<%= cat.enname %>">
             <span class="cat-card-thumb">
               <% if (cat.image) { %>
-                <img src="<%= cat.image %>" alt="<%= cat.name %>" fetchpriority="high" decoding="async">
+                <img<%= isVectorIcon(cat.image) ? ' class=is-vector' : '' %> src="<%= cat.image %>" width="48" height="48" alt=""<%= index > 4 ? ' loading=lazy' : '' %> decoding="async">
               <% } else { %>
-                <i class="bi <%= cat.icon || 'bi-grid' %>"></i>
+                <i class="bi <%= cat.icon || 'bi-grid' %>" aria-hidden="true"></i>
               <% } %>
             </span>
             <span class="cat-card-label"><%= cat.name %></span>
@@ -96,7 +85,7 @@
     </nav>
   </div>
 
-  <main class="menu-main container" id="menuMain" data-view="grid">
+  <main class="menu-main" id="menuMain">
 
     <% if (hasCategories) { %>
       <div class="view-switcher">
@@ -111,12 +100,12 @@
       </div>
 
       <% categoriesWithItems.forEach(function (cat, index) { %>
-        <section class="cat-panel <%= index === 0 ? 'active' : '' %>" id="cat-<%= cat.enname %>" data-cat-panel aria-label="<%= cat.name %>">
+        <section class="cat-panel<%= index === 0 ? ' active' : '' %>" id="cat-<%= cat.enname %>" data-cat-panel data-cat-name="<%= cat.name %>" data-cat-icon="<%= cat.icon || 'bi-grid' %>" data-cat-img="<%= cat.image || '' %>" aria-label="<%= cat.name %>">
 
           <div class="cat-section-header">
             <div class="cat-thumb">
               <% if (cat.image) { %>
-                <img src="<%= cat.image %>" alt="" fetchpriority="high" decoding="async" class="<%= isVectorIcon(cat.image) ? 'is-vector' : '' %>">
+                <img<%= isVectorIcon(cat.image) ? ' class=is-vector' : '' %> src="<%= cat.image %>" width="48" height="48" alt="" loading="lazy" decoding="async">
               <% } else { %>
                 <i class="bi <%= cat.icon || 'bi-grid' %>" aria-hidden="true"></i>
               <% } %>
@@ -134,34 +123,21 @@
                 <p>فعلاً محصولی در این دسته‌بندی ثبت نشده است.</p>
               </div>
             <% } else { %>
-              <% cat.items.forEach(function (item) { %>
-                <button type="button" class="menu-card"
-                     data-name="<%= item.iteamName %>"
-                     data-price="<%= item.iteamPrice %>"
-                     data-desc="<%= item.description %>"
-                     data-img="<%= item.imageUrl || '' %>"
-                     data-full-img="<%= item.imageUrl || '' %>"
-                     data-cat="<%= cat.name %>"
-                     data-cat-icon="<%= cat.icon || 'bi-grid' %>"
-                     data-cat-img="<%= cat.image || '' %>">
+              <% cat.items.forEach(function (item, i) { %>
+                <button type="button" class="menu-card" data-full-img="<%= item.imageUrl || '' %>">
                   <span class="menu-card-img">
                     <% if (item.imageUrl) { %>
-
-                      <img class="lazy-img" data-src="<%= item.thumbUrl || item.imageUrl %>" decoding="async" alt="<%= item.iteamName %>">
-                      <noscript><img src="<%= item.thumbUrl || item.imageUrl %>" alt="<%= item.iteamName %>"></noscript>
+                      <img class="lazy-img" src="<%= item.thumbUrl || item.imageUrl %>" alt="" decoding="async"<%- (index === 0 && i < 6) ? ' fetchpriority="high"' : ' loading="lazy"' %>>
                     <% } else { %>
                       <span class="menu-card-placeholder"><i class="bi bi-image" aria-hidden="true"></i></span>
                     <% } %>
                   </span>
                   <span class="menu-card-info">
                     <span class="menu-card-name"><%= item.iteamName %></span>
-                    <span class="menu-card-desc"><%= item.description %></span>
-                    <span class="menu-card-footer">
-                      <span class="menu-card-price">
-                        <%= Number(item.iteamPrice).toLocaleString('fa-IR') %>
-                        <small>تومان</small>
-                      </span>
-                    </span>
+                    <% if (item.description && String(item.description).trim()) { %>
+                      <span class="menu-card-desc"><%= item.description %></span>
+                    <% } %>
+                    <span class="menu-card-price"><bdi class="menu-card-price-num"><%= fa(item.iteamPrice) %></bdi><small>تومان</small></span>
                   </span>
                 </button>
               <% }) %>
@@ -171,7 +147,7 @@
         </section>
       <% }) %>
     <% } else { %>
-      <div class="cat-empty" style="padding:4rem 1rem;">
+      <div class="cat-empty cat-empty-page">
         <i class="bi bi-basket2" aria-hidden="true"></i>
         <p>هنوز دسته‌بندی یا محصولی برای نمایش ثبت نشده است.</p>
       </div>
@@ -181,15 +157,14 @@
 
   <footer class="menu-footer">
     <div class="footer-brand">نان و نان</div>
-    <p class="footer-text"> فردیس کانال غربی بعد از کوچه 21 <strong>کافه بیکری نان و نان</strong></p>
+    <p class="footer-text">فردیس کانال غربی بعد از کوچه 21 <strong>کافه بیکری نان و نان</strong></p>
 
     <div class="footer-socials">
-      <a href="https://www.instagram.com/nanonan_bakery" class="social-dot" aria-label="اینستاگرام"><i class="bi bi-instagram" aria-hidden="true"></i></a>
-
+      <a href="https://www.instagram.com/nanonan_bakery" class="social-dot" target="_blank" rel="noopener noreferrer" aria-label="اینستاگرام"><i class="bi bi-instagram" aria-hidden="true"></i></a>
     </div>
 
-    <p class="footer-text mt-3" style="font-size:.72rem;opacity:.7;">© 2026 نان و نان</p>
-    <p class="footer-text" style="font-size:.72rem;opacity:.7;">
+    <p class="footer-text footer-fine mt-3">© 2026 نان و نان</p>
+    <p class="footer-text footer-fine">
       طراحی و توسعه توسط
       <a href="http://SoulWeb.ir" target="_blank" rel="noopener noreferrer" class="text-link">سُل وب</a>
     </p>
@@ -200,14 +175,15 @@
     <button type="button" class="sheet-close-btn" data-bs-dismiss="offcanvas" aria-label="بستن">
       <i class="bi bi-x-lg" aria-hidden="true"></i>
     </button>
-    <div class="offcanvas-body">
-      <div class="sheet-media">
-        <div class="sheet-media-placeholder" id="sheetMediaPlaceholder">
-          <i class="bi bi-image" aria-hidden="true"></i>
-        </div>
-        <img id="sheetImg" class="lazy-img" decoding="async" alt="" style="display:none;">
-        <span class="sheet-cat-badge" id="sheetCatBadge">
-          <span class="sheet-cat-visual" id="sheetCatVisual"><i class="bi bi-grid" aria-hidden="true"></i></span>
+    <div class="offcanvas-body" id="sheetBody">
+      <div class="sheet-media" id="sheetMedia">
+        <div class="sheet-media-placeholder" id="sheetMediaPlaceholder"><i class="bi bi-image" aria-hidden="true"></i></div>
+        <img id="sheetImg" class="lazy-img" decoding="async" alt="" hidden>
+        <span class="sheet-cat-badge">
+          <span class="sheet-cat-visual">
+            <img id="sheetCatImg" width="22" height="22" alt="" decoding="async" hidden>
+            <i id="sheetCatIcon" class="bi bi-grid" aria-hidden="true"></i>
+          </span>
           <span id="sheetCatName"></span>
         </span>
       </div>
@@ -223,12 +199,7 @@
   </div>
 
   <noscript>
-    <style>.preloader{display:none!important;} .top-bar,.cat-nav-wrapper,.menu-main,.menu-footer{opacity:1!important;}</style>
+    <style>.preloader{display:none!important}.top-bar,.cat-nav-wrapper,.menu-main,.menu-footer{opacity:1!important}.lazy-img{opacity:1!important}</style>
   </noscript>
-
-  <script src="js/jquery-3.7.1.min.js"></script>
-  <script src="js/bootstrap.bundle.min.js"></script>
-
-  <script src="js/main.js"></script>
 </body>
 </html>

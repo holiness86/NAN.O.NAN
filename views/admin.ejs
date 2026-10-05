@@ -3,34 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>پنل مدیریت | کافه و بیکری نان و نان</title>
+    <title>پنل مدیریت | کافه بابل تیله رزکان</title>
 
-    <!-- جلوگیری از فلاش تم اشتباه قبل از رندر اول — دقیقاً هماهنگ با index.ejs
-         (همان کلید localStorage، یعنی تم پنل ادمین و منوی عمومی یکی است) -->
     <script>
       (function () {
         try {
-          var t = localStorage.getItem('nanonan-theme');
+          var t = localStorage.getItem('bubbleteale-theme');
           if (!t) t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
           document.documentElement.setAttribute('data-bs-theme', t);
         } catch (e) {}
       })();
     </script>
 
-    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.0.0/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
     <link href="/css/bootstrap.rtl.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/css/icons-1.13.1/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="/css/style.css">
 
     <style>
-        /* =========================================================
-           پنل مدیریت نان و نان (NAN.O.NAN) — توکن‌های طراحی
-           این بلوک هیچ رنگ مستقلی تعریف نمی‌کند؛ فقط نام‌متغیرهای
-           قدیمی پنل ادمین (--accent-color, --glass-bg, --text-main ...)
-           را مستقیماً به توکن‌های اصلی style.css (--brand, --cream,
-           --ink, --surface-glass, --sw-0..9 و ...) نگاشت (alias) می‌کند
-           تا پالت رنگی و تم روشن/تاریک ۱۰۰٪ با صفحه اصلی یکسان باشد.
-        ========================================================= */
+
         :root, [data-bs-theme="light"] {
             --bg-grad-1: var(--cream);
             --bg-grad-2: var(--cream-deep);
@@ -99,6 +89,30 @@
             100% { background-position: 0% 50%; }
         }
 
+        body::before, body::after {
+            content: '';
+            position: fixed;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+            will-change: transform;
+        }
+        body::before {
+            width: 360px; height: 360px; top: -100px; left: -100px;
+            background: radial-gradient(circle at 32% 28%, rgba(var(--brand-rgb), .20), rgba(var(--brand-rgb), 0) 70%);
+            animation: bubble-float-a 22s ease-in-out infinite;
+        }
+        body::after {
+            width: 280px; height: 280px; bottom: -70px; right: -70px;
+            background: radial-gradient(circle at 32% 28%, rgba(var(--steel-rgb), .18), rgba(var(--steel-rgb), 0) 70%);
+            animation: bubble-float-b 26s ease-in-out infinite;
+        }
+        @keyframes bubble-float-a { 0%,100% { transform: translate3d(0,0,0) scale(1); } 50% { transform: translate3d(34px,44px,0) scale(1.08); } }
+        @keyframes bubble-float-b { 0%,100% { transform: translate3d(0,0,0) scale(1); } 50% { transform: translate3d(-26px,-32px,0) scale(1.06); } }
+        @media (prefers-reduced-motion: reduce) { body::before, body::after { animation: none; } }
+
+        :root { --ease-bubble: cubic-bezier(.34, 1.56, .64, 1); }
+        .admin-layout { position: relative; z-index: 1; }
 
         .admin-layout { display: flex; min-height: 100vh; }
 
@@ -111,7 +125,6 @@
             transition: all 0.3s ease;
         }
 
-        /* ---------- Sidebar ---------- */
         .sidebar {
             width: var(--sidebar-width);
             position: fixed;
@@ -142,12 +155,12 @@
         }
         .sidebar-brand .brand-mark {
             width: 42px; height: 42px;
-            border-radius: 12px;
+            border-radius: 16px;
             display: flex; align-items: center; justify-content: center;
             background: linear-gradient(135deg, var(--accent-light), var(--accent-color));
             color: #fff;
             font-size: 1.25rem;
-            box-shadow: 0 4px 14px rgba(184,134,11,0.35);
+            box-shadow: 0 4px 14px rgba(87,45,119,0.35);
             flex-shrink: 0;
         }
         .sidebar-brand .brand-text { line-height: 1.25; min-width: 0; }
@@ -165,7 +178,7 @@
         }
 
         .sidebar .nav-link {
-            border-radius: 13px;
+            border-radius: 16px;
             margin: 0.18rem 1rem;
             padding: 0.7rem 1rem;
             color: var(--text-muted);
@@ -179,7 +192,7 @@
         }
         .sidebar .nav-link .nav-ico {
             width: 34px; height: 34px;
-            border-radius: 10px;
+            border-radius: 14px;
             display: flex; align-items: center; justify-content: center;
             background: var(--glass-hover);
             font-size: 1rem;
@@ -202,13 +215,13 @@
         }
         .sidebar .nav-link.active {
             background: linear-gradient(135deg, var(--accent-light), var(--accent-color));
-            color: #1A1208;
+            color: #FFFFFF;
             font-weight: 700;
-            box-shadow: 0 6px 18px rgba(184,134,11,0.30);
+            box-shadow: 0 6px 18px rgba(87,45,119,0.30);
         }
-        [data-bs-theme="dark"] .sidebar .nav-link.active { color: #1A1208; }
+        [data-bs-theme="dark"] .sidebar .nav-link.active { color: #FFFFFF; }
         .sidebar .nav-link.active .nav-ico { background: rgba(255,255,255,0.25); }
-        .sidebar .nav-link.active .nav-badge { background: rgba(255,255,255,0.3); color: #1A1208; }
+        .sidebar .nav-link.active .nav-badge { background: rgba(255,255,255,0.3); color: #FFFFFF; }
 
         .sidebar-footer {
             margin-top: auto;
@@ -220,7 +233,7 @@
             align-items: center;
             justify-content: space-between;
             padding: 0.65rem 0.9rem;
-            border-radius: 13px;
+            border-radius: 16px;
             background: var(--glass-hover);
             border: 1px solid var(--glass-border);
             font-size: 0.78rem;
@@ -233,13 +246,12 @@
             color: var(--danger-color);
             text-decoration: none;
             padding: 0.55rem;
-            border-radius: 12px;
+            border-radius: 16px;
             border: 1px solid var(--glass-border);
             transition: all 0.25s ease;
         }
         .sidebar-footer .logout-link:hover { background: rgba(214,69,59,0.12); }
 
-        /* ---------- Main / Topbar ---------- */
         .main-content { flex: 1; margin-right: var(--sidebar-width); min-width: 0; transition: margin 0.3s ease; }
         .content-wrapper { padding: 1.5rem; padding-top: calc(var(--topbar-height) + 1.5rem); max-width: 1400px; }
 
@@ -282,30 +294,31 @@
             .sidebar-toggle-btn { display: flex; }
         }
 
-        /* ---------- Cards / Inputs / Buttons ---------- */
         .glass-card {
             background: var(--glass-bg);
             backdrop-filter: blur(16px) saturate(160%);
             -webkit-backdrop-filter: blur(16px) saturate(160%);
             border: 1px solid var(--glass-border);
-            border-radius: 20px;
+            border-radius: 28px;
             box-shadow: 0 8px 32px var(--glass-shadow);
             padding: 1.6rem;
-            transition: transform 0.3s ease, background 0.4s ease;
+            transition: transform 0.35s var(--ease-bubble), background 0.4s ease, box-shadow 0.35s ease;
         }
-        .glass-card:hover { transform: translateY(-2px); }
+        .glass-card:hover { transform: translateY(-3px); box-shadow: 0 14px 38px var(--glass-shadow); }
 
         .glass-input, .glass-select, .glass-textarea {
             background: var(--input-bg) !important;
             border: 1px solid var(--glass-border) !important;
             color: var(--text-main) !important;
-            border-radius: 13px !important;
+            border-radius: 18px !important;
             box-shadow: none !important;
+            transition: box-shadow 0.25s ease, border-color 0.25s ease, background 0.25s ease, transform 0.2s var(--ease-bubble) !important;
         }
         .glass-input:focus, .glass-select:focus, .glass-textarea:focus {
-            box-shadow: 0 0 0 3px rgba(184, 134, 11, 0.20) !important;
+            box-shadow: 0 0 0 4px rgba(87,45,119, 0.18) !important;
             border-color: var(--accent-color) !important;
             background: var(--input-focus) !important;
+            transform: translateY(-1px) !important;
         }
         option { background-color: var(--option-bg); color: var(--text-main); }
 
@@ -341,27 +354,29 @@
 
         .btn-accent {
             background: linear-gradient(135deg, var(--accent-light), var(--accent-color));
-            color: #1A1208 !important;
+            color: #FFFFFF !important;
             border: none;
-            border-radius: 14px;
+            border-radius: 18px;
             padding: 0.75rem 1.5rem;
             font-weight: 700;
-            box-shadow: 0 4px 16px rgba(184, 134, 11, 0.28);
-            transition: all 0.25s ease;
+            box-shadow: 0 4px 16px rgba(87,45,119, 0.28);
+            transition: transform 0.3s var(--ease-bubble), box-shadow 0.3s ease;
         }
-        .btn-accent:hover { transform: translateY(-2px); box-shadow: 0 6px 22px rgba(184, 134, 11, 0.38); }
+        .btn-accent:hover { transform: translateY(-3px) scale(1.015); box-shadow: 0 8px 24px rgba(87,45,119, 0.4); }
+        .btn-accent:active { transform: translateY(-1px) scale(0.97); }
         .btn-accent:disabled { opacity: 0.6; transform: none; }
 
         .btn-glass {
             background: var(--btn-bg);
             border: 1px solid var(--glass-border);
             color: var(--text-main);
-            border-radius: 14px;
+            border-radius: 18px;
             padding: 0.7rem 1.4rem;
             font-weight: 600;
-            transition: all 0.25s ease;
+            transition: transform 0.3s var(--ease-bubble), background 0.25s ease, color 0.25s ease;
         }
-        .btn-glass:hover { background: var(--btn-hover); color: var(--text-main); }
+        .btn-glass:hover { background: var(--btn-hover); color: var(--text-main); transform: translateY(-2px); }
+        .btn-glass:active { transform: translateY(0) scale(0.97); }
 
         .text-accent { color: var(--accent-color) !important; }
         .text-muted-custom { color: var(--text-muted) !important; opacity: 0.9; }
@@ -380,12 +395,11 @@
 
         input::placeholder, textarea::placeholder { color: var(--text-muted) !important; opacity: 0.8; }
 
-        /* ---------- Stat Cards ---------- */
         .stat-card {
             background: var(--glass-bg);
             backdrop-filter: blur(16px) saturate(160%);
             border: 1px solid var(--glass-border);
-            border-radius: 18px;
+            border-radius: 24px;
             box-shadow: 0 8px 28px var(--glass-shadow);
             padding: 1.3rem 1.4rem;
             display: flex;
@@ -393,45 +407,53 @@
             justify-content: space-between;
             gap: 0.75rem;
             height: 100%;
-            transition: transform 0.3s ease;
+            transition: transform 0.35s var(--ease-bubble), box-shadow 0.35s ease;
             position: relative;
             overflow: hidden;
         }
-        .stat-card:hover { transform: translateY(-4px); }
+        .stat-card:hover { transform: translateY(-5px); box-shadow: 0 14px 34px var(--glass-shadow); }
         .stat-card .stat-icon {
             width: 54px; height: 54px;
-            border-radius: 16px;
+            border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
             font-size: 1.4rem;
             color: #fff;
             flex-shrink: 0;
             box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+            transition: transform 0.4s var(--ease-bubble);
         }
+        .stat-card:hover .stat-icon { transform: scale(1.1) rotate(-6deg); }
         .stat-card h3 { font-size: 1.5rem; letter-spacing: -0.02em; }
         .stat-trend { font-size: 0.68rem; font-weight: 700; padding: 0.15rem 0.5rem; border-radius: 50rem; }
 
-        /* ---------- Category breakdown ---------- */
         .cat-bar-row { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.85rem; }
-        .cat-bar-dot { width: 34px; height: 34px; border-radius: 10px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 0.95rem; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
-        .cat-bar-track { flex: 1; height: 8px; border-radius: 50rem; background: var(--glass-hover); overflow: hidden; margin-top: 4px; }
-        .cat-bar-fill { height: 100%; border-radius: 50rem; transition: width 0.6s ease; }
+        .cat-bar-dot { width: 34px; height: 34px; border-radius: 16px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 0.95rem; box-shadow: 0 2px 8px rgba(0,0,0,0.15); overflow: hidden; }
+        .cat-bar-track { flex: 1; height: 9px; border-radius: 50rem; background: var(--glass-hover); overflow: hidden; margin-top: 4px; position: relative; }
+        .cat-bar-fill { height: 100%; border-radius: 50rem; transition: width 0.8s var(--ease-bubble); position: relative; overflow: hidden; }
+        .cat-bar-fill::after {
+            content: '';
+            position: absolute; inset: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,.4), transparent);
+            transform: translateX(-100%);
+            animation: barShimmer 2.8s ease-in-out infinite;
+        }
+        @keyframes barShimmer { 0% { transform: translateX(-100%); } 60%, 100% { transform: translateX(100%); } }
+        @media (prefers-reduced-motion: reduce) { .cat-bar-fill::after { animation: none; } }
 
-        /* ---------- Icon swatches (shared with picker) ---------- */
         .icon-swatch-0 { background: var(--sw-0); } .icon-swatch-1 { background: var(--sw-1); }
         .icon-swatch-2 { background: var(--sw-2); } .icon-swatch-3 { background: var(--sw-3); }
         .icon-swatch-4 { background: var(--sw-4); } .icon-swatch-5 { background: var(--sw-5); }
         .icon-swatch-6 { background: var(--sw-6); } .icon-swatch-7 { background: var(--sw-7); }
         .icon-swatch-8 { background: var(--sw-8); } .icon-swatch-9 { background: var(--sw-9); }
 
-        /* ---------- Visual (Vector/Image) Picker ---------- */
         .icon-picker-preview {
             display: flex; align-items: center; gap: 1rem;
-            padding: 0.9rem 1rem; border-radius: 16px;
+            padding: 0.9rem 1rem; border-radius: 18px;
             background: var(--glass-hover); border: 1px solid var(--glass-border);
             margin-bottom: 0.9rem;
         }
         .icon-picker-preview .ipv-box {
-            width: 54px; height: 54px; border-radius: 15px;
+            width: 54px; height: 54px; border-radius: 18px;
             display: flex; align-items: center; justify-content: center;
             font-size: 1.55rem; color: var(--accent-color);
             background: var(--glass-bg); border: 1px solid var(--glass-border);
@@ -443,7 +465,7 @@
         .visual-picker-grid {
             display: grid; grid-template-columns: repeat(6, 1fr);
             gap: 10px; max-height: 320px; overflow-y: auto;
-            padding: 10px; border-radius: 16px;
+            padding: 10px; border-radius: 18px;
             background: var(--input-bg); border: 1px solid var(--glass-border);
         }
         @media (max-width: 400px) {
@@ -452,7 +474,7 @@
         .visual-picker-grid::-webkit-scrollbar { width: 5px; }
         .visual-picker-grid::-webkit-scrollbar-thumb { background: var(--glass-border); border-radius: 5px; }
         .visual-picker-item {
-            aspect-ratio: 1/1; border-radius: 14px; cursor: pointer;
+            aspect-ratio: 1/1; border-radius: 16px; cursor: pointer;
             background: var(--glass-bg); border: 2px solid var(--glass-border);
             display: flex; align-items: center; justify-content: center;
             padding: 8px; position: relative; transition: transform .2s ease, border-color .2s ease;
@@ -469,7 +491,7 @@
 
         .cat-img-upload {
             display: flex; align-items: center; gap: 1rem;
-            padding: .9rem; border-radius: 16px;
+            padding: .9rem; border-radius: 18px;
             background: var(--input-bg); border: 1px dashed var(--glass-border);
             transition: all .25s ease; cursor: pointer;
         }
@@ -477,7 +499,7 @@
             border-color: var(--accent-color); background: var(--brand-soft);
         }
         .cat-img-upload-icon {
-            width: 44px; height: 44px; border-radius: 12px; flex-shrink: 0;
+            width: 44px; height: 44px; border-radius: 16px; flex-shrink: 0;
             display: flex; align-items: center; justify-content: center;
             background: var(--glass-bg); border: 1px solid var(--glass-border);
             font-size: 1.2rem; color: var(--accent-color);
@@ -486,14 +508,13 @@
         .cat-img-upload .txt span { font-size: .74rem; color: var(--text-muted); }
         .cat-img-remove {
             border: none; background: rgba(214,69,59,0.12); color: #D6453B;
-            border-radius: 10px; width: 32px; height: 32px; flex-shrink: 0;
+            border-radius: 14px; width: 32px; height: 32px; flex-shrink: 0;
             display: none; align-items: center; justify-content: center;
         }
         .cat-img-remove.show { display: flex; }
 
-        /* ---------- Category badge in table ---------- */
         .cat-icon-badge {
-            width: 34px; height: 34px; border-radius: 10px;
+            width: 34px; height: 34px; border-radius: 14px;
             display: inline-flex; align-items: center; justify-content: center;
             color: #fff; font-size: 1rem; box-shadow: 0 2px 8px rgba(0,0,0,0.15);
             overflow: hidden; padding: 5px;
@@ -507,15 +528,36 @@
         .product-cat-pill .dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
 
         .img-thumb-ph {
-            width: 55px; height: 55px; border-radius: 12px;
+            width: 55px; height: 55px; border-radius: 16px;
             display: flex; align-items: center; justify-content: center;
             background: var(--glass-hover); border: 1px solid var(--glass-border);
             color: var(--text-muted); font-size: 1.3rem;
         }
 
+        .product-mobile-list { display: flex; flex-direction: column; gap: 0.8rem; }
+        .product-mobile-card {
+            display: flex; align-items: center; gap: 0.9rem;
+            background: var(--glass-hover); border: 1px solid var(--glass-border);
+            border-radius: 22px; padding: 0.8rem;
+            transition: transform 0.3s var(--ease-bubble), box-shadow 0.3s ease;
+        }
+        .product-mobile-card:active { transform: scale(0.98); }
+        .pmc-img {
+            width: 64px; height: 64px; border-radius: 18px; overflow: hidden; flex-shrink: 0;
+            background: var(--input-bg);
+        }
+        .pmc-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .pmc-img .img-thumb-ph { width: 100%; height: 100%; border-radius: 0; border: none; }
+        .pmc-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 0.35rem; }
+        .pmc-name { font-weight: 700; font-size: 0.9rem; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .pmc-price { font-weight: 800; font-size: 0.85rem; color: var(--accent-color); }
+        .pmc-price small { font-weight: 500; color: var(--text-muted); font-size: 0.68rem; }
+        .pmc-actions { display: flex; flex-direction: column; gap: 0.4rem; flex-shrink: 0; }
+        .pmc-actions .btn { width: 38px; height: 38px; padding: 0; display: flex; align-items: center; justify-content: center; border-radius: 16px; }
+
         .upload-drop {
             border: 1.5px dashed var(--glass-border);
-            border-radius: 16px;
+            border-radius: 18px;
             background: var(--input-bg);
             padding: 1.4rem;
             text-align: center;
@@ -527,15 +569,151 @@
 
         .char-counter { font-size: 0.7rem; color: var(--text-muted); text-align: left; margin-top: 0.3rem; }
 
+        .product-form-grid { display: grid; grid-template-columns: 1.55fr 1fr; gap: 1.6rem; align-items: start; }
+        @media (max-width: 991.98px) { .product-form-grid { grid-template-columns: 1fr; } }
+
+        .form-block {
+            background: var(--glass-hover);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 1.25rem 1.3rem;
+            margin-bottom: 1.1rem;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .form-block:focus-within { border-color: var(--accent-color); box-shadow: 0 0 0 4px rgba(87,45,119,0.12); }
+        .form-block-title {
+            display: flex; align-items: center; gap: 0.5rem;
+            font-weight: 800; font-size: 0.86rem; color: var(--text-main);
+            margin-bottom: 1rem;
+        }
+        .form-block-title i { color: var(--accent-color); font-size: 1rem; }
+
+        .product-form-preview { position: sticky; top: 1rem; }
+        .live-menu-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px var(--glass-shadow);
+            transition: transform 0.4s var(--ease-bubble);
+        }
+        .live-menu-card:hover { transform: translateY(-4px); }
+        .live-menu-card-img {
+            position: relative; display: block; width: 100%; aspect-ratio: 16/11;
+            background: var(--input-bg); cursor: pointer; overflow: hidden;
+        }
+        .live-menu-card-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .upload-drop-hint {
+            position: absolute; inset: 0; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; text-align: center; padding: 1rem;
+            border: 1.5px dashed var(--glass-border); border-radius: inherit; margin: 8px;
+            transition: border-color 0.25s ease, background 0.25s ease;
+        }
+        .upload-drop-hint i { font-size: 1.9rem; color: var(--accent-color); }
+        .live-menu-card-img:hover .upload-drop-hint, .live-menu-card-img.dragover .upload-drop-hint {
+            border-color: var(--accent-color); background: var(--glass-hover);
+        }
+        #addPreviewContainer:not(.d-none) ~ .upload-drop-hint,
+        .live-menu-card-img:has(#addPreviewContainer:not(.d-none)) .upload-drop-hint { opacity: 0; pointer-events: none; }
+
+        .live-menu-card-body { padding: 1.1rem 1.2rem 1.3rem; }
+        .live-menu-card-cat {
+            display: inline-flex; align-items: center; gap: 0.3rem;
+            font-size: 0.68rem; font-weight: 700; color: var(--accent-color);
+            background: rgba(87,45,119,0.14); border-radius: 50rem; padding: 0.2rem 0.65rem;
+            margin-bottom: 0.5rem;
+        }
+        .live-menu-card-name { font-weight: 800; font-size: 1.02rem; margin: 0 0 0.3rem; color: var(--text-main); }
+        .live-menu-card-desc {
+            font-size: 0.76rem; color: var(--text-muted); line-height: 1.6; margin: 0 0 0.7rem;
+            display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+        }
+        .live-menu-card-price { font-weight: 800; font-size: 1.15rem; color: var(--accent-color); }
+        .live-menu-card-price small { font-size: 0.68rem; color: var(--text-muted); font-weight: 500; }
+
         .empty-state { text-align: center; padding: 3rem 1rem; color: var(--text-muted); }
         .empty-state i { font-size: 2.6rem; color: var(--accent-color); opacity: 0.6; margin-bottom: 0.75rem; display: block; }
 
         .badge-soft-success { background: rgba(46,138,80,0.15); color: var(--success-color); }
         .badge-soft-danger { background: rgba(214,69,59,0.15); color: var(--danger-color); }
 
+        .cat-type-toggle {
+            display: inline-flex; gap: 0.4rem; padding: 0.3rem;
+            background: var(--glass-hover); border: 1px solid var(--glass-border);
+            border-radius: 50rem; width: 100%;
+        }
+        .cat-type-btn {
+            flex: 1 1 0; border: none; background: transparent; color: var(--text-muted);
+            font-weight: 700; font-size: 0.82rem; padding: 0.55rem 0.8rem; border-radius: 50rem;
+            display: flex; align-items: center; justify-content: center; gap: 0.4rem;
+            cursor: pointer; transition: all 0.25s ease;
+        }
+        .cat-type-btn.active {
+            background: linear-gradient(135deg, var(--accent-light), var(--accent-color));
+            color: #FFFFFF; box-shadow: 0 4px 14px rgba(87,45,119,0.28);
+        }
+        [data-bs-theme="dark"] .cat-type-btn.active { color: #FFFFFF; }
+
+        .cat-parent-wrap {
+            overflow: hidden;
+            max-height: 0; opacity: 0; transform: translateY(-6px);
+            transition: max-height 0.4s cubic-bezier(.22,1,.36,1), opacity 0.3s ease, transform 0.3s ease, margin 0.3s ease;
+        }
+        .cat-parent-wrap.show { max-height: 160px; opacity: 1; transform: translateY(0); }
+
+        .cat-sub-wrap {
+            overflow: hidden;
+            max-height: 0; opacity: 0; transform: translateY(-6px);
+            transition: max-height 0.4s cubic-bezier(.22,1,.36,1), opacity 0.3s ease, transform 0.3s ease;
+        }
+        .cat-sub-wrap.show { max-height: 130px; opacity: 1; transform: translateY(0); }
+
+        .cat-tree-render { display: inline-flex; align-items: center; gap: 0.35rem; flex-wrap: wrap; }
+        .cat-pill-main, .cat-pill-sub {
+            display: inline-flex; align-items: center; gap: 0.3rem;
+            border-radius: 50rem; font-weight: 700; white-space: nowrap;
+        }
+        .cat-pill-main {
+            padding: 0.25rem 0.65rem; font-size: 0.78rem;
+            background: var(--glass-hover); border: 1px solid var(--glass-border); color: var(--text-main);
+        }
+        .cat-pill-sub {
+            padding: 0.2rem 0.6rem; font-size: 0.72rem;
+            background: rgba(87,45,119,0.14); border: 1px solid rgba(87,45,119,0.28); color: var(--accent-color);
+        }
+        .cat-tree-render i.cat-tree-sep { font-size: 0.65rem; color: var(--text-muted); }
+
+        .product-cat-pill { flex-wrap: wrap; }
+        .product-cat-pill .cat-pill-sub { padding: 0.15rem 0.5rem; font-size: 0.7rem; }
+
+        .cat-card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+            gap: 1rem;
+        }
+        .cat-manage-card {
+            background: var(--glass-hover);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 1.1rem;
+            display: flex; flex-direction: column; gap: 0.55rem;
+            transition: transform 0.35s var(--ease-bubble), box-shadow 0.35s ease, border-color 0.3s ease;
+        }
+        .cat-manage-card:hover { transform: translateY(-4px); box-shadow: 0 10px 26px var(--glass-shadow); border-color: var(--accent-color); }
+        .cmc-top { display: flex; align-items: center; justify-content: space-between; }
+        .cmc-count {
+            font-size: 0.68rem; font-weight: 700; color: var(--text-muted);
+            background: var(--input-bg); border: 1px solid var(--glass-border);
+            border-radius: 50rem; padding: 0.2rem 0.6rem;
+        }
+        .cmc-name { font-weight: 800; font-size: 0.92rem; color: var(--text-main); }
+        .cmc-enname { font-size: 0.75rem; color: var(--text-muted); margin-top: -0.4rem; }
+        .cmc-actions { display: flex; gap: 0.5rem; margin-top: 0.4rem; }
+        .cmc-actions .btn-sm { border-radius: 16px; }
+
         @media (max-width: 575.98px) {
             .content-wrapper { padding: 1rem; padding-top: calc(var(--topbar-height) + 1rem); }
-            .glass-card { padding: 1.1rem; border-radius: 16px; }
+            .glass-card { padding: 1.1rem; border-radius: 18px; }
         }
     </style>
 </head>
@@ -543,13 +721,12 @@
 
 <div class="admin-layout">
 
-    <!-- ═══════════════ SIDEBAR ═══════════════ -->
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-brand">
-            <div class="brand-mark"><img width="100%" height="100%" src="/images/logo/Nan.O.Nan-white.png" style="width: 100%; height: 100%; object-fit: contain;" alt="نان و نان"></div>
+            <div class="brand-mark"><img width="100%" height="100%" src="/images/logo/Nan.O.Nan-white.png" style="width: 100%; height: 100%; object-fit: contain;" alt="بابل تیله رزکان"></div>
             <div class="brand-text">
-                <strong>نان و نان</strong>
-                <span>NAN.O.NAN | پنل مدیریت</span>
+                <strong>بابل تیله رزکان</strong>
+                <span>بابل تیله رزکان | پنل مدیریت</span>
             </div>
         </div>
 
@@ -594,7 +771,6 @@
 
     <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 
-    <!-- ═══════════════ MAIN ═══════════════ -->
     <main class="main-content">
 
         <header class="topbar">
@@ -603,10 +779,10 @@
                     <i class="bi bi-list"></i>
                 </button>
                 <div class="topbar-title">
-                   <img width="75px" height="75px" src="/images/logo/Nan.O.Nan-brand.png" style="width: 75px; height: 75px; object-fit: contain;" alt="نان و نان">
+                   <img width="75px" height="75px" src="/images/logo/Nan.O.Nan-brand.png" style="width: 75px; height: 75px; object-fit: contain;" alt="بابل تیله رزکان">
                     <div>
-                        پنل مدیریت نان و نان
-                        <span class="topbar-sub">خوش آمدید، امروز روز خوبی برای پختن نان تازه است ☕🥐</span>
+                        پنل مدیریت بابل تیله رزکان
+                        <span class="topbar-sub">خوش اومدی، امروز روز خوبی برای یه لیوان بابل تیله خنکه 🧋✨</span>
                     </div>
                 </div>
             </div>
@@ -645,17 +821,29 @@
                 var catCounts = {};
                 allProducts.forEach(function(p){ catCounts[p.category] = (catCounts[p.category] || 0) + 1; });
                 function catByName(n){ return allCategories.find(function(c){ return c.name === n; }); }
+
+                var topCategoryName = null, topCategoryCount = 0;
+                allCategories.forEach(function(c){
+                    var cnt = catCounts[c.name] || 0;
+                    if (cnt > topCategoryCount) { topCategoryCount = cnt; topCategoryName = c.name; }
+                });
+                var CAT_SEP_DASH = ' — ';
+                var parentGroupSet = {};
+                allCategories.forEach(function(c){
+                    var idx = String(c.name).indexOf(CAT_SEP_DASH);
+                    if (idx !== -1) parentGroupSet[c.name.slice(0, idx).trim()] = true;
+                });
+                var groupsWithSubCount = Object.keys(parentGroupSet).length;
             %>
 
-            <!-- ══════════════ DASHBOARD ══════════════ -->
             <section id="dashboardSection" class="content-section active-section">
                 <h5 class="fw-bold mb-4 d-flex align-items-center gap-2">
                     <i class="bi bi-pie-chart-fill text-accent"></i>
-                    آمار و وضعیت کلی نان و نان
+                    آمار و وضعیت کلی بابل تیله رزکان
                 </h5>
 
-                <div class="row g-3 mb-4">
-                    <div class="col-12 col-sm-6 col-xl-3">
+                <div class="row row-cols-1 row-cols-sm-2 row-cols-xl-5 g-3 mb-4">
+                    <div class="col">
                         <div class="stat-card">
                             <div>
                                 <span class="text-muted-custom d-block mb-1 fw-medium" style="font-size:0.78rem;">کل محصولات</span>
@@ -664,7 +852,7 @@
                             <div class="stat-icon icon-swatch-0"><i class="bi bi-box-seam-fill"></i></div>
                         </div>
                     </div>
-                    <div class="col-12 col-sm-6 col-xl-3">
+                    <div class="col">
                         <div class="stat-card">
                             <div>
                                 <span class="text-muted-custom d-block mb-1 fw-medium" style="font-size:0.78rem;">دسته‌بندی‌ها</span>
@@ -673,7 +861,7 @@
                             <div class="stat-icon icon-swatch-5"><i class="bi bi-tags-fill"></i></div>
                         </div>
                     </div>
-                    <div class="col-12 col-sm-6 col-xl-3">
+                    <div class="col">
                         <div class="stat-card">
                             <div>
                                 <span class="text-muted-custom d-block mb-1 fw-medium" style="font-size:0.78rem;">ارزش کل منو</span>
@@ -682,13 +870,59 @@
                             <div class="stat-icon icon-swatch-3"><i class="bi bi-cash-coin"></i></div>
                         </div>
                     </div>
-                    <div class="col-12 col-sm-6 col-xl-3">
+                    <div class="col">
                         <div class="stat-card">
                             <div>
                                 <span class="text-muted-custom d-block mb-1 fw-medium" style="font-size:0.78rem;">میانگین قیمت</span>
                                 <h3 class="fw-bold mb-0" style="font-size:1.15rem;"><%= fmtNum(avgPrice) %> <small class="fw-normal text-muted-custom" style="font-size:0.7rem;">تومان</small></h3>
                             </div>
                             <div class="stat-icon icon-swatch-6"><i class="bi bi-graph-up-arrow"></i></div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="stat-card">
+                            <div class="flex-grow-1" style="min-width:0;">
+                                <span class="text-muted-custom d-block mb-1 fw-medium" style="font-size:0.78rem;">محبوب‌ترین دسته</span>
+                                <h3 class="fw-bold mb-0 text-truncate" style="font-size:1.05rem;"><%= topCategoryName || '—' %></h3>
+                                <span class="text-muted-custom" style="font-size:0.7rem;"><%= topCategoryCount %> محصول</span>
+                            </div>
+                            <div class="stat-icon icon-swatch-1"><i class="bi bi-trophy-fill"></i></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-3 mb-4">
+                    <div class="col-12">
+                        <div class="glass-card">
+                            <h6 class="fw-bold mb-3 d-flex align-items-center gap-2">
+                                <i class="bi bi-lightning-charge-fill text-accent"></i> دسترسی سریع
+                            </h6>
+                            <div class="row g-2">
+                                <div class="col-6 col-lg-3">
+                                    <a href="#addProduct" onclick="setActiveTab('addProduct')" class="btn btn-glass w-100 d-flex flex-column align-items-center gap-2 py-3 text-decoration-none">
+                                        <i class="bi bi-plus-circle-fill fs-5 text-accent"></i>
+                                        <span style="font-size:0.8rem;">محصول جدید</span>
+                                    </a>
+                                </div>
+                                <div class="col-6 col-lg-3">
+                                    <a href="#categoryManage" onclick="setActiveTab('categoryManage')" class="btn btn-glass w-100 d-flex flex-column align-items-center gap-2 py-3 text-decoration-none">
+                                        <i class="bi bi-grid-fill fs-5 text-accent"></i>
+                                        <span style="font-size:0.8rem;">دسته‌بندی جدید</span>
+                                    </a>
+                                </div>
+                                <div class="col-6 col-lg-3">
+                                    <a href="/" target="_blank" class="btn btn-glass w-100 d-flex flex-column align-items-center gap-2 py-3 text-decoration-none">
+                                        <i class="bi bi-eye-fill fs-5 text-accent"></i>
+                                        <span style="font-size:0.8rem;">مشاهده منو</span>
+                                    </a>
+                                </div>
+                                <div class="col-6 col-lg-3">
+                                    <a href="#changeCredentials" onclick="setActiveTab('changeCredentials')" class="btn btn-glass w-100 d-flex flex-column align-items-center gap-2 py-3 text-decoration-none">
+                                        <i class="bi bi-shield-lock-fill fs-5 text-accent"></i>
+                                        <span style="font-size:0.8rem;">تنظیمات امنیتی</span>
+                                    </a>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -706,7 +940,13 @@
                                     var sIdx = swatchIndex(cat.icon || cat.name);
                                 %>
                                 <div class="cat-bar-row">
-                                    <div class="cat-bar-dot icon-swatch-<%= sIdx %>"><i class="bi <%= cat.icon || 'bi-grid' %>"></i></div>
+                                    <div class="cat-bar-dot icon-swatch-<%= sIdx %>">
+                                        <% if (cat.image) { %>
+                                            <img src="<%= cat.image %>" alt="" style="width:100%; height:100%; object-fit:cover; border-radius:inherit;">
+                                        <% } else { %>
+                                            <i class="bi <%= cat.icon || 'bi-grid' %>"></i>
+                                        <% } %>
+                                    </div>
                                     <div class="flex-grow-1">
                                         <div class="d-flex justify-content-between mb-1">
                                             <span class="fw-semibold" style="font-size:0.85rem;"><%= cat.name %></span>
@@ -730,7 +970,7 @@
                     <div class="col-md-5">
                         <div class="glass-card h-100">
                             <h6 class="fw-bold mb-4 d-flex align-items-center gap-2">
-                                <i class="bi bi-clipboard-check-fill text-accent"></i> وضعیت سیستم
+                                <i class="bi bi-clipboard-check-fill text-accent"></i> سلامت سیستم و منو
                             </h6>
                             <div class="d-flex align-items-center justify-content-between p-3 rounded-3 mb-3" style="background: var(--glass-hover); border:1px solid var(--glass-border);">
                                 <span class="fw-semibold d-flex align-items-center gap-2" style="font-size:0.88rem;">
@@ -742,90 +982,111 @@
                                 <span class="fw-semibold" style="font-size:0.88rem;">محصولات بدون تصویر</span>
                                 <span class="<%= missingImg > 0 ? 'badge-soft-danger' : 'badge-soft-success' %> rounded-pill px-3 py-2 fw-bold" style="font-size:0.72rem;"><%= missingImg %> مورد</span>
                             </div>
-                            <div class="d-flex align-items-center justify-content-between p-3 rounded-3" style="background: var(--glass-hover); border:1px solid var(--glass-border);">
+                            <div class="d-flex align-items-center justify-content-between p-3 rounded-3 mb-3" style="background: var(--glass-hover); border:1px solid var(--glass-border);">
                                 <span class="fw-semibold" style="font-size:0.88rem;">دسته‌بندی‌های خالی</span>
                                 <% var emptyCats = allCategories.filter(function(c){ return !(catCounts[c.name] > 0); }).length; %>
                                 <span class="<%= emptyCats > 0 ? 'badge-soft-danger' : 'badge-soft-success' %> rounded-pill px-3 py-2 fw-bold" style="font-size:0.72rem;"><%= emptyCats %> مورد</span>
                             </div>
-
-                            <div class="d-flex gap-2 mt-4">
-                                <a href="#addProduct" onclick="setActiveTab('addProduct')" class="btn btn-accent flex-fill text-decoration-none text-center" style="font-size:0.85rem;">
-                                    <i class="bi bi-plus-lg"></i> محصول جدید
-                                </a>
-                                <a href="#categoryManage" onclick="setActiveTab('categoryManage')" class="btn btn-glass flex-fill text-decoration-none text-center" style="font-size:0.85rem;">
-                                    <i class="bi bi-grid"></i> دسته‌بندی جدید
-                                </a>
+                            <div class="d-flex align-items-center justify-content-between p-3 rounded-3" style="background: var(--glass-hover); border:1px solid var(--glass-border);">
+                                <span class="fw-semibold" style="font-size:0.88rem;">دسته‌های دارای زیرمجموعه</span>
+                                <span class="badge-soft-success rounded-pill px-3 py-2 fw-bold" style="font-size:0.72rem;"><%= groupsWithSubCount %> گروه</span>
                             </div>
                         </div>
                     </div>
                 </div>
             </section>
 
-            <!-- ══════════════ ADD PRODUCT ══════════════ -->
             <section id="addProductSection" class="content-section">
-                <div class="glass-card" style="max-width: 900px;">
-                    <h5 class="fw-bold mb-4 d-flex align-items-center gap-2">
+                <div class="glass-card">
+                    <h5 class="fw-bold mb-1 d-flex align-items-center gap-2">
                         <i class="bi bi-plus-circle-fill text-accent"></i>
                         افزودن محصول جدید به منو
                     </h5>
+                    <p class="text-muted-custom mb-4" style="font-size:0.82rem;">اطلاعات محصول را کامل کن؛ در سمت راست دقیقاً همان‌طور که در منو دیده می‌شود پیش‌نمایش می‌گیری 🧋</p>
 
-                    <form action="/admin" method="POST" enctype="multipart/form-data" class="row g-4" id="addProductForm">
+                    <form action="/admin" method="POST" enctype="multipart/form-data" class="product-form-grid" id="addProductForm">
 
-                        <div class="col-md-6">
-                            <label class="form-label fw-medium text-muted-custom">نام محصول</label>
-                            <input type="text" name="iteamName" class="form-control glass-input" required placeholder="مثال: پاستا آلفردو">
-                        </div>
+                        <div class="product-form-fields">
+                            <div class="form-block">
+                                <div class="form-block-title"><i class="bi bi-tag-fill"></i> اطلاعات پایه</div>
+                                <div class="row g-3">
+                                    <div class="col-md-7">
+                                        <label class="form-label fw-medium text-muted-custom">نام محصول</label>
+                                        <input type="text" name="iteamName" id="addNameField" class="form-control glass-input" required placeholder="مثال: بابل تی موز">
+                                    </div>
+                                    <div class="col-md-5">
+                                        <label class="form-label fw-medium text-muted-custom">قیمت (تومان)</label>
+                                        <input type="text" inputmode="numeric" name="iteamPrice" id="addPriceField" class="form-control glass-input price-input" required placeholder="مثال: 185,000">
+                                    </div>
+                                </div>
+                            </div>
 
-                        <div class="col-md-6">
-                            <label class="form-label fw-medium text-muted-custom">قیمت (تومان)</label>
-                            <input type="text" inputmode="numeric" name="iteamPrice" class="form-control glass-input price-input" required placeholder="مثال: 185,000">
-                        </div>
+                            <div class="form-block">
+                                <div class="form-block-title"><i class="bi bi-diagram-3-fill"></i> دسته‌بندی</div>
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-medium text-muted-custom">دسته اصلی</label>
+                                        <select class="form-select glass-select cat-cascade-main" id="addMainCategorySelect" required <%= allCategories.length === 0 ? 'disabled' : '' %>>
+                                            <% if (allCategories.length === 0) { %>
+                                                <option value="">ابتدا دسته‌بندی بسازید</option>
+                                            <% } %>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6 cat-sub-wrap" id="addSubWrap">
+                                        <label class="form-label fw-medium text-muted-custom">زیردسته</label>
+                                        <select class="form-select glass-select cat-cascade-sub" id="addSubCategorySelect"></select>
+                                    </div>
+                                </div>
 
-                        <div class="col-md-6">
-                            <label class="form-label fw-medium text-muted-custom">دسته‌بندی</label>
-                            <select name="category" class="form-select glass-select" required>
-                                <% if (allCategories.length > 0) { %>
+                                <select name="category" id="addRealCategorySelect" class="visually-hidden" tabindex="-1" aria-hidden="true">
                                     <% allCategories.forEach(function(cat){ %>
-                                        <option value="<%= cat.name %>"><%= cat.name %> (<%= cat.enname %>)</option>
+                                        <option value="<%= cat.name %>"><%= cat.name %></option>
                                     <% }) %>
-                                <% } else { %>
-                                    <option value="">ابتدا دسته‌بندی بسازید</option>
-                                <% } %>
-                            </select>
-                        </div>
+                                </select>
+                            </div>
 
-                        <div class="col-md-6">
-                            <label class="form-label fw-medium text-muted-custom">تصویر محصول</label>
-                            <label class="upload-drop d-block" id="addUploadDrop">
-                                <i class="bi bi-cloud-arrow-up-fill d-block mb-2"></i>
-                                <span class="fw-semibold d-block" style="font-size:0.85rem;" id="addUploadLabel">برای انتخاب تصویر کلیک کنید</span>
-                                <span class="text-muted-custom" style="font-size:0.72rem;">PNG, JPG یا WEBP</span>
-                                <input type="file" name="imageUrl" id="addImageInput" accept="image/*" class="d-none" onchange="previewAddImage(event)">
-                            </label>
-                            <div id="addPreviewContainer" class="d-none mt-2 text-center">
-                                <img id="addPreview" class="rounded-3 border-glass" style="width:90px; height:90px; object-fit:cover; border:1px solid var(--glass-border);">
+                            <div class="form-block">
+                                <div class="form-block-title"><i class="bi bi-card-text"></i> توضیحات و ترکیبات</div>
+                                <textarea name="description" class="form-control glass-textarea" rows="4" maxlength="400" id="addDescField"
+                                          placeholder="ترکیبات: چای، شیر، مروارید تاپیوکا، شربت موز..."></textarea>
+                                <div class="char-counter"><span id="addDescCount">0</span>/400</div>
+                            </div>
+
+                            <div class="d-flex justify-content-end gap-2 mt-1">
+                                <button type="reset" class="btn btn-glass px-4">پاک کردن فرم</button>
+                                <button type="submit" class="btn btn-accent px-5">
+                                    <i class="bi bi-check-circle me-1"></i> ثبت و انتشار محصول
+                                </button>
                             </div>
                         </div>
 
-                        <div class="col-12">
-                            <label class="form-label fw-medium text-muted-custom">توضیحات و ترکیبات محصول</label>
-                            <textarea name="description" class="form-control glass-textarea" rows="4" maxlength="400" id="addDescField"
-                                      placeholder="ترکیبات: فیله مرغ، قارچ، خامه، پنیر پارمسان..."></textarea>
-                            <div class="char-counter"><span id="addDescCount">0</span>/400</div>
-                        </div>
-
-                        <div class="col-12 d-flex justify-content-end gap-2 mt-3">
-                            <button type="reset" class="btn btn-glass px-4">پاک کردن فرم</button>
-                            <button type="submit" class="btn btn-accent px-5">
-                                <i class="bi bi-check-circle me-1"></i> ثبت و انتشار محصول
-                            </button>
+                        <div class="product-form-preview">
+                            <div class="form-block-title"><i class="bi bi-eye-fill"></i> پیش‌نمایش زنده</div>
+                            <div class="live-menu-card">
+                                <label class="live-menu-card-img upload-drop-overlay" id="addUploadDrop">
+                                    <div class="upload-drop-hint" id="addUploadHint">
+                                        <i class="bi bi-cloud-arrow-up-fill d-block mb-2"></i>
+                                        <span class="fw-semibold d-block" style="font-size:0.82rem;" id="addUploadLabel">برای انتخاب تصویر کلیک کن</span>
+                                        <span class="text-muted-custom" style="font-size:0.68rem;">PNG, JPG یا WEBP</span>
+                                    </div>
+                                    <div id="addPreviewContainer" class="d-none">
+                                        <img id="addPreview" alt="پیش‌نمایش محصول">
+                                    </div>
+                                    <input type="file" name="imageUrl" id="addImageInput" accept="image/*" class="d-none" onchange="previewAddImage(event)">
+                                </label>
+                                <div class="live-menu-card-body">
+                                    <span class="live-menu-card-cat" id="livePreviewCat"><i class="bi bi-tag"></i> دسته‌بندی</span>
+                                    <h6 class="live-menu-card-name" id="livePreviewName">نام محصول شما</h6>
+                                    <p class="live-menu-card-desc" id="livePreviewDesc">توضیحات محصول اینجا نمایش داده می‌شود...</p>
+                                    <div class="live-menu-card-price" id="livePreviewPrice">۰ <small>تومان</small></div>
+                                </div>
+                            </div>
                         </div>
 
                     </form>
                 </div>
             </section>
 
-            <!-- ══════════════ PRODUCT LIST ══════════════ -->
             <section id="productListSection" class="content-section">
                 <div class="glass-card">
                     <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-4">
@@ -850,7 +1111,7 @@
                         <span class="text-muted-custom" style="font-size:0.8rem;" id="productCountLabel">نمایش <%= allProducts.length %> از <%= allProducts.length %> محصول</span>
                     </div>
 
-                    <div class="table-responsive">
+                    <div class="table-responsive d-none d-md-block">
                         <table class="table table-hover align-middle" id="productTable">
                             <thead>
                                 <tr>
@@ -880,7 +1141,7 @@
                                             <td>
                                                 <span class="product-cat-pill">
                                                     <span class="dot icon-swatch-<%= sIdx %>"></span>
-                                                    <%= it.category %>
+                                                    <span class="cat-name-render" data-cat-name="<%= it.category %>"><%= it.category %></span>
                                                 </span>
                                             </td>
                                             <td class="text-center pe-4">
@@ -909,146 +1170,179 @@
                             </tbody>
                         </table>
                     </div>
+
+                    <div class="product-mobile-list d-md-none" id="productCards">
+                        <% if (allProducts.length > 0) { %>
+                            <% allProducts.forEach(function(it){
+                                var cat = catByName(it.category);
+                                var sIdx = swatchIndex(cat ? (cat.icon || cat.name) : it.category);
+                            %>
+                                <div class="product-mobile-card" data-category="<%= it.category %>">
+                                    <div class="pmc-img">
+                                        <% if (it.imageUrl) { %>
+                                            <img src="<%= it.imageUrl %>" alt="<%= it.iteamName %>">
+                                        <% } else { %>
+                                            <div class="img-thumb-ph"><i class="bi bi-image"></i></div>
+                                        <% } %>
+                                    </div>
+                                    <div class="pmc-body">
+                                        <div class="pmc-name"><%= it.iteamName %></div>
+                                        <span class="product-cat-pill">
+                                            <span class="dot icon-swatch-<%= sIdx %>"></span>
+                                            <span class="cat-name-render" data-cat-name="<%= it.category %>"><%= it.category %></span>
+                                        </span>
+                                        <div class="pmc-price"><%= fmtNum(it.iteamPrice) %> <small>تومان</small></div>
+                                    </div>
+                                    <div class="pmc-actions">
+                                        <a href="/admin/edit/<%= it._id %>" class="btn btn-glass btn-sm text-accent">
+                                            <i class="bi bi-pencil-square"></i>
+                                        </a>
+                                        <button type="button" class="btn btn-glass btn-sm text-danger" data-bs-toggle="modal" data-bs-target="#deleteModal"
+                                                data-bs-title="<%= it.iteamName %>" data-bs-id="<%= it._id %>">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            <% }) %>
+                        <% } else { %>
+                            <div class="empty-state">
+                                <i class="bi bi-inboxes"></i>
+                                <p class="mb-0">هیچ محصولی در سیستم یافت نشد. از تب «افزودن محصول» شروع کنید.</p>
+                            </div>
+                        <% } %>
+                    </div>
                 </div>
             </section>
 
-            <!-- ══════════════ CATEGORY MANAGEMENT ══════════════ -->
             <section id="categoryManageSection" class="content-section">
-                <div class="row g-4">
-                    <div class="col-lg-5">
-                        <div class="glass-card">
-                            <h5 class="fw-bold mb-4 d-flex align-items-center gap-2">
-                                <i class="bi bi-plus-square-fill text-accent"></i>
-                                ایجاد دسته‌بندی جدید
-                            </h5>
-                            <form action="/admin/category/add" method="POST" enctype="multipart/form-data" class="row g-3" id="addCategoryForm">
-                                <div class="col-12">
-                                    <label class="form-label fw-medium text-muted-custom">نام فارسی</label>
-                                    <input type="text" name="name" class="form-control glass-input" required placeholder="مثال: پاستا">
-                                </div>
-
-                                <div class="col-12">
-                                    <label class="form-label fw-medium text-muted-custom">نام انگلیسی</label>
-                                    <input type="text" name="enname" class="form-control glass-input" required placeholder="مثال: pasta">
-                                </div>
-
-                                <div class="col-12">
-                                    <label class="form-label fw-medium text-muted-custom">تصویر دسته‌بندی</label>
-
-                                    <div class="icon-picker-preview">
-                                        <div class="ipv-box" id="addVisualPreviewBox">
-                                            <i class="bi bi-image"></i>
-                                        </div>
-                                        <div>
-                                            <span class="fw-semibold d-block" id="addVisualPreviewLabel">هیچ تصویری انتخاب نشده</span>
-                                            <span class="text-muted-custom" style="font-size:0.78rem;">یکی از وکتورهای آماده را انتخاب یا تصویر دلخواه آپلود کنید</span>
-                                        </div>
-                                    </div>
-
-                                    <input type="text" id="addVisualPickerSearch" class="form-control glass-input mb-2"
-                                           placeholder="جستجو در وکتورها... (مثال: قهوه، نان، کیک)">
-
-                                    <div class="visual-picker-grid" id="addVisualPickerGrid"></div>
-
-                                    <label class="cat-img-upload mt-3" id="addCategoryImageDrop" for="addCategoryImageInput">
-                                        <div class="cat-img-upload-icon"><i class="bi bi-cloud-arrow-up"></i></div>
-                                        <div class="txt flex-grow-1">
-                                            <strong>آپلود تصویر یا وکتور دلخواه</strong>
-                                            <span>SVG / PNG / JPG — برای آپلود کلیک یا فایل را رها کنید</span>
-                                        </div>
-                                        <button type="button" class="cat-img-remove" id="addCategoryImageRemoveBtn" title="حذف تصویر">
-                                            <i class="bi bi-x-lg"></i>
-                                        </button>
-                                        <input type="file" name="image" id="addCategoryImageInput" accept="image/png,image/jpeg,image/webp,image/svg+xml,.svg,.png,.jpg,.jpeg,.webp" class="visually-hidden">
-                                    </label>
-
-                                    <input type="hidden" name="imageUrl" id="addSelectedImageUrl" value="">
-                                </div>
-
-                                <div class="col-12 text-end mt-2">
-                                    <button type="submit" class="btn btn-accent w-100">
-                                        <i class="bi bi-plus-lg me-1"></i> افزودن دسته‌بندی
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-
-                    <div class="col-lg-7">
-                        <div class="glass-card">
-                            <h5 class="fw-bold mb-4 d-flex align-items-center gap-2">
-                                <i class="bi bi-grid-fill text-accent"></i>
-                                دسته‌بندی‌های موجود
-                            </h5>
-                            <div class="table-responsive">
-                                <table class="table table-hover align-middle">
-                                    <thead>
-                                        <tr>
-                                            <th class="ps-4">#</th>
-                                            <th>دسته‌بندی</th>
-                                            <th>نام انگلیسی</th>
-                                            <th class="text-center">تعداد محصول</th>
-                                            <th class="text-center pe-4">عملیات</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <% if (allCategories.length > 0) { %>
-                                            <% allCategories.forEach(function(cat, index){
-                                                var sIdx = swatchIndex(cat.icon || cat.name);
-                                                var cnt = catCounts[cat.name] || 0;
-                                            %>
-                                                <tr>
-                                                    <td class="ps-4">
-                                                        <span class="badge rounded-circle fw-bold d-flex align-items-center justify-content-center" style="width:32px; height:32px; background: var(--glass-hover); color: var(--accent-color); border: 1px solid var(--glass-border);">
-                                                            <%= index + 1 %>
-                                                        </span>
-                                                    </td>
-                                                    <td class="fw-bold">
-                                                        <span class="cat-icon-badge icon-swatch-<%= sIdx %> me-2">
-                                                            <% if (cat.image) { %>
-                                                                <img src="<%= cat.image %>" alt="<%= cat.name %>" style="width:100%; height:100%; object-fit:cover; border-radius:inherit;">
-                                                            <% } else { %>
-                                                                <i class="bi <%= cat.icon || 'bi-image' %>"></i>
-                                                            <% } %>
-                                                        </span>
-                                                        <%= cat.name %>
-                                                    </td>
-                                                    <td class="text-muted-custom"><%= cat.enname %></td>
-                                                    <td class="text-center">
-                                                        <span class="badge rounded-pill" style="background: var(--glass-hover); color: var(--text-main); border:1px solid var(--glass-border);"><%= cnt %></span>
-                                                    </td>
-                                                    <td class="text-center pe-4">
-                                                        <div class="d-flex justify-content-center gap-2">
-                                                            <a href="/admin/category/edit/<%= cat._id %>" class="btn btn-glass btn-sm text-accent">
-                                                                <i class="bi bi-pencil-square"></i> ویرایش
-                                                            </a>
-                                                            <button type="button" class="btn btn-glass btn-sm text-danger" data-bs-toggle="modal" data-bs-target="#deleteCategoryModal"
-                                                                    data-bs-title="<%= cat.name %>" data-bs-id="<%= cat._id %>">
-                                                                <i class="bi bi-trash"></i> حذف
-                                                            </button>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            <% }) %>
-                                        <% } else { %>
-                                            <tr>
-                                                <td colspan="5">
-                                                    <div class="empty-state">
-                                                        <i class="bi bi-tags"></i>
-                                                        <p class="mb-0">هیچ دسته‌بندی ثبت نشده است.</p>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        <% } %>
-                                    </tbody>
-                                </table>
+                <div class="glass-card mb-4">
+                    <h5 class="fw-bold mb-4 d-flex align-items-center gap-2">
+                        <i class="bi bi-plus-square-fill text-accent"></i>
+                        ایجاد دسته‌بندی جدید
+                    </h5>
+                    <form action="/admin/category/add" method="POST" enctype="multipart/form-data" class="row g-3" id="addCategoryForm">
+                        <div class="col-12 col-md-6">
+                            <label class="form-label fw-medium text-muted-custom">نوع دسته‌بندی</label>
+                            <div class="cat-type-toggle" id="addCatTypeToggle">
+                                <button type="button" class="cat-type-btn active" data-type="main">
+                                    <i class="bi bi-diagram-2-fill"></i> دسته اصلی
+                                </button>
+                                <button type="button" class="cat-type-btn" data-type="sub">
+                                    <i class="bi bi-diagram-3-fill"></i> زیرمجموعه یک دسته
+                                </button>
                             </div>
                         </div>
-                    </div>
+
+                        <div class="col-12 col-md-6 cat-parent-wrap" id="addParentWrap">
+                            <label class="form-label fw-medium text-muted-custom">دسته والد</label>
+                            <select class="form-select glass-select" id="addParentSelect">
+                                <% allCategories.filter(function(c){ return String(c.name).indexOf(' — ') === -1; }).forEach(function(cat){ %>
+                                    <option value="<%= cat.name %>"><%= cat.name %></option>
+                                <% }) %>
+                            </select>
+                            <% if (allCategories.filter(function(c){ return String(c.name).indexOf(' — ') === -1; }).length === 0) { %>
+                                <div class="form-text text-danger">ابتدا یک دسته اصلی بسازید تا بتوانید زیرمجموعه تعریف کنید.</div>
+                            <% } %>
+                        </div>
+
+                        <div class="col-12 col-md-6">
+                            <label class="form-label fw-medium text-muted-custom" id="addCatNameLabel">نام فارسی</label>
+                            <input type="text" name="name" id="addCategoryNameInput" class="form-control glass-input" required placeholder="مثال: نوشیدنی‌های سرد">
+                        </div>
+
+                        <div class="col-12 col-md-6">
+                            <label class="form-label fw-medium text-muted-custom">نام انگلیسی</label>
+                            <input type="text" name="enname" class="form-control glass-input" required placeholder="مثال: cold-drinks">
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label fw-medium text-muted-custom">تصویر دسته‌بندی</label>
+
+                            <div class="icon-picker-preview">
+                                <div class="ipv-box" id="addVisualPreviewBox">
+                                    <i class="bi bi-image"></i>
+                                </div>
+                                <div>
+                                    <span class="fw-semibold d-block" id="addVisualPreviewLabel">هیچ تصویری انتخاب نشده</span>
+                                    <span class="text-muted-custom" style="font-size:0.78rem;">یکی از وکتورهای آماده را انتخاب یا تصویر دلخواه آپلود کنید</span>
+                                </div>
+                            </div>
+
+                            <input type="text" id="addVisualPickerSearch" class="form-control glass-input mb-2"
+                                   placeholder="جستجو در وکتورها... (مثال: چای، شیر، مروارید)">
+
+                            <div class="visual-picker-grid" id="addVisualPickerGrid"></div>
+
+                            <label class="cat-img-upload mt-3" id="addCategoryImageDrop" for="addCategoryImageInput">
+                                <div class="cat-img-upload-icon"><i class="bi bi-cloud-arrow-up"></i></div>
+                                <div class="txt flex-grow-1">
+                                    <strong>آپلود تصویر یا وکتور دلخواه</strong>
+                                    <span>SVG / PNG / JPG — برای آپلود کلیک یا فایل را رها کنید</span>
+                                </div>
+                                <button type="button" class="cat-img-remove" id="addCategoryImageRemoveBtn" title="حذف تصویر">
+                                    <i class="bi bi-x-lg"></i>
+                                </button>
+                                <input type="file" name="image" id="addCategoryImageInput" accept="image/png,image/jpeg,image/webp,image/svg+xml,.svg,.png,.jpg,.jpeg,.webp" class="visually-hidden">
+                            </label>
+
+                            <input type="hidden" name="imageUrl" id="addSelectedImageUrl" value="">
+                        </div>
+
+                        <div class="col-12 text-end mt-2">
+                            <button type="submit" class="btn btn-accent px-5">
+                                <i class="bi bi-plus-lg me-1"></i> افزودن دسته‌بندی
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="glass-card">
+                    <h5 class="fw-bold mb-4 d-flex align-items-center gap-2">
+                        <i class="bi bi-grid-fill text-accent"></i>
+                        دسته‌بندی‌های موجود
+                        <span class="badge rounded-pill ms-1" style="background: var(--glass-hover); color: var(--text-muted); border:1px solid var(--glass-border); font-size:0.7rem;"><%= allCategories.length %></span>
+                    </h5>
+
+                    <% if (allCategories.length > 0) { %>
+                        <div class="cat-card-grid">
+                            <% allCategories.forEach(function(cat, index){
+                                var sIdx = swatchIndex(cat.icon || cat.name);
+                                var cnt = catCounts[cat.name] || 0;
+                            %>
+                                <div class="cat-manage-card">
+                                    <div class="cmc-top">
+                                        <span class="cat-icon-badge icon-swatch-<%= sIdx %>">
+                                            <% if (cat.image) { %>
+                                                <img src="<%= cat.image %>" alt="<%= cat.name %>" style="width:100%; height:100%; object-fit:cover; border-radius:inherit;">
+                                            <% } else { %>
+                                                <i class="bi <%= cat.icon || 'bi-image' %>"></i>
+                                            <% } %>
+                                        </span>
+                                        <span class="cmc-count" title="تعداد محصولات این دسته"><%= cnt %> محصول</span>
+                                    </div>
+                                    <div class="cmc-name cat-name-render" data-cat-name="<%= cat.name %>"><%= cat.name %></div>
+                                    <div class="cmc-enname"><%= cat.enname %></div>
+                                    <div class="cmc-actions">
+                                        <a href="/admin/category/edit/<%= cat._id %>" class="btn btn-glass btn-sm text-accent flex-grow-1">
+                                            <i class="bi bi-pencil-square"></i> ویرایش
+                                        </a>
+                                        <button type="button" class="btn btn-glass btn-sm text-danger" data-bs-toggle="modal" data-bs-target="#deleteCategoryModal"
+                                                data-bs-title="<%= cat.name %>" data-bs-id="<%= cat._id %>">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            <% }) %>
+                        </div>
+                    <% } else { %>
+                        <div class="empty-state">
+                            <i class="bi bi-tags"></i>
+                            <p class="mb-0">هیچ دسته‌بندی ثبت نشده است.</p>
+                        </div>
+                    <% } %>
                 </div>
             </section>
 
-            <!-- ══════════════ SECURITY / CREDENTIALS ══════════════ -->
             <section id="changeCredentialsSection" class="content-section">
                 <div class="glass-card mx-auto" style="max-width: 550px;">
                     <h5 class="fw-bold mb-4 text-center d-flex align-items-center justify-content-center gap-2">
@@ -1094,10 +1388,9 @@
     </main>
 </div>
 
-<!-- ═══════════════ MODALS ═══════════════ -->
 <div class="modal fade" id="deleteModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content glass-panel" style="border-radius: 22px;">
+        <div class="modal-content glass-panel" style="border-radius: 24px;">
             <div class="modal-body text-center p-5">
                 <div class="mb-3"><i class="bi bi-exclamation-triangle-fill text-danger" style="font-size: 2.8rem;"></i></div>
                 <h5 class="fw-bold mb-2">حذف محصول</h5>
@@ -1113,7 +1406,7 @@
 
 <div class="modal fade" id="deleteCategoryModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content glass-panel" style="border-radius: 22px;">
+        <div class="modal-content glass-panel" style="border-radius: 24px;">
             <div class="modal-body text-center p-5">
                 <div class="mb-3"><i class="bi bi-exclamation-triangle-fill text-danger" style="font-size: 2.8rem;"></i></div>
                 <h5 class="fw-bold mb-2">حذف دسته‌بندی</h5>
@@ -1127,10 +1420,9 @@
     </div>
 </div>
 
-<!-- Toast -->
 <div class="toast-container position-fixed bottom-0 start-0 p-3" style="z-index: 1080;">
     <div id="liveToast" class="toast align-items-center border-0" role="alert" aria-live="assertive" aria-atomic="true"
-         style="background: rgba(46,138,80,0.2); backdrop-filter: blur(10px); border: 1px solid rgba(46,138,80,0.3) !important; color: var(--text-main); border-radius: 15px;">
+         style="background: rgba(46,138,80,0.2); backdrop-filter: blur(10px); border: 1px solid rgba(46,138,80,0.3) !important; color: var(--text-main); border-radius: 18px;">
         <div class="d-flex">
             <div class="toast-body d-flex align-items-center gap-2 fw-bold" id="toastMessage"></div>
             <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
@@ -1142,10 +1434,7 @@
 <script src="/js/bootstrap.bundle.min.js"></script>
 
 <script>
-/* =========================================================
-   وکتورهای از پیش آپلود‌شده برای دسته‌بندی‌ها (کافه/بیکری)
-   فایل‌های SVG باید در public/images/categories/presets/ باشند.
-========================================================= */
+
 const CATEGORY_PRESETS = [
     { file: 'bread.svg',             label: 'نان' },
     { file: 'traditional-bread.svg', label: 'نان سنتی' },
@@ -1181,7 +1470,173 @@ const CATEGORY_PRESETS = [
     { file: 'salad.svg',             label: 'سالاد' }
 ];
 const PRESET_BASE_PATH = '/images/categories/presets/';
-/* گرید انتخاب تصویر/وکتور + آپلود دلخواه — برای فرم افزودن دسته‌بندی */
+
+const CAT_SEP = ' — ';
+
+function parseCategoryFull(full) {
+    if (!full) return { parent: '', child: '' };
+    var idx = full.indexOf(CAT_SEP);
+    if (idx === -1) return { parent: full.trim(), child: '' };
+    return { parent: full.slice(0, idx).trim(), child: full.slice(idx + CAT_SEP.length).trim() };
+}
+
+function buildCategoryTree(realSelectEl) {
+    var tree = {}, order = [];
+    if (!realSelectEl) return { tree: tree, order: order };
+    Array.prototype.forEach.call(realSelectEl.options, function (opt) {
+        var full = opt.value;
+        if (!full) return;
+        var p = parseCategoryFull(full);
+        if (!tree[p.parent]) { tree[p.parent] = { hasOwn: false, ownValue: '', children: [] }; order.push(p.parent); }
+        if (p.child) tree[p.parent].children.push({ label: p.child, full: full });
+        else { tree[p.parent].hasOwn = true; tree[p.parent].ownValue = full; }
+    });
+    return { tree: tree, order: order };
+}
+
+function initCategoryCascade(opts) {
+    var realSelect = document.getElementById(opts.realId);
+    var mainSelect = document.getElementById(opts.mainId);
+    var subWrap    = document.getElementById(opts.subWrapId);
+    var subSelect  = document.getElementById(opts.subId);
+    if (!realSelect || !mainSelect || !subSelect || !subWrap) return;
+
+    var data = buildCategoryTree(realSelect);
+    var tree = data.tree, order = data.order;
+    if (!order.length) return;
+
+    mainSelect.innerHTML = '';
+    order.forEach(function (name) {
+        var o = document.createElement('option');
+        o.value = name; o.textContent = name;
+        mainSelect.appendChild(o);
+    });
+
+    function fillSub(parentName, preselectFull) {
+        var node = tree[parentName];
+        subSelect.innerHTML = '';
+        if (!node || node.children.length === 0) {
+            subWrap.classList.remove('show');
+            realSelect.value = node ? node.ownValue : '';
+            return;
+        }
+        node.children.forEach(function (c) {
+            var o = document.createElement('option');
+            o.value = c.full; o.textContent = c.label;
+            subSelect.appendChild(o);
+        });
+        subWrap.classList.add('show');
+        if (preselectFull) subSelect.value = preselectFull;
+        realSelect.value = subSelect.value;
+    }
+
+    mainSelect.addEventListener('change', function () { fillSub(mainSelect.value, null); });
+    subSelect.addEventListener('change', function () { realSelect.value = subSelect.value; });
+
+    var initialFull = opts.initialValue || (realSelect.options[0] ? realSelect.options[0].value : '');
+    var p = parseCategoryFull(initialFull);
+    if (order.indexOf(p.parent) === -1) p.parent = order[0];
+    mainSelect.value = p.parent;
+    fillSub(p.parent, initialFull);
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+
+    initCategoryCascade({
+        realId: 'addRealCategorySelect', mainId: 'addMainCategorySelect',
+        subWrapId: 'addSubWrap', subId: 'addSubCategorySelect'
+    });
+
+    var editRealSel = document.getElementById('editRealCategorySelect');
+    if (editRealSel) {
+        initCategoryCascade({
+            realId: 'editRealCategorySelect', mainId: 'editMainCategorySelect',
+            subWrapId: 'editSubWrap', subId: 'editSubCategorySelect',
+            initialValue: editRealSel.dataset.initial || ''
+        });
+    }
+
+    document.querySelectorAll('.cat-name-render[data-cat-name]').forEach(function (el) {
+        var full = el.getAttribute('data-cat-name') || '';
+        var p = parseCategoryFull(full);
+        if (!p.child) { el.textContent = full; return; }
+        el.innerHTML =
+            '<span class="cat-tree-render">' +
+                '<span class="cat-pill-main">' + p.parent + '</span>' +
+                '<i class="bi bi-chevron-left cat-tree-sep"></i>' +
+                '<span class="cat-pill-sub">' + p.child + '</span>' +
+            '</span>';
+    });
+
+    (function groupCategoryFilter() {
+        var sel = document.getElementById('categoryFilter');
+        if (!sel) return;
+        var allOpt = sel.querySelector('option[value=""]');
+        var opts = Array.prototype.slice.call(sel.querySelectorAll('option')).filter(function (o) { return o.value !== ''; });
+        if (!opts.length) return;
+        var groups = {}, order = [];
+        opts.forEach(function (o) {
+            var p = parseCategoryFull(o.value);
+            if (!groups[p.parent]) { groups[p.parent] = []; order.push(p.parent); }
+            o.textContent = p.child || p.parent;
+            groups[p.parent].push(o);
+        });
+        sel.innerHTML = '';
+        if (allOpt) sel.appendChild(allOpt);
+        else { var d = document.createElement('option'); d.value = ''; d.textContent = 'همه دسته‌بندی‌ها'; sel.appendChild(d); }
+        order.forEach(function (parentName) {
+            if (groups[parentName].length === 1 && groups[parentName][0].value === parentName) {
+                sel.appendChild(groups[parentName][0]);
+            } else {
+                var og = document.createElement('optgroup');
+                og.label = parentName;
+                groups[parentName].forEach(function (o) { og.appendChild(o); });
+                sel.appendChild(og);
+            }
+        });
+    })();
+
+    (function initAddCategoryToggle() {
+        var toggle       = document.getElementById('addCatTypeToggle');
+        var form         = document.getElementById('addCategoryForm');
+        var parentWrap   = document.getElementById('addParentWrap');
+        var parentSelect = document.getElementById('addParentSelect');
+        var nameLabel    = document.getElementById('addCatNameLabel');
+        var nameInput    = document.getElementById('addCategoryNameInput');
+        if (!toggle || !form) return;
+        var currentType = 'main';
+
+        toggle.querySelectorAll('.cat-type-btn').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                toggle.querySelectorAll('.cat-type-btn').forEach(function (b) { b.classList.remove('active'); });
+                btn.classList.add('active');
+                currentType = btn.getAttribute('data-type');
+                if (currentType === 'sub') {
+                    parentWrap.classList.add('show');
+                    nameLabel.textContent = 'نام زیرمجموعه (فارسی)';
+                    nameInput.placeholder = 'مثال: نوشیدنی سرد';
+                } else {
+                    parentWrap.classList.remove('show');
+                    nameLabel.textContent = 'نام فارسی';
+                    nameInput.placeholder = 'مثال: پاستا';
+                }
+            });
+        });
+
+        form.addEventListener('submit', function (e) {
+            if (currentType !== 'sub') return;
+            var parentVal = parentSelect ? parentSelect.value : '';
+            if (!parentVal) {
+                e.preventDefault();
+                if (typeof showToast === 'function') showToast('لطفاً یک دسته والد انتخاب کنید.', 'danger');
+                return;
+            }
+            var childVal = nameInput.value.trim();
+            nameInput.value = parentVal + CAT_SEP + childVal;
+        });
+    })();
+});
+
 function initVisualPicker(cfg) {
     const grid        = document.getElementById(cfg.gridId);
     const hiddenUrl    = document.getElementById(cfg.hiddenId);
@@ -1297,7 +1752,6 @@ document.addEventListener("DOMContentLoaded", function () {
         searchId: 'addVisualPickerSearch'
     });
 
-
     const deleteModal = document.getElementById('deleteModal');
     if (deleteModal) {
         deleteModal.addEventListener('show.bs.modal', event => {
@@ -1316,7 +1770,6 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // --- اعتبارسنجی فرم رمز عبور ---
     const credForm = document.getElementById('credentialsForm');
     if (credForm) {
         credForm.addEventListener('submit', function (e) {
@@ -1338,40 +1791,88 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // --- همگام‌سازی آیکون تم با مقدار مشترک با صفحه اصلی (nanonan-theme) ---
-    // خودِ تم پیش از رندر توسط اسکریپت ضدفلاش در <head> ست شده؛ اینجا فقط آیکون را هماهنگ می‌کنیم.
     updateThemeIcon(document.documentElement.getAttribute('data-bs-theme') || 'dark');
 
-    const initialHash = window.location.hash || '#dashboard';
-    setActiveTab(initialHash.substring(1));
+    let savedTab = null;
+    try { savedTab = localStorage.getItem(ADMIN_TAB_STORAGE_KEY); } catch (e) {}
+    const initialTab = (window.location.hash ? window.location.hash.substring(1) : '') || savedTab || 'dashboard';
+    setActiveTab(document.getElementById(initialTab + 'Section') ? initialTab : 'dashboard');
 
-    // --- Image Preview (Add Product) ---
     window.previewAddImage = function (event) {
         const reader = new FileReader();
         const container = document.getElementById("addPreviewContainer");
         const preview = document.getElementById("addPreview");
         const label = document.getElementById("addUploadLabel");
+        const hint = document.getElementById("addUploadHint");
         reader.onload = function () {
             preview.src = reader.result;
             container.classList.remove("d-none");
+            if (hint) hint.style.opacity = '0';
         };
         if (event.target.files[0]) {
             label.textContent = event.target.files[0].name;
             reader.readAsDataURL(event.target.files[0]);
         } else {
             container.classList.add("d-none");
-            label.textContent = "برای انتخاب تصویر کلیک کنید";
+            if (hint) hint.style.opacity = '1';
+            label.textContent = "برای انتخاب تصویر کلیک کن";
         }
     };
 
-    // --- شمارنده کاراکتر توضیحات ---
     const addDescField = document.getElementById('addDescField');
     const addDescCount = document.getElementById('addDescCount');
     if (addDescField) {
         addDescField.addEventListener('input', () => { addDescCount.textContent = addDescField.value.length; });
     }
 
-    // --- فرمت‌دهی قیمت با کاما ---
+    (function initAddProductLivePreview() {
+        var nameField  = document.getElementById('addNameField');
+        var priceField = document.getElementById('addPriceField');
+        var mainSelect = document.getElementById('addMainCategorySelect');
+        var subSelect  = document.getElementById('addSubCategorySelect');
+        var pvName  = document.getElementById('livePreviewName');
+        var pvPrice = document.getElementById('livePreviewPrice');
+        var pvDesc  = document.getElementById('livePreviewDesc');
+        var pvCat   = document.getElementById('livePreviewCat');
+        if (!nameField || !pvName) return;
+
+        function toFa(n) { try { return Number(n || 0).toLocaleString('fa-IR'); } catch (e) { return n; } }
+
+        function syncCategory() {
+            var subVisible = document.getElementById('addSubWrap') && document.getElementById('addSubWrap').classList.contains('show');
+            var label = (subVisible && subSelect && subSelect.value && subSelect.options.length) ? subSelect.options[subSelect.selectedIndex].textContent : (mainSelect.options[mainSelect.selectedIndex] ? mainSelect.options[mainSelect.selectedIndex].textContent : 'دسته‌بندی');
+            pvCat.innerHTML = '<i class="bi bi-tag"></i> ' + label;
+        }
+
+        nameField.addEventListener('input', function () { pvName.textContent = nameField.value.trim() || 'نام محصول شما'; });
+        priceField.addEventListener('input', function () {
+            var raw = priceField.value.replace(/[^\d]/g, '');
+            pvPrice.innerHTML = toFa(raw || 0) + ' <small>تومان</small>';
+        });
+        addDescField && addDescField.addEventListener('input', function () {
+            pvDesc.textContent = addDescField.value.trim() || 'توضیحات محصول اینجا نمایش داده می‌شود...';
+        });
+        mainSelect && mainSelect.addEventListener('change', function () { setTimeout(syncCategory, 60); });
+        subSelect  && subSelect.addEventListener('change', syncCategory);
+        setTimeout(syncCategory, 120);
+
+        var formEl = document.getElementById('addProductForm');
+        if (formEl) {
+            formEl.addEventListener('reset', function () {
+                setTimeout(function () {
+                    pvName.textContent = 'نام محصول شما';
+                    pvPrice.innerHTML = '۰ <small>تومان</small>';
+                    pvDesc.textContent = 'توضیحات محصول اینجا نمایش داده می‌شود...';
+                    var pc = document.getElementById('addPreviewContainer');
+                    var hint = document.getElementById('addUploadHint');
+                    if (pc) pc.classList.add('d-none');
+                    if (hint) hint.style.opacity = '1';
+                    syncCategory();
+                }, 10);
+            });
+        }
+    })();
+
     document.querySelectorAll('.price-input').forEach(input => {
         input.addEventListener('input', function () {
             let raw = this.value.replace(/[^\d]/g, '');
@@ -1386,7 +1887,6 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
-    // --- لودینگ تعاملی برای دکمه‌های ارسال فرم (افزودن محصول/دسته‌بندی/امنیت) ---
     document.querySelectorAll('form').forEach(form => {
         const submitBtn = form.querySelector('button[type="submit"].btn-accent');
         if (!submitBtn) return;
@@ -1411,7 +1911,6 @@ document.addEventListener("DOMContentLoaded", function () {
         document.head.appendChild(styleTag);
     }
 
-    // --- جستجوی جدول محصولات ---
     window.searchTable = function (value) {
         applyTableFilters();
     };
@@ -1421,22 +1920,30 @@ document.addEventListener("DOMContentLoaded", function () {
     function applyTableFilters() {
         const searchVal = (document.getElementById('productSearchInput')?.value || '').toLowerCase();
         const catVal = document.getElementById('categoryFilter')?.value || '';
-        const rows = document.querySelectorAll("#productTable tbody tr");
+        const rows = document.querySelectorAll("#productTable tbody tr[data-category]");
+        const cards = document.querySelectorAll("#productCards .product-mobile-card");
         let visibleCount = 0, totalCount = 0;
+
+        function matches(el) {
+            const matchesSearch = el.innerText.toLowerCase().includes(searchVal);
+            const matchesCat = !catVal || el.getAttribute('data-category') === catVal;
+            return matchesSearch && matchesCat;
+        }
+
         rows.forEach(row => {
-            if (row.querySelector('td')?.colSpan === 5) return;
             totalCount++;
-            const matchesSearch = row.innerText.toLowerCase().includes(searchVal);
-            const matchesCat = !catVal || row.getAttribute('data-category') === catVal;
-            const show = matchesSearch && matchesCat;
+            const show = matches(row);
             row.style.display = show ? "" : "none";
             if (show) visibleCount++;
         });
+        cards.forEach(card => {
+            card.style.display = matches(card) ? "" : "none";
+        });
+
         const label = document.getElementById('productCountLabel');
         if (label) label.textContent = `نمایش ${visibleCount} از ${totalCount} محصول`;
     }
 
-    // --- ساعت و تاریخ سایدبار ---
     function updateClock() {
         const now = new Date();
         const clockEl = document.getElementById('liveClock');
@@ -1448,7 +1955,6 @@ document.addEventListener("DOMContentLoaded", function () {
     setInterval(updateClock, 30000);
 });
 
-// --- نمایش/پنهان رمز عبور ---
 function togglePassword(inputId, iconId) {
     const input = document.getElementById(inputId);
     const icon = document.getElementById(iconId);
@@ -1461,7 +1967,6 @@ function togglePassword(inputId, iconId) {
     }
 }
 
-// --- Toast ---
 function showToast(message, type = 'success') {
     const toastEl = document.getElementById('liveToast');
     const toastMessage = document.getElementById('toastMessage');
@@ -1473,7 +1978,6 @@ function showToast(message, type = 'success') {
     toast.show();
 }
 
-// --- Sidebar ---
 function toggleSidebar() {
     document.getElementById("sidebar").classList.toggle("show");
     document.getElementById("sidebarOverlay").classList.toggle("show");
@@ -1485,12 +1989,11 @@ function closeSidebarOnMobile() {
     }
 }
 
-// --- Theme ---
 function toggleTheme() {
     const html = document.documentElement;
     const newTheme = html.getAttribute("data-bs-theme") === "dark" ? "light" : "dark";
     html.setAttribute("data-bs-theme", newTheme);
-    try { localStorage.setItem("nanonan-theme", newTheme); } catch (e) {}
+    try { localStorage.setItem("bubbleteale-theme", newTheme); } catch (e) {}
     updateThemeIcon(newTheme);
 }
 function updateThemeIcon(theme) {
@@ -1503,7 +2006,7 @@ function updateThemeIcon(theme) {
     }
 }
 
-// --- Tab Switching ---
+const ADMIN_TAB_STORAGE_KEY = 'babol-admin-active-tab';
 function setActiveTab(targetId) {
     document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active-section'));
     const target = document.getElementById(targetId + 'Section');
@@ -1512,9 +2015,9 @@ function setActiveTab(targetId) {
         link.classList.toggle('active', link.getAttribute('href') === `#${targetId}`);
     });
     history.replaceState(null, '', `#${targetId}`);
+    try { localStorage.setItem(ADMIN_TAB_STORAGE_KEY, targetId); } catch (e) {}
 }
 
-// --- AJAX وضعیت سفارش (در صورت وجود فرم در صفحات آینده) ---
 document.querySelectorAll('.update-status-form').forEach(form => {
     form.addEventListener('submit', async (e) => {
         e.preventDefault();

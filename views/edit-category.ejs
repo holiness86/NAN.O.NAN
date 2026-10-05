@@ -3,13 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ویرایش دسته‌بندی | نان و نان</title>
+    <title>ویرایش دسته‌بندی | بابل تیله رزکان</title>
 
-    <!-- جلوگیری از فلاش تم اشتباه — دقیقاً هماهنگ با index.ejs (کلید مشترک) -->
     <script>
       (function () {
         try {
-          var t = localStorage.getItem('nanonan-theme');
+          var t = localStorage.getItem('bubbleteale-theme');
           if (!t) t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
           document.documentElement.setAttribute('data-bs-theme', t);
         } catch (e) {}
@@ -20,8 +19,6 @@
     <link rel="stylesheet" href="/css/icons-1.13.1/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="/css/style.css">
     <style>
-        /* توکن‌های محلی صرفاً alias به توکن‌های اصلی style.css هستند
-           تا پالت رنگی و تم روشن/تاریک دقیقاً مثل صفحه اصلی باشد. */
         :root, [data-bs-theme="light"] {
             --bg-gradient-1: var(--cream);
             --bg-gradient-2: var(--cream-deep);
@@ -55,7 +52,7 @@
         body {
             background: linear-gradient(-45deg, var(--bg-gradient-1), var(--bg-gradient-2), var(--bg-gradient-3));
             color: var(--text-main);
-            font-family: 'Vazirmatn', Tahoma, sans-serif;
+            font-family: 'YekanBakh', Tahoma, sans-serif;
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -67,95 +64,125 @@
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border: 1px solid var(--glass-border);
-            border-radius: 24px;
-            box-shadow: 0 8px 32px var(--glass-shadow);
+            border-radius: 30px;
+            border-radius: max(30px, 1.85rem);
+            box-shadow: 0 12px 40px var(--glass-shadow);
             width: 100%;
-            max-width: 500px;
-            padding: 2.5rem;
+            max-width: 980px;
+            padding: 2.6rem;
         }
         .glass-input {
             background: var(--input-bg) !important;
             border: 1px solid var(--glass-border) !important;
             color: var(--text-main) !important;
-            border-radius: 14px;
+            border-radius: 16px !important;
             padding: 0.75rem 1rem;
             transition: all 0.3s ease;
         }
         .glass-input:focus {
-            box-shadow: 0 0 0 3px rgba(184, 134, 11, 0.2) !important;
+            box-shadow: 0 0 0 4px rgba(87,45,119, 0.2) !important;
             border-color: var(--accent-color) !important;
             background: var(--input-focus) !important;
         }
         .btn-accent {
             background: linear-gradient(135deg, var(--accent-color), var(--accent-hover));
-            color: #1A1208 !important;
+            color: #FFFFFF !important;
             border: none;
-            border-radius: 14px;
-            padding: 0.75rem 1.5rem;
+            border-radius: 18px;
+            padding: 0.75rem 1.6rem;
             font-weight: 600;
-            width: 100%;
             transition: all 0.3s ease;
-        }
-        [data-bs-theme="dark"] .btn-accent {
-            color: #120C05 !important;
         }
         .btn-accent:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(184, 134, 11, 0.3);
+            box-shadow: 0 6px 20px rgba(87,45,119, 0.3);
         }
         .btn-glass {
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid var(--glass-border);
             color: var(--text-main);
-            border-radius: 14px;
-            padding: 0.75rem 1.5rem;
-            width: 100%;
+            border-radius: 18px;
+            padding: 0.75rem 1.6rem;
             transition: all 0.3s ease;
             text-decoration: none;
-            display: inline-block;
-            text-align: center;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
         }
-        .btn-glass:hover {
-            background: var(--glass-hover);
-            color: var(--text-main);
-        }
-        /* مرورگرهای مدرن (Chrome, Firefox, Safari, Edge) */
- input::placeholder,
- textarea::placeholder {
-  color: var(--text-main) !important;
-  opacity: 1; /* برای فیکس کردن رنگ سفید خالص در فایرفاکس */
-}
+        .btn-glass:hover { background: var(--glass-hover); color: var(--text-main); }
 
-/* مرورگر Internet Explorer 10-11 */
- input:-ms-input-placeholder,
-textarea:-ms-input-placeholder {
-  color: var(--text-main) !important;
-}
+        input::placeholder,
+        textarea::placeholder { color: var(--text-main) !important; opacity: 1; }
+        input:-ms-input-placeholder,
+        textarea:-ms-input-placeholder { color: var(--text-main) !important; }
+        input::-ms-input-placeholder,
+        textarea::-ms-input-placeholder { color: var(--text-main) !important; }
 
-/* نسخه قدیمی مرورگر Edge */
- input::-ms-input-placeholder,
-textarea::-ms-input-placeholder {
-  color: var(--text-main) !important;
-}
-
-        /* ── انیمیشن ورود کارت ─────────────────────────────────── */
         @keyframes cardPop { 0% { opacity: 0; transform: translateY(24px) scale(.97); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
         @keyframes fieldIn { 0% { opacity: 0; transform: translateY(12px); } 100% { opacity: 1; transform: translateY(0); } }
         .glass-card { animation: cardPop .6s cubic-bezier(.22,1,.36,1) both; }
-        .glass-card > form > .col-12 { animation: fieldIn .45s ease both; }
-        .glass-card > form > .col-12:nth-child(1) { animation-delay: .06s; }
-        .glass-card > form > .col-12:nth-child(2) { animation-delay: .12s; }
-        .glass-card > form > .col-12:nth-child(3) { animation-delay: .18s; }
-        .glass-card > form > .col-12:nth-child(4) { animation-delay: .24s; }
-        .glass-card > form > .col-12:nth-child(5) { animation-delay: .30s; }
+        .form-block { animation: fieldIn .45s ease both; }
+        .form-block:nth-child(1) { animation-delay: .06s; }
+        .form-block:nth-child(2) { animation-delay: .12s; }
+        .form-block:nth-child(3) { animation-delay: .18s; }
+        .category-form-preview { animation: fieldIn .5s ease .1s both; }
 
-        /* ── پیش‌نمایش تصویر/وکتور انتخاب‌شده ─────────────────────── */
-        .cat-visual-preview {
+        .category-form-grid { display: grid; grid-template-columns: 1.55fr 1fr; gap: 1.6rem; align-items: start; }
+        @media (max-width: 860px) { .category-form-grid { grid-template-columns: 1fr; } }
+
+        .form-block {
+            background: var(--glass-hover);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 1.25rem 1.3rem;
+            margin-bottom: 1.1rem;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .form-block:focus-within { border-color: var(--accent-color); box-shadow: 0 0 0 4px rgba(87,45,119,0.12); }
+        .form-block-title {
+            display: flex; align-items: center; gap: 0.5rem;
+            font-weight: 800; font-size: 0.86rem; color: var(--text-main);
+            margin-bottom: 1rem;
+        }
+        .form-block-title i { color: var(--accent-color); font-size: 1rem; }
+
+        .category-form-preview { position: sticky; top: 1rem; }
+        .live-cat-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            border-radius: max(28px, 1.75rem);
+            padding: 1.6rem 1.3rem;
+            text-align: center;
+            box-shadow: 0 10px 30px var(--glass-shadow);
+            transition: transform 0.4s cubic-bezier(.34,1.1,.64,1);
+        }
+        .live-cat-card:hover { transform: translateY(-4px); }
+        .live-cat-icon {
+            width: 92px; height: 92px; margin: 0 auto 1rem;
+            border-radius: 30px; border-radius: max(30px, 1.85rem);
+            display: flex; align-items: center; justify-content: center;
+            overflow: hidden;
             background: var(--brand-soft);
             border: 1px solid var(--glass-border);
+            color: var(--accent-color);
+            font-size: 2.4rem;
         }
+        .live-cat-icon img { width: 100%; height: 100%; object-fit: cover; }
+        .live-cat-icon img.is-vector { object-fit: contain; padding: 14px; }
+        .live-cat-name { font-weight: 800; font-size: 1.1rem; color: var(--text-main); margin-bottom: .2rem; }
+        .live-cat-enname { font-size: .82rem; color: var(--text-muted); direction: ltr; }
+        .live-cat-badge {
+            display: inline-flex; align-items: center; gap: .35rem;
+            margin-top: 1rem; padding: .35rem .9rem;
+            border-radius: 50rem; background: var(--input-bg);
+            border: 1px solid var(--glass-border);
+            font-size: .74rem; font-weight: 700; color: var(--text-muted);
+        }
+
+        .cat-visual-preview { background: var(--brand-soft); border: 1px solid var(--glass-border); }
         .cat-visual-preview-box {
-            width: 52px; height: 52px; border-radius: 14px; flex-shrink: 0;
+            width: 52px; height: 52px; border-radius: 16px; flex-shrink: 0;
             overflow: hidden; display: flex; align-items: center; justify-content: center;
             background: var(--glass-bg); border: 1px solid var(--glass-border);
             font-size: 1.4rem; color: var(--accent-color); padding: 6px;
@@ -163,18 +190,17 @@ textarea::-ms-input-placeholder {
         .cat-visual-preview-box img { width: 100%; height: 100%; object-fit: contain; animation: fieldIn .4s ease; }
         .cat-visual-preview-hint { font-size: .78rem; color: var(--text-muted); display: block; }
 
-        /* ── گرید وکتورهای از پیش آپلود‌شده ──────────────────────── */
         .visual-picker-grid {
             display: grid; grid-template-columns: repeat(6, 1fr);
-            gap: 10px; max-height: 320px; overflow-y: auto;
-            padding: 10px; border-radius: 16px;
+            gap: 10px; max-height: 280px; overflow-y: auto;
+            padding: 10px; border-radius: 18px;
             background: var(--input-bg); border: 1px solid var(--glass-border);
         }
         @media (max-width: 400px) {
             .visual-picker-grid { grid-template-columns: repeat(5, 1fr); }
         }
         .visual-picker-item {
-            aspect-ratio: 1/1; border-radius: 14px; cursor: pointer;
+            aspect-ratio: 1/1; border-radius: 16px; cursor: pointer;
             background: var(--glass-bg); border: 2px solid var(--glass-border);
             display: flex; align-items: center; justify-content: center;
             padding: 8px; position: relative; transition: transform .2s ease, border-color .2s ease;
@@ -189,16 +215,10 @@ textarea::-ms-input-placeholder {
             background: var(--surface, #fff); display: flex; align-items: center; justify-content: center;
             font-size: .7rem; box-shadow: 0 2px 6px rgba(0,0,0,.25);
         }
-        .visual-picker-item span.vp-label {
-            position: absolute; inset: auto 0 -20px 0; text-align: center;
-            font-size: .62rem; color: var(--text-muted); white-space: nowrap;
-            overflow: hidden; text-overflow: ellipsis;
-        }
 
-        /* ── باکس آپلود تصویر/وکتور دلخواه ────────────────────────── */
         .cat-img-upload {
             display: flex; align-items: center; gap: 1rem;
-            padding: .9rem; border-radius: 16px;
+            padding: .9rem; border-radius: 18px;
             background: var(--input-bg); border: 1px dashed var(--glass-border);
             transition: all .25s ease; cursor: pointer;
         }
@@ -207,7 +227,7 @@ textarea::-ms-input-placeholder {
             background: var(--brand-soft);
         }
         .cat-img-upload-icon {
-            width: 44px; height: 44px; border-radius: 12px; flex-shrink: 0;
+            width: 44px; height: 44px; border-radius: 16px; flex-shrink: 0;
             display: flex; align-items: center; justify-content: center;
             background: var(--glass-bg); border: 1px solid var(--glass-border);
             font-size: 1.2rem; color: var(--accent-color);
@@ -216,40 +236,11 @@ textarea::-ms-input-placeholder {
         .cat-img-upload .txt span { font-size: .74rem; color: var(--text-muted); }
         .cat-img-remove {
             border: none; background: rgba(214,69,59,0.12); color: #D6453B;
-            border-radius: 10px; width: 32px; height: 32px; flex-shrink: 0;
+            border-radius: 12px; width: 32px; height: 32px; flex-shrink: 0;
             display: none; align-items: center; justify-content: center;
         }
         .cat-img-remove.show { display: flex; }
 
-        /* ── سواتچ‌های رنگی گرادیانی (هماهنگ با style.css: --sw-0..9) ── */
-        .swatch-grid {
-            display: grid; grid-template-columns: repeat(5, 1fr);
-            gap: 10px; margin-top: .5rem;
-        }
-        .swatch-dot {
-            aspect-ratio: 1/1; border-radius: 14px; cursor: pointer;
-            border: 2px solid transparent; position: relative;
-            transition: transform .2s ease, border-color .2s ease;
-        }
-        .swatch-dot:hover { transform: translateY(-3px) scale(1.05); }
-        .swatch-dot.active { border-color: var(--text-main); box-shadow: 0 0 0 3px var(--glass-shadow); }
-        .swatch-dot.active::after {
-            content: "\f26e"; font-family: "bootstrap-icons"; color: #fff;
-            position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
-            font-size: 1.1rem; text-shadow: 0 1px 3px rgba(0,0,0,.4);
-        }
-        .swatch-dot[data-sw="0"] { background: var(--sw-0, linear-gradient(135deg,#e8c88a,#c49a3c)); }
-        .swatch-dot[data-sw="1"] { background: var(--sw-1, linear-gradient(135deg,#f29a82,#c94f30)); }
-        .swatch-dot[data-sw="2"] { background: var(--sw-2, linear-gradient(135deg,#b5d4a8,#4a8a38)); }
-        .swatch-dot[data-sw="3"] { background: var(--sw-3, linear-gradient(135deg,#a8d8b0,#2e8a50)); }
-        .swatch-dot[data-sw="4"] { background: var(--sw-4, linear-gradient(135deg,#f0b8c8,#c83860)); }
-        .swatch-dot[data-sw="5"] { background: var(--sw-5, linear-gradient(135deg,#a8cce8,#2e6aa8)); }
-        .swatch-dot[data-sw="6"] { background: var(--sw-6, linear-gradient(135deg,#f4b87e,#d47230)); }
-        .swatch-dot[data-sw="7"] { background: var(--sw-7, linear-gradient(135deg,#d8b8e8,#8a3ec4)); }
-        .swatch-dot[data-sw="8"] { background: var(--sw-8, linear-gradient(135deg,#a0e0d0,#1e9a82)); }
-        .swatch-dot[data-sw="9"] { background: var(--sw-9, linear-gradient(135deg,#d8a878,#8a5a28)); }
-
-        /* ── وضعیت لودینگ دکمه ذخیره ─────────────────────────────── */
         .btn-accent { position: relative; overflow: hidden; }
         .btn-accent[disabled] { cursor: not-allowed; opacity: .85; }
         .btn-spinner {
@@ -262,101 +253,192 @@ textarea::-ms-input-placeholder {
         .btn-accent.is-loading .btn-spinner {
             display: inline-block; position: absolute; top: 50%; left: 50%; margin: -9px 0 0 -9px;
         }
+
+        .cat-type-toggle {
+            display: inline-flex; gap: 0.4rem; padding: 0.3rem;
+            background: var(--glass-hover); border: 1px solid var(--glass-border);
+            border-radius: 50rem; width: 100%;
+        }
+        .cat-type-btn {
+            flex: 1 1 0; border: none; background: transparent; color: var(--text-muted);
+            font-weight: 700; font-size: 0.82rem; padding: 0.55rem 0.8rem; border-radius: 50rem;
+            display: flex; align-items: center; justify-content: center; gap: 0.4rem;
+            cursor: pointer; transition: all 0.25s ease;
+        }
+        .cat-type-btn.active {
+            background: linear-gradient(135deg, var(--accent-color), var(--accent-hover));
+            color: #FFFFFF; box-shadow: 0 4px 14px rgba(87,45,119,0.28);
+        }
+        .cat-parent-wrap {
+            overflow: hidden;
+            max-height: 0; opacity: 0; transform: translateY(-6px);
+            transition: max-height 0.4s cubic-bezier(.22,1,.36,1), opacity 0.3s ease, transform 0.3s ease;
+        }
+        .cat-parent-wrap.show { max-height: 140px; opacity: 1; transform: translateY(0); margin-top: 1.1rem; }
     </style>
 </head>
 <body>
 
 <div class="glass-card">
-    <h5 class="fw-bold mb-4 text-center d-flex align-items-center justify-content-center gap-2">
+    <h5 class="fw-bold mb-4 d-flex align-items-center gap-2">
         <i class="bi bi-tags-fill text-accent"></i>
         ویرایش اطلاعات دسته‌بندی
     </h5>
-<form action="/admin/category/update/<%= category._id %>" method="POST" enctype="multipart/form-data" class="row g-3" id="editCategoryForm">
-    <div class="col-12">
-        <label class="form-label fw-medium text-muted">نام فارسی</label>
-        <input type="text" name="nameFa" class="form-control glass-input"
-               value="<%= category.name %>" required>
-    </div>
-    <div class="col-12">
-        <label class="form-label fw-medium text-muted">نام انگلیسی</label>
-        <input type="text" name="nameEn" class="form-control glass-input"
-               value="<%= category.enname %>" required>
-    </div>
 
-    <!-- تصویر / وکتور دسته‌بندی -->
-    <div class="col-12">
-        <label class="form-label fw-medium text-muted">تصویر دسته‌بندی</label>
+    <form action="/admin/category/update/<%= category._id %>" method="POST" enctype="multipart/form-data" id="editCategoryForm">
+        <div class="category-form-grid">
 
-        <!-- پیش‌نمایش زنده -->
-        <div class="d-flex align-items-center gap-3 mb-3 p-3 rounded-3 cat-visual-preview">
-            <div class="cat-visual-preview-box" id="catVisualPreviewBox">
-                <% if (category.imageUrl) { %>
-                    <img src="<%= category.imageUrl %>" alt="" id="catVisualPreviewImg">
-                <% } else { %>
-                    <i class="bi bi-image" id="catVisualPlaceholderIcon"></i>
-                <% } %>
+            <div class="category-form-fields">
+                <div class="form-block">
+                    <div class="form-block-title"><i class="bi bi-diagram-3-fill"></i> نوع دسته‌بندی</div>
+                    <div class="cat-type-toggle" id="editCatTypeToggle">
+                        <button type="button" class="cat-type-btn" data-type="main">
+                            <i class="bi bi-diagram-2-fill"></i> دسته اصلی
+                        </button>
+                        <button type="button" class="cat-type-btn" data-type="sub">
+                            <i class="bi bi-diagram-3-fill"></i> زیرمجموعه یک دسته
+                        </button>
+                    </div>
+                    <div class="cat-parent-wrap" id="editParentWrap">
+                        <label class="form-label fw-medium text-muted small">نام دسته والد</label>
+                        <input type="text" class="form-control glass-input" id="editParentInput" placeholder="مثال: نوشیدنی">
+                        <div class="form-text">دقیقاً همان نام دسته اصلی موجود را وارد کنید.</div>
+                    </div>
+                </div>
+
+                <div class="form-block">
+                    <div class="form-block-title"><i class="bi bi-tag-fill"></i> نام‌گذاری</div>
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label class="form-label fw-medium text-muted small" id="editCatNameLabel">نام فارسی</label>
+                            <input type="text" name="nameFa" id="editCategoryNameInput" class="form-control glass-input"
+                                   value="<%= category.name %>" required>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-medium text-muted small">نام انگلیسی</label>
+                            <input type="text" name="nameEn" id="editCategoryEnnameInput" class="form-control glass-input"
+                                   value="<%= category.enname %>" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-block">
+                    <div class="form-block-title"><i class="bi bi-image-fill"></i> تصویر دسته‌بندی</div>
+
+                    <input type="text" id="visualPickerSearch" class="form-control glass-input mb-2"
+                           placeholder="جستجو در وکتورها... (مثال: چای، شیر، مروارید)">
+
+                    <div class="visual-picker-grid" id="visualPickerGrid"></div>
+
+                    <label class="cat-img-upload mt-3" id="catImgDrop" for="catImageInput">
+                        <div class="cat-img-upload-icon"><i class="bi bi-cloud-arrow-up"></i></div>
+                        <div class="txt flex-grow-1">
+                            <strong>آپلود تصویر یا وکتور دلخواه</strong>
+                            <span>SVG / PNG / JPG — برای آپلود کلیک یا فایل را اینجا رها کنید</span>
+                        </div>
+                        <button type="button" class="cat-img-remove <%= category.imageUrl ? 'show' : '' %>" id="catImgRemoveBtn" title="حذف تصویر">
+                            <i class="bi bi-x-lg"></i>
+                        </button>
+                        <input type="file" name="image" id="catImageInput" accept="image/png,image/jpeg,image/webp,image/svg+xml,.svg,.png,.jpg,.jpeg,.webp" class="visually-hidden">
+                    </label>
+
+                    <input type="hidden" name="imageUrl" id="selectedImageUrl" value="<%= category.imageUrl || '' %>">
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-accent flex-grow-1" id="saveCategoryBtn">
+                        <span class="btn-label"><i class="bi bi-check-circle me-1"></i> ذخیره تغییرات</span>
+                        <span class="btn-spinner" aria-hidden="true"></span>
+                    </button>
+                    <a href="/admin#categoryManage" class="btn btn-glass">انصراف</a>
+                </div>
             </div>
-            <div>
-                <span class="fw-medium d-block" id="catVisualPreviewLabel">
-                    <%= category.imageUrl ? 'تصویر انتخاب‌شده' : 'هیچ تصویری انتخاب نشده' %>
-                </span>
-                <span class="cat-visual-preview-hint">یکی از وکتورهای آماده را انتخاب کنید یا تصویر دلخواه آپلود کنید</span>
+
+            <div class="category-form-preview">
+                <div class="form-block-title"><i class="bi bi-eye-fill"></i> پیش‌نمایش زنده</div>
+                <div class="live-cat-card">
+                    <div class="live-cat-icon" id="liveCatIcon">
+                        <% if (category.imageUrl) { %>
+                            <img src="<%= category.imageUrl %>" alt="" id="liveCatIconImg">
+                        <% } else { %>
+                            <i class="bi bi-image" id="liveCatIconPlaceholder"></i>
+                        <% } %>
+                    </div>
+                    <div class="live-cat-name" id="liveCatName"><%= category.name %></div>
+                    <div class="live-cat-enname" id="liveCatEnname"><%= category.enname %></div>
+                    <span class="live-cat-badge"><i class="bi bi-tag"></i> دسته‌بندی</span>
+                </div>
             </div>
+
         </div>
-
-        <!-- جستجو در وکتورهای آماده -->
-        <input type="text" id="visualPickerSearch" class="form-control glass-input mb-2"
-               placeholder="جستجو در وکتورها... (مثال: قهوه، نان، کیک)">
-
-        <!-- گرید وکتورهای از پیش آپلود شده -->
-        <div class="visual-picker-grid" id="visualPickerGrid"></div>
-
-        <!-- آپلود تصویر/وکتور دلخواه -->
-        <label class="cat-img-upload mt-3" id="catImgDrop" for="catImageInput">
-            <div class="cat-img-upload-icon"><i class="bi bi-cloud-arrow-up"></i></div>
-            <div class="txt flex-grow-1">
-                <strong>آپلود تصویر یا وکتور دلخواه</strong>
-                <span>SVG / PNG / JPG — برای آپلود کلیک یا فایل را اینجا رها کنید</span>
-            </div>
-            <button type="button" class="cat-img-remove <%= category.imageUrl ? 'show' : '' %>" id="catImgRemoveBtn" title="حذف تصویر">
-                <i class="bi bi-x-lg"></i>
-            </button>
-            <input type="file" name="image" id="catImageInput" accept="image/png,image/jpeg,image/webp,image/svg+xml,.svg,.png,.jpg,.jpeg,.webp" class="visually-hidden">
-        </label>
-
-        <!-- مقدار نهایی (مسیر وکتور پیش‌فرض انتخاب‌شده، یا مقدار فعلی؛ در صورت آپلود فایل، سرور باید فایل را در اولویت قرار دهد) -->
-        <input type="hidden" name="imageUrl" id="selectedImageUrl" value="<%= category.imageUrl || '' %>">
-    </div>
-
-    <!-- سواتچ رنگی/گرادیان دسته‌بندی -->
-    <div class="col-12">
-        <label class="form-label fw-medium text-muted">رنگ/گرادیان اختصاصی دسته‌بندی</label>
-        <div class="swatch-grid" id="swatchGrid">
-            <% for (var s = 0; s <= 9; s++) { %>
-                <div class="swatch-dot <%= (category.color !== undefined && String(category.color) === String(s)) ? 'active' : '' %>"
-                     data-sw="<%= s %>" title="سواتچ <%= s %>"></div>
-            <% } %>
-        </div>
-        <input type="hidden" name="color" id="selectedSwatch" value="<%= typeof category.color !== 'undefined' ? category.color : '' %>">
-    </div>
-
-    <div class="col-12 mt-4 d-flex gap-2">
-        <button type="submit" class="btn btn-accent" id="saveCategoryBtn">
-            <span class="btn-label"><i class="bi bi-check-circle me-1"></i> ذخیره تغییرات</span>
-            <span class="btn-spinner" aria-hidden="true"></span>
-        </button>
-        <a href="/admin" class="btn btn-glass">انصراف</a>
-    </div>
-</form>
+    </form>
 </div>
 
 <script>
-    // نکته: تم پیش از رندر توسط اسکریپت ضدفلاش در <head> ست شده (کلید مشترک nanonan-theme)
+    (function () {
+        var CAT_SEP = ' — ';
+        var toggle      = document.getElementById('editCatTypeToggle');
+        var form        = document.getElementById('editCategoryForm');
+        var parentWrap  = document.getElementById('editParentWrap');
+        var parentInput = document.getElementById('editParentInput');
+        var nameLabel   = document.getElementById('editCatNameLabel');
+        var nameInput   = document.getElementById('editCategoryNameInput');
+        var liveName    = document.getElementById('liveCatName');
+        if (!toggle || !form) return;
 
-    /* ── وکتورهای از پیش آپلود‌شده — مسیر واقعی فایل‌ها روی سرور
-       این فایل‌ها باید در public/images/categories/presets/ قرار بگیرند
-       (۱۰ فایل SVG پیوست‌شده در پاسخ). برای افزودن وکتور جدید فقط
-       فایل را در همان مسیر قرار داده و یک آیتم به این آرایه اضافه کنید. */
+        var currentFull = nameInput.value;
+        var idx = currentFull.indexOf(CAT_SEP);
+        var currentType = idx === -1 ? 'main' : 'sub';
+
+        function setType(type, silent) {
+            currentType = type;
+            toggle.querySelectorAll('.cat-type-btn').forEach(function (b) {
+                b.classList.toggle('active', b.getAttribute('data-type') === type);
+            });
+            if (type === 'sub') {
+                parentWrap.classList.add('show');
+                nameLabel.textContent = 'نام زیرمجموعه (فارسی)';
+            } else {
+                parentWrap.classList.remove('show');
+                nameLabel.textContent = 'نام فارسی';
+                if (!silent) nameInput.value = currentFull;
+            }
+        }
+
+        if (currentType === 'sub') {
+            parentInput.value = currentFull.slice(0, idx).trim();
+            nameInput.value = currentFull.slice(idx + CAT_SEP.length).trim();
+        }
+        setType(currentType, true);
+
+        toggle.querySelectorAll('.cat-type-btn').forEach(function (btn) {
+            btn.addEventListener('click', function () { setType(btn.getAttribute('data-type')); });
+        });
+
+        nameInput.addEventListener('input', function () {
+            liveName.textContent = nameInput.value.trim() || 'نام دسته‌بندی';
+        });
+
+        var ennameInput = document.getElementById('editCategoryEnnameInput');
+        var liveEnname = document.getElementById('liveCatEnname');
+        if (ennameInput && liveEnname) {
+            ennameInput.addEventListener('input', function () {
+                liveEnname.textContent = ennameInput.value.trim();
+            });
+        }
+
+        form.addEventListener('submit', function (e) {
+            if (currentType !== 'sub') return;
+            var parentVal = parentInput.value.trim();
+            if (!parentVal) {
+                e.preventDefault();
+                parentInput.focus();
+                return;
+            }
+            nameInput.value = parentVal + CAT_SEP + nameInput.value.trim();
+        });
+    })();
+
     const CATEGORY_PRESETS = [
         { file: 'bread.svg',             label: 'نان' },
         { file: 'traditional-bread.svg', label: 'نان سنتی' },
@@ -396,21 +478,21 @@ textarea::-ms-input-placeholder {
     (function () {
         const grid         = document.getElementById('visualPickerGrid');
         const hiddenUrl     = document.getElementById('selectedImageUrl');
-        const previewBox    = document.getElementById('catVisualPreviewBox');
-        const previewLabel  = document.getElementById('catVisualPreviewLabel');
+        const liveIcon      = document.getElementById('liveCatIcon');
         const fileInput     = document.getElementById('catImageInput');
         const removeBtn     = document.getElementById('catImgRemoveBtn');
         const currentValue  = hiddenUrl.value;
 
+        function isVector(src) { return /\.svg(\?.*)?$/i.test(src || ''); }
+
         function fullPath(file) { return PRESET_BASE_PATH + file; }
 
-        function setPreview(src, label) {
+        function setPreview(src) {
             if (src) {
-                previewBox.innerHTML = `<img src="${src}" alt="" id="catVisualPreviewImg">`;
+                liveIcon.innerHTML = '<img src="' + src + '" alt="" class="' + (isVector(src) ? 'is-vector' : '') + '">';
             } else {
-                previewBox.innerHTML = `<i class="bi bi-image" id="catVisualPlaceholderIcon"></i>`;
+                liveIcon.innerHTML = '<i class="bi bi-image"></i>';
             }
-            previewLabel.textContent = label || 'هیچ تصویری انتخاب نشده';
             removeBtn.classList.toggle('show', Boolean(src));
         }
 
@@ -436,10 +518,10 @@ textarea::-ms-input-placeholder {
                 item.title = preset.label;
                 item.innerHTML = `<img src="${path}" alt="${preset.label}" loading="lazy">`;
                 item.addEventListener('click', () => {
-                    fileInput.value = '';               // انصراف از فایل آپلودی احتمالی
+                    fileInput.value = '';
                     hiddenUrl.value = path;
                     highlightActive(path);
-                    setPreview(path, preset.label);
+                    setPreview(path);
                 });
                 grid.appendChild(item);
             });
@@ -456,15 +538,14 @@ textarea::-ms-input-placeholder {
             });
         }
 
-        /* ── آپلود وکتور/تصویر دلخواه: پیش‌نمایش زنده + Drag&Drop + حذف ── */
         const dropZone = document.getElementById('catImgDrop');
 
         fileInput.addEventListener('change', function () {
             const file = this.files && this.files[0];
             if (!file) return;
-            highlightActive(null); // انتخاب از گرید پریست‌ها لغو می‌شود
+            highlightActive(null);
             const reader = new FileReader();
-            reader.onload = e => setPreview(e.target.result, file.name);
+            reader.onload = e => setPreview(e.target.result);
             reader.readAsDataURL(file);
         });
 
@@ -474,7 +555,7 @@ textarea::-ms-input-placeholder {
             fileInput.value = '';
             hiddenUrl.value = '';
             highlightActive(null);
-            setPreview(null, null);
+            setPreview(null);
         });
 
         ['dragenter', 'dragover'].forEach(evt => {
@@ -491,31 +572,17 @@ textarea::-ms-input-placeholder {
         });
     })();
 
-/* ── انتخاب سواتچ رنگی/گرادیان ─────────────────────────────────────── */
-(function () {
-    const grid = document.getElementById('swatchGrid');
-    const hidden = document.getElementById('selectedSwatch');
-    if (!grid) return;
-    grid.querySelectorAll('.swatch-dot').forEach(dot => {
-        dot.addEventListener('click', () => {
-            grid.querySelectorAll('.swatch-dot').forEach(d => d.classList.remove('active'));
-            dot.classList.add('active');
-            hidden.value = dot.getAttribute('data-sw');
+    (function () {
+        const form = document.getElementById('editCategoryForm');
+        const btn  = document.getElementById('saveCategoryBtn');
+        if (!form || !btn) return;
+        form.addEventListener('submit', function () {
+            if (!form.checkValidity()) return;
+            try { localStorage.setItem('babol-admin-active-tab', 'categoryManage'); } catch (e) {}
+            btn.classList.add('is-loading');
+            btn.setAttribute('disabled', 'disabled');
         });
-    });
-})();
-
-/* ── لودینگ تعاملی هنگام ذخیره‌ی فرم ─────────────────────────────────── */
-(function () {
-    const form = document.getElementById('editCategoryForm');
-    const btn  = document.getElementById('saveCategoryBtn');
-    if (!form || !btn) return;
-    form.addEventListener('submit', function () {
-        if (!form.checkValidity()) return;
-        btn.classList.add('is-loading');
-        btn.setAttribute('disabled', 'disabled');
-    });
-})();
+    })();
 </script>
 </body>
 </html>
