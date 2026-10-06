@@ -439,40 +439,70 @@
         });
     })();
 
-    const CATEGORY_PRESETS = [
-        { file: 'bread.svg',             label: 'نان' },
-        { file: 'traditional-bread.svg', label: 'نان سنتی' },
-        { file: 'fantasy-bread.svg',     label: 'نان فانتزی' },
-        { file: 'bulky-bread.svg',       label: 'نان حجیم' },
-        { file: 'croissant.svg',         label: 'کرواسان' },
-        { file: 'pastry.svg',            label: 'شیرینی' },
-        { file: 'dry-pastry.svg',        label: 'شیرینی خشک' },
-        { file: 'wet-pastry.svg',        label: 'شیرینی تر' },
-        { file: 'cake.svg',              label: 'کیک' },
-        { file: 'birthday-cake.svg',     label: 'کیک تولد' },
-        { file: 'cupcake.svg',           label: 'کاپ‌کیک' },
-        { file: 'dessert.svg',           label: 'دسر' },
-        { file: 'cookie.svg',            label: 'کوکی' },
-        { file: 'biscuit.svg',           label: 'بیسکویت' },
-        { file: 'donut.svg',             label: 'دونات' },
-        { file: 'cinnamon-roll.svg',     label: 'رول دارچین' },
-        { file: 'chocolate.svg',         label: 'شکلات' },
-        { file: 'icecream.svg',          label: 'بستنی' },
-        { file: 'coffee.svg',            label: 'قهوه' },
-        { file: 'espresso.svg',          label: 'اسپرسو' },
-        { file: 'tea.svg',               label: 'چای' },
-        { file: 'hot-drink.svg',         label: 'نوشیدنی گرم' },
-        { file: 'cold-drink.svg',        label: 'نوشیدنی سرد' },
-        { file: 'smoothie.svg',          label: 'اسموتی' },
-        { file: 'juice.svg',             label: 'آبمیوه' },
-        { file: 'milk.svg',              label: 'شیر' },
-        { file: 'breakfast.svg',         label: 'صبحانه' },
-        { file: 'sandwich.svg',          label: 'ساندویچ' },
-        { file: 'pizza.svg',             label: 'پیتزا' },
-        { file: 'fastfood.svg',          label: 'فست‌فود' },
-        { file: 'iranian-food.svg',      label: 'غذای ایرانی' },
-        { file: 'salad.svg',             label: 'سالاد' }
-    ];
+   const CATEGORY_PRESETS = [
+    // نان‌ها
+    { file: 'bread.svg',             label: 'نان' },
+    { file: 'traditional-bread.svg', label: 'نان سنتی' },
+    { file: 'fantasy-bread.svg',     label: 'نان فانتزی' },
+    { file: 'bulky-bread.svg',       label: 'نان حجیم' },
+    { file: 'croissant.svg',         label: 'کرواسان' },
+    { file: 'danish-croissant.svg',  label: 'کرواسان دانمارکی' },
+
+    // شیرینی، کیک و دسر
+    { file: 'pastry.svg',            label: 'شیرینی' },
+    { file: 'dry-pastry.svg',        label: 'شیرینی خشک' },
+    { file: 'wet-pastry.svg',        label: 'شیرینی تر' },
+    { file: 'cake.svg',              label: 'کیک' },
+    { file: 'birthday-cake.svg',     label: 'کیک تولد' },
+    { file: 'cupcake.svg',           label: 'کاپ‌کیک' },
+    { file: 'dessert.svg',           label: 'دسر' },
+    { file: 'cookie.svg',            label: 'کوکی' },
+    { file: 'biscuit.svg',           label: 'بیسکویت' },
+    { file: 'donut.svg',             label: 'دونات' },
+    { file: 'cinnamon-roll.svg',     label: 'رول دارچین' },
+    { file: 'chocolate.svg',         label: 'شکلات' },
+
+    // بستنی
+    { file: 'icecream.svg',          label: 'بستنی' },
+    { file: 'ice-cream.svg',         label: 'بستنی اسکوپی' },
+
+    // قهوه و بار گرم
+    { file: 'coffee.svg',            label: 'قهوه' },
+    { file: 'espresso.svg',          label: 'اسپرسو' },
+    { file: 'iced-espresso.svg',     label: 'آیس اسپرسو' },
+    { file: 'coffee-70-30.svg',      label: 'قهوه ۷۰/۳۰' },
+    { file: 'coffee-arabica.svg',    label: 'قهوه عربیکا' },
+    { file: 'hot-drink.svg',         label: 'نوشیدنی گرم' },
+    { file: 'hot-bar.svg',           label: 'بار گرم' },
+    { file: 'tea.svg',               label: 'چای' },
+    { file: 'tea-bar.svg',           label: 'بار چای و دمنوش' },
+    { file: 'milk.svg',              label: 'شیر' },
+
+    // بار سرد و آبمیوه
+    { file: 'cold-drink.svg',        label: 'نوشیدنی سرد' },
+    { file: 'soft-drink.svg',        label: 'نوشابه و دلستر' },
+    { file: 'mocktail.svg',          label: 'موکتل' },
+    { file: 'smoothie.svg',          label: 'اسموتی' },
+    { file: 'shake.svg',             label: 'شیک' },
+    { file: 'juice.svg',             label: 'آبمیوه' },
+
+    // آیتم‌های سلامت و تخصصی
+    { file: 'matcha-spirulina.svg',  label: 'ماچا و اسپیرولینا' },
+    { file: 'ube.svg',               label: 'اوُبه (سیب‌زمینی بنفش)' },
+    { file: 'protein-bar.svg',       label: 'پروتئین بار' },
+
+    // غذا و اسنک
+    { file: 'breakfast.svg',         label: 'صبحانه' },
+    { file: 'sandwich.svg',          label: 'ساندویچ' },
+    { file: 'pizza.svg',             label: 'پیتزا' },
+    { file: 'fastfood.svg',          label: 'فست‌فود' },
+    { file: 'food.svg',              label: 'غذا' },
+    { file: 'iranian-food.svg',      label: 'غذای ایرانی' },
+    { file: 'salad.svg',             label: 'سالاد' },
+
+    // عمومی
+    { file: 'default.svg',           label: 'پیش‌فرض' }
+];
     const PRESET_BASE_PATH = '/images/categories/presets/';
 
     (function () {
