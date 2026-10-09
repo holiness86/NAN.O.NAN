@@ -2,6 +2,8 @@ const mongoose = require('mongoose');
 const express = require('express');
 const multer = require('multer');
 const path = require('path');
+const fs = require('fs');
+const sharp = require('sharp');
 const session = require('express-session');
 const { MongoStore } = require('connect-mongo');
 const rateLimit = require('express-rate-limit');
@@ -11,7 +13,6 @@ require('dotenv').config();
 console.log('DEBUG مقدار NODE_ENV:', JSON.stringify(process.env.NODE_ENV));
 
 // اگه یه خطای مدیریت‌نشده باعث کرش پروسه بشه، حداقل قبلش لاگش کن
-// (چون الان که کرش می‌کنه هیچ لاگی ازش نمی‌مونه)
 process.on('uncaughtException', (err) => {
     console.error('خطای مدیریت‌نشده (uncaughtException):', err);
 });
@@ -22,6 +23,14 @@ process.on('unhandledRejection', (reason) => {
 // آدرس دیتابیس - بالا آورده شد چون هم توسط session store و هم mongoose.connect لازمه
 const urlDB = process.env.MONGO_URL || 'mongodb://localhost:27017/NANONAN';
 const PORT = process.env.PORT || 3000;
+
+// مسیر ذخیره عکس‌ها (دیسک persistent)
+const UPLOAD_DIR = '/uploads';
+try {
+    fs.mkdirSync(UPLOAD_DIR, { recursive: true });
+} catch (e) {
+    console.error('نتونستم پوشه uploads رو بسازم:', e.message);
+}
 
 const app = express();
 app.set('trust proxy', 1); // چون پشت nginx/reverse proxy هستیم
@@ -34,7 +43,7 @@ if (!process.env.SESSION_SECRET) {
 // وارد کردن مدل‌ها
 const Iteam = require('./models/iteam');
 const Pass = require('./models/pass');
-const Category = require('./models/category')
+const Category = require('./models/category');
 
 // ==================== بخش مانیتورینگ - شروع ====================
 
@@ -45,6 +54,7 @@ let requestsInLastMinute = [];
 let statusCodeCounts = {};
 let errorCount = 0;
 let eventLoopLag = 0;
+
 // ==================== کش منوی صفحه اصلی ====================
 let menuCache = null;
 let menuCacheTime = 0;
@@ -55,109 +65,109 @@ function invalidateMenuCache() {
 }
 
 setInterval(() => {
-  const start = Date.now();
-  setImmediate(() => { eventLoopLag = Date.now() - start; });
+    const start = Date.now();
+    setImmediate(() => { eventLoopLag = Date.now() - start; });
 }, 1000);
 
 setInterval(() => {
-  const oneMinuteAgo = Date.now() - 60000;
-  requestsInLastMinute = requestsInLastMinute.filter(ts => ts > oneMinuteAgo);
+    const oneMinuteAgo = Date.now() - 60000;
+    requestsInLastMinute = requestsInLastMinute.filter(ts => ts > oneMinuteAgo);
 }, 10000);
 
 // ---------- محاسبه درصد CPU ----------
 function getCpuUsagePercent() {
-  return new Promise((resolve) => {
-    const start = os.cpus();
-    setTimeout(() => {
-      const end = os.cpus();
-      let idleDiff = 0, totalDiff = 0;
-      for (let i = 0; i < start.length; i++) {
-        const s = start[i].times, e = end[i].times;
-        const sTotal = Object.values(s).reduce((a, b) => a + b, 0);
-        const eTotal = Object.values(e).reduce((a, b) => a + b, 0);
-        idleDiff += e.idle - s.idle;
-        totalDiff += eTotal - sTotal;
-      }
-      resolve(Math.round((100 - (100 * idleDiff / totalDiff)) * 100) / 100);
-    }, 200);
-  });
+    return new Promise((resolve) => {
+        const start = os.cpus();
+        setTimeout(() => {
+            const end = os.cpus();
+            let idleDiff = 0, totalDiff = 0;
+            for (let i = 0; i < start.length; i++) {
+                const s = start[i].times, e = end[i].times;
+                const sTotal = Object.values(s).reduce((a, b) => a + b, 0);
+                const eTotal = Object.values(e).reduce((a, b) => a + b, 0);
+                idleDiff += e.idle - s.idle;
+                totalDiff += eTotal - sTotal;
+            }
+            resolve(Math.round((100 - (100 * idleDiff / totalDiff)) * 100) / 100);
+        }, 200);
+    });
 }
 
 function formatUptime(seconds) {
-  const h = Math.floor(seconds / 3600);
-  const m = Math.floor((seconds % 3600) / 60);
-  const s = Math.floor(seconds % 60);
-  return `${h}h ${m}m ${s}s`;
+    const h = Math.floor(seconds / 3600);
+    const m = Math.floor((seconds % 3600) / 60);
+    const s = Math.floor(seconds % 60);
+    return `${h}h ${m}m ${s}s`;
 }
 
 // ---------- تابع اصلی جمع‌آوری داده ----------
 async function getMonitoringData() {
-  const mem = process.memoryUsage();
-  const cpuPercent = await getCpuUsagePercent();
-  const loadAvg = os.loadavg();
-  const totalSystemMem = os.totalmem();
-  const freeSystemMem = os.freemem();
+    const mem = process.memoryUsage();
+    const cpuPercent = await getCpuUsagePercent();
+    const loadAvg = os.loadavg();
+    const totalSystemMem = os.totalmem();
+    const freeSystemMem = os.freemem();
 
-  return {
-    timestamp: new Date().toISOString(),
-    traffic: {
-      activeConnectionsNow: activeConnections,
-      totalRequestsSinceStart: totalRequests,
-      requestsPerMinute: requestsInLastMinute.length,
-      statusCodeBreakdown: statusCodeCounts,
-      errorCount5xx: errorCount,
-    },
-    processMemory: {
-      rss: `${Math.round(mem.rss / 1024 / 1024)} MB`,
-      heapUsed: `${Math.round(mem.heapUsed / 1024 / 1024)} MB`,
-      heapTotal: `${Math.round(mem.heapTotal / 1024 / 1024)} MB`,
-      heapUsedPercent: `${Math.round((mem.heapUsed / mem.heapTotal) * 100)}%`,
-    },
-    systemMemory: {
-      usedPercent: `${Math.round(((totalSystemMem - freeSystemMem) / totalSystemMem) * 100)}%`,
-      total: `${Math.round(totalSystemMem / 1024 / 1024)} MB`,
-      free: `${Math.round(freeSystemMem / 1024 / 1024)} MB`,
-    },
-    cpu: {
-      usagePercent: `${cpuPercent}%`,
-      cores: os.cpus().length,
-      loadAverage1min: loadAvg[0].toFixed(2),
-    },
-    eventLoop: {
-      lagMs: eventLoopLag,
-      status: eventLoopLag < 50 ? 'سالم' : eventLoopLag < 200 ? 'تحت فشار' : 'بحرانی',
-    },
-    uptimeSeconds: Math.round(process.uptime()),
-    uptimeFormatted: formatUptime(process.uptime()),
-  };
+    return {
+        timestamp: new Date().toISOString(),
+        traffic: {
+            activeConnectionsNow: activeConnections,
+            totalRequestsSinceStart: totalRequests,
+            requestsPerMinute: requestsInLastMinute.length,
+            statusCodeBreakdown: statusCodeCounts,
+            errorCount5xx: errorCount,
+        },
+        processMemory: {
+            rss: `${Math.round(mem.rss / 1024 / 1024)} MB`,
+            heapUsed: `${Math.round(mem.heapUsed / 1024 / 1024)} MB`,
+            heapTotal: `${Math.round(mem.heapTotal / 1024 / 1024)} MB`,
+            heapUsedPercent: `${Math.round((mem.heapUsed / mem.heapTotal) * 100)}%`,
+        },
+        systemMemory: {
+            usedPercent: `${Math.round(((totalSystemMem - freeSystemMem) / totalSystemMem) * 100)}%`,
+            total: `${Math.round(totalSystemMem / 1024 / 1024)} MB`,
+            free: `${Math.round(freeSystemMem / 1024 / 1024)} MB`,
+        },
+        cpu: {
+            usagePercent: `${cpuPercent}%`,
+            cores: os.cpus().length,
+            loadAverage1min: loadAvg[0].toFixed(2),
+        },
+        eventLoop: {
+            lagMs: eventLoopLag,
+            status: eventLoopLag < 50 ? 'سالم' : eventLoopLag < 200 ? 'تحت فشار' : 'بحرانی',
+        },
+        uptimeSeconds: Math.round(process.uptime()),
+        uptimeFormatted: formatUptime(process.uptime()),
+    };
 }
 
 // ==================== بخش مانیتورینگ - پایان تعاریف ====================
 
 // میدل ور ها
-app.set('view engine' , 'ejs');
+app.set('view engine', 'ejs');
 // اول: مسیر اختصاصی uploads از دیسک persistent (اولویت داره)
-app.use('/uploads', express.static('/uploads'));
+app.use('/uploads', express.static(UPLOAD_DIR));
 
 // بعد: بقیه فایل‌های استاتیک از public (css, js, images, picture)
 app.use(express.static('public'));
-app.use(express.urlencoded({extended: true}));
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 // میدل‌ور ردیابی ترافیک برای مانیتورینگ (باید قبل از روت‌ها ثبت بشه)
 app.use((req, res, next) => {
-  activeConnections++;
-  totalRequests++;
-  requestsInLastMinute.push(Date.now());
+    activeConnections++;
+    totalRequests++;
+    requestsInLastMinute.push(Date.now());
 
-  res.on('finish', () => {
-    activeConnections--;
-    const status = res.statusCode;
-    statusCodeCounts[status] = (statusCodeCounts[status] || 0) + 1;
-    if (status >= 500) errorCount++;
-  });
+    res.on('finish', () => {
+        activeConnections--;
+        const status = res.statusCode;
+        statusCodeCounts[status] = (statusCodeCounts[status] || 0) + 1;
+        if (status >= 500) errorCount++;
+    });
 
-  next();
+    next();
 });
 
 // جلوگیری از NoSQL Injection: کلیدهای خطرناک ($ و .) رو از داخل آبجکت پاک می‌کنیم
@@ -180,7 +190,7 @@ app.use((req, res, next) => {
     next();
 });
 
-// سشن - حالا روی MongoDB ذخیره میشه (نه RAM) تا بین چند instance مشترک باشه
+// سشن - روی MongoDB ذخیره میشه (نه RAM) تا بین چند instance مشترک باشه
 app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false,
@@ -190,7 +200,7 @@ app.use(session({
         collectionName: 'sessions',
         ttl: 60 * 60 * 24 // ۲۴ ساعت بر حسب ثانیه - هم‌راستا با cookie.maxAge
     }),
-    cookie: { 
+    cookie: {
         maxAge: 1000 * 60 * 60 * 24,
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production' // روی هاست با HTTPS باید true باشه
@@ -200,9 +210,9 @@ app.use(session({
 // میدل‌ور برای محافظت از مسیرهای ادمین
 const checkAdminLogin = (req, res, next) => {
     if (req.session.isLoggedIn) {
-        next(); 
+        next();
     } else {
-        res.redirect('/log'); 
+        res.redirect('/log');
     }
 };
 
@@ -215,64 +225,83 @@ const loginLimiter = rateLimit({
     legacyHeaders: false
 });
 
-// مالتر و آپلود عکس
-const ALLOWED_MIME_TYPES = {
-    'image/jpeg': '.jpg',
-    'image/png': '.png',
-    'image/webp': '.webp'
-};
+// ==================== مالتر و آپلود عکس (تبدیل خودکار به WebP) ====================
 
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, '/uploads/'); // مسیر مطلق دیسک persistent، نه پوشه public داخل کانتینر
-    },
-    filename: function (req, file, cb) {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        const safeExt = ALLOWED_MIME_TYPES[file.mimetype];
-        cb(null, uniqueSuffix + safeExt);
-    }
-});
+// فرمت‌های ورودی مجاز (SVG عمداً نیست، چون ریسک XSS داره)
+const ALLOWED_MIME_TYPES = {
+    'image/jpeg': true,
+    'image/png': true,
+    'image/webp': true,
+    'image/gif': true,
+    'image/avif': true,
+    'image/tiff': true
+};
 
 const fileFilter = (req, file, cb) => {
     if (ALLOWED_MIME_TYPES[file.mimetype]) {
         cb(null, true);
     } else {
-        cb(new Error('فقط فایل تصویری با فرمت jpg, png یا webp مجاز است'));
+        cb(new Error('فرمت فایل مجاز نیست (فقط jpg, png, webp, gif, avif, tiff)'));
     }
 };
 
+// فایل اول تو RAM میاد، بعد توسط convertToWebp تبدیل و روی دیسک ذخیره میشه
 const upload = multer({
-    storage: storage,
+    storage: multer.memoryStorage(),
     fileFilter: fileFilter,
     limits: {
         fileSize: 5 * 1024 * 1024 // حداکثر ۵ مگابایت
     }
 });
 
-// اتصال دیتا بیس
+// تبدیل عکس آپلودشده به webp و ذخیره در /uploads
+// بعد از upload.single(...) باید بیاد
+const convertToWebp = async (req, res, next) => {
+    if (!req.file) return next();
+    try {
+        const filename = Date.now() + '-' + Math.round(Math.random() * 1E9) + '.webp';
+        await sharp(req.file.buffer)
+            .rotate() // اصلاح جهت عکس بر اساس EXIF (عکس‌های موبایل)
+            .resize({ width: 1600, withoutEnlargement: true }) // بزرگ‌تر از ۱۶۰۰ پیکسل نشه
+            .webp({ quality: 80 })
+            .toFile(path.join(UPLOAD_DIR, filename));
+
+        // بقیه کد از req.file.filename استفاده می‌کنه
+        req.file.filename = filename;
+        req.file.mimetype = 'image/webp';
+        req.file.buffer = undefined; // آزاد کردن RAM
+        next();
+    } catch (err) {
+        console.error('خطا در تبدیل عکس:', err);
+        next(new Error('فرمت یا محتوای عکس نامعتبر است'));
+    }
+};
+
+// ==================== اتصال دیتابیس ====================
 mongoose.connect(urlDB)
-.then(() => {
-    console.log('Connected to MongoDB');
-    app.listen(PORT , () => {
-        console.log('Server is running on port 3000');
-    });
-})
-.catch((err) => console.error('Could not connect to MongoDB', err));
-
-
+    .then(() => {
+        console.log('Connected to MongoDB');
+        app.listen(PORT, () => {
+            console.log('Server is running on port ' + PORT);
+        });
+    })
+    .catch((err) => console.error('Could not connect to MongoDB', err));
 
 // صفحه داشبورد مانیتورینگ
 app.get('/admin/monitoring', checkAdminLogin, (req, res) => {
-  res.render('monitoring'); // views/monitoring.ejs
+    res.render('monitoring'); // views/monitoring.ejs
 });
 
 // اندپوینت داده‌ای که صفحه هر ۲ ثانیه صداش می‌زنه
 app.get('/admin/monitoring/data', checkAdminLogin, async (req, res) => {
-  const data = await getMonitoringData();
-  res.json(data);
+    try {
+        const data = await getMonitoringData();
+        res.json(data);
+    } catch (err) {
+        console.error('خطا در مانیتورینگ:', err);
+        res.status(500).json({ error: 'خطا در دریافت اطلاعات مانیتورینگ' });
+    }
 });
-
-
 
 // روت صفحه اصلی (نمایش منو)
 app.get('/', async (req, res) => {
@@ -295,88 +324,88 @@ app.get('/', async (req, res) => {
 });
 
 // روت نمایش صفحه ادمین
-app.get('/admin', checkAdminLogin, async (req , res) => {
+app.get('/admin', checkAdminLogin, async (req, res) => {
     try {
         const [iteam, categories] = await Promise.all([
             Iteam.find(),
             Category.find().sort({ createdAt: -1 })
-        ])
+        ]);
 
-        res.render('admin', { 
+        res.render('admin', {
             iteam,
             categories
-        })
+        });
     } catch (e) {
-        console.log(e)
-        res.status(500).send('Error')
+        console.log(e);
+        res.status(500).send('Error');
     }
-})
+});
 
 // حذف کتگوری
 app.get('/admin/category/delete/:id', checkAdminLogin, async (req, res) => {
     try {
-        await Category.findByIdAndDelete(req.params.id)
-        res.redirect('/admin#categoryManage')
+        await Category.findByIdAndDelete(req.params.id);
+        res.redirect('/admin#categoryManage');
     } catch (err) {
-        console.error('خطا در حذف دسته‌بندی:', err)
-        res.status(500).send('خطا در حذف دسته‌بندی')
+        console.error('خطا در حذف دسته‌بندی:', err);
+        res.status(500).send('خطا در حذف دسته‌بندی');
     }
-})
+});
 
 // روت ادیت
 app.get('/admin/category/edit/:id', checkAdminLogin, async (req, res) => {
     try {
-        const category = await Category.findById(req.params.id)
+        const category = await Category.findById(req.params.id);
         if (!category) {
-            return res.redirect('/admin#categoryManage')
+            return res.redirect('/admin#categoryManage');
         }
-        res.render('edit-category', { category })
+        res.render('edit-category', { category });
     } catch (err) {
-        console.log(err)
-        res.redirect('/admin#categoryManage')
+        console.log(err);
+        res.redirect('/admin#categoryManage');
     }
-})
+});
 
-app.post('/admin/category/update/:id', checkAdminLogin, upload.single('image'), async (req, res) => {
+app.post('/admin/category/update/:id', checkAdminLogin, upload.single('image'), convertToWebp, async (req, res) => {
     try {
-        const { nameFa, nameEn, icon, imageUrl } = req.body
+        const { nameFa, nameEn, icon, imageUrl } = req.body;
 
         const updateData = {
             name: nameFa,
             enname: nameEn,
             icon: icon || 'bi-grid'
-        }
+        };
 
         // اگه فایل جدید آپلود شده، عکس رو عوض کن؛ وگرنه اگه imageUrl (وکتور از پیش‌انتخاب‌شده) اومده اونو بذار؛ وگرنه عکس قبلی دست‌نخورده می‌مونه
         if (req.file) {
-            updateData.image = '/uploads/' + req.file.filename
+            updateData.image = '/uploads/' + req.file.filename;
         } else if (imageUrl) {
-            updateData.image = imageUrl
+            updateData.image = imageUrl;
         }
 
         await Category.findByIdAndUpdate(
             req.params.id,
             updateData
-        )
+        );
 
-        res.redirect('/admin#categoryManage')
+        res.redirect('/admin#categoryManage');
 
     } catch (err) {
-        console.log(err)
-        res.status(500).send('خطا در ویرایش دسته‌بندی')
+        console.log(err);
+        res.status(500).send('خطا در ویرایش دسته‌بندی');
     }
-})
+});
 
 // تعویض رمز
 app.post('/admin/change-credentials', checkAdminLogin, async (req, res) => {
     try {
 
-        const { username, password, confirmPassword } = req.body
+        const { username, password, confirmPassword } = req.body;
 
         const [iteam, categories] = await Promise.all([
             Iteam.find(),
             Category.find().sort({ createdAt: -1 })
-        ])
+        ]);
 
         if (!username || !password || !confirmPassword) {
             return res.render('admin', {
@@ -386,7 +415,7 @@ app.post('/admin/change-credentials', checkAdminLogin, async (req, res) => {
                     type: 'error',
                     text: 'همه فیلدها الزامی هستند'
                 }
-            })
+            });
         }
 
         if (password !== confirmPassword) {
@@ -397,15 +426,15 @@ app.post('/admin/change-credentials', checkAdminLogin, async (req, res) => {
                     type: 'error',
                     text: 'رمزهای عبور با هم مطابقت ندارند'
                 }
-            })
+            });
         }
 
-        const adminUser = await Pass.findOne()
+        const adminUser = await Pass.findOne();
 
-        adminUser.username = username.trim()
-        adminUser.password = password.trim() // هش شدن به‌صورت خودکار توسط pre-save hook مدل Pass انجام میشه
+        adminUser.username = username.trim();
+        adminUser.password = password.trim(); // هش شدن به‌صورت خودکار توسط pre-save hook مدل Pass انجام میشه
 
-        await adminUser.save()
+        await adminUser.save();
 
         res.render('admin', {
             iteam,
@@ -414,17 +443,16 @@ app.post('/admin/change-credentials', checkAdminLogin, async (req, res) => {
                 type: 'success',
                 text: 'اطلاعات ورود با موفقیت تغییر کرد'
             }
-        })
+        });
 
     } catch (err) {
-        console.error(err)
-        res.redirect('/admin')
+        console.error(err);
+        res.redirect('/admin');
     }
-})
-
+});
 
 // روت دریافت اطلاعات و عکس از فرم ادمین
-app.post('/admin', checkAdminLogin, upload.single('imageUrl'), (req, res) => {
+app.post('/admin', checkAdminLogin, upload.single('imageUrl'), convertToWebp, (req, res) => {
     const price = Number(req.body.iteamPrice);
     if (!req.body.iteamName || isNaN(price) || price < 0) {
         return res.status(400).send('نام محصول یا قیمت نامعتبر است');
@@ -442,23 +470,26 @@ app.post('/admin', checkAdminLogin, upload.single('imageUrl'), (req, res) => {
             console.log('Iteam saved');
             res.redirect('/admin#addProduct');
         })
-        .catch(err => res.status(500).send('خطا در ذخیره محصول'));
+        .catch(err => {
+            console.error(err);
+            res.status(500).send('خطا در ذخیره محصول');
+        });
 });
 
 // افزودن کتگوری
-app.post('/admin/category/add', checkAdminLogin, upload.single('image'), async (req, res) => {
+app.post('/admin/category/add', checkAdminLogin, upload.single('image'), convertToWebp, async (req, res) => {
     try {
-        console.log('DEBUG req.body:', req.body)
-        console.log('DEBUG req.file:', req.file)
-        const { name, enname, icon, imageUrl } = req.body   // imageUrl = مسیر وکتور آماده‌ی انتخاب‌شده (اگه فایل آپلود نشده باشه)
+        console.log('DEBUG req.body:', req.body);
+        console.log('DEBUG req.file:', req.file);
+        const { name, enname, icon, imageUrl } = req.body; // imageUrl = مسیر وکتور آماده‌ی انتخاب‌شده (اگه فایل آپلود نشده باشه)
 
         if (!name || !enname) {
-            return res.status(400).send('name و enname الزامی هستند')
+            return res.status(400).send('name و enname الزامی هستند');
         }
 
-        const existingCategory = await Category.findOne({ enname })
+        const existingCategory = await Category.findOne({ enname });
         if (existingCategory) {
-            return res.status(400).send('این دسته‌بندی قبلاً ثبت شده')
+            return res.status(400).send('این دسته‌بندی قبلاً ثبت شده');
         }
 
         const newCategory = new Category({
@@ -467,24 +498,20 @@ app.post('/admin/category/add', checkAdminLogin, upload.single('image'), async (
             icon: icon || 'bi-grid',
             // اولویت با فایل آپلودی؛ اگه فایلی نبود از وکتور از پیش‌انتخاب‌شده استفاده کن
             image: req.file ? '/uploads/' + req.file.filename : (imageUrl || '')
-        })
+        });
 
-        await newCategory.save()
+        await newCategory.save();
 
-        const [iteam, categories] = await Promise.all([
-            Iteam.find(),
-            Category.find().sort({ createdAt: -1 })
-        ])
-        res.render('/admin#categoryManage', { iteam, categories })
+        res.redirect('/admin#categoryManage');
 
     } catch (error) {
-        console.error(error)
-        res.status(500).send('خطا در ذخیره دسته‌بندی')
+        console.error(error);
+        res.status(500).send('خطا در ذخیره دسته‌بندی');
     }
-})
+});
 
 // روت صفحه لیست آپدیت
-app.get('/update', checkAdminLogin, (req , res) => {
+app.get('/update', checkAdminLogin, (req, res) => {
     Iteam.find()
         .then(iteams => res.render('update', { iteams }))
         .catch(err => {
@@ -494,7 +521,7 @@ app.get('/update', checkAdminLogin, (req , res) => {
 });
 
 // روت حذف محصول
-app.get('/admin/delete/:id', checkAdminLogin, (req,res) => {
+app.get('/admin/delete/:id', checkAdminLogin, (req, res) => {
     const id = req.params.id;
     Iteam.findByIdAndDelete(id)
         .then(() => res.redirect('/admin#productList'))
@@ -522,9 +549,8 @@ app.get('/admin/edit/:id', checkAdminLogin, async (req, res) => {
     }
 });
 
-
 // روت ذخیره ویرایش
-app.post('/admin/update/:id', checkAdminLogin, upload.single('imageUrl'), async (req, res) => {
+app.post('/admin/update/:id', checkAdminLogin, upload.single('imageUrl'), convertToWebp, async (req, res) => {
     try {
         const { iteamName, iteamPrice, description, category } = req.body;
         const price = Number(iteamPrice);
@@ -532,7 +558,7 @@ app.post('/admin/update/:id', checkAdminLogin, upload.single('imageUrl'), async 
             return res.status(400).send('نام محصول یا قیمت نامعتبر است');
         }
         let updateData = { iteamName, iteamPrice: price, description, category };
-        
+
         if (req.file) updateData.imageUrl = '/uploads/' + req.file.filename;
 
         await Iteam.findByIdAndUpdate(req.params.id, updateData, { runValidators: true });
@@ -544,7 +570,7 @@ app.post('/admin/update/:id', checkAdminLogin, upload.single('imageUrl'), async 
 });
 
 // نمایش فرم لاگین
-app.get('/log' , (req , res) => {
+app.get('/log', (req, res) => {
     res.render('log');
 });
 
@@ -573,15 +599,16 @@ app.post('/log', loginLimiter, async (req, res) => {
 // روت خروج (Logout)
 app.get('/logout', (req, res) => {
     req.session.destroy((err) => {
-        if(err) console.log(err);
-        res.redirect('/log'); 
+        if (err) console.log(err);
+        res.redirect('/log');
     });
 });
 
-// هندلر خطای آپلود (فایل نامعتبر یا حجم زیاد)
+// هندلر خطای آپلود (فایل نامعتبر، حجم زیاد یا عکس خراب)
 app.use((err, req, res, next) => {
-    if (err instanceof multer.MulterError || err.message.includes('فرمت')) {
-        return res.status(400).send('خطا در آپلود فایل: ' + err.message);
+    const msg = (err && err.message) || '';
+    if (err instanceof multer.MulterError || msg.includes('فرمت') || msg.includes('عکس')) {
+        return res.status(400).send('خطا در آپلود فایل: ' + msg);
     }
     next(err);
 });
