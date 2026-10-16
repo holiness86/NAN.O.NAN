@@ -574,25 +574,30 @@ app.get('/log', (req, res) => {
     res.render('log');
 });
 
+// نمایش فرم لاگین
+app.get('/log', (req, res) => {
+    res.render('log', { error: null });
+});
+
 // بررسی لاگین
 app.post('/log', loginLimiter, async (req, res) => {
     try {
         const user = await Pass.findOne({ username: req.body.username });
-        console.log('DEBUG کاربر پیدا شد؟', !!user);
         const isMatch = user && await user.comparePassword(req.body.password || '');
-        console.log('DEBUG پسورد مطابقت داشت؟', isMatch);
         if (!isMatch) {
-            return res.send('نام کاربری یا رمز عبور اشتباه است!');
+            return res.status(401).render('log', {
+                error: 'نام کاربری یا رمز عبور اشتباه است',
+                username: req.body.username || ''
+            });
         }
         req.session.isLoggedIn = true;
-        console.log('DEBUG session id بعد از ست شدن:', req.sessionID, 'isLoggedIn:', req.session.isLoggedIn);
         req.session.save((err) => {
-            if (err) console.log('DEBUG خطا در ذخیره سشن:', err);
+            if (err) console.log('خطا در ذخیره سشن:', err);
             res.redirect('/admin');
         });
     } catch (err) {
         console.error('خطا در لاگین:', err);
-        res.status(500).send('خطای سرور');
+        res.status(500).render('log', { error: 'خطای سرور، دوباره تلاش کن', username: '' });
     }
 });
 

@@ -19,6 +19,29 @@
     <link rel="stylesheet" href="/css/icons-1.13.1/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="/css/style.css">
     <style>
+
+
+
+
+
+.login-error {
+    background: rgba(220, 53, 69, .14);
+    border: 1px solid rgba(220, 53, 69, .45);
+    color: #ff6b78;
+    border-radius: 16px;
+    padding: .7rem 1rem;
+    font-size: .88rem;
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    animation: shake .4s ease;
+}
+[data-bs-theme="light"] .login-error { color: #b02a37; }
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-6px); }
+    75% { transform: translateX(6px); }
+}
         :root, [data-bs-theme="light"] {
             --glass-bg: var(--surface-glass);
             --glass-border: var(--border-warm);
@@ -252,14 +275,22 @@
     <div class="brand-icon-wrapper">
         <i class="bi bi-cup-hot-fill"></i>
     </div>
-    <h4 class="fw-bold text-center mb-1">کافه بابل تیله رزکان</h4>
-    <p class="text-center text-muted small mb-4">بابل تیله رزکان | پنل مدیریت هوشمند</p>
-
+    <h4 class="fw-bold text-center mb-1">کافه نان و نان</h4>
+    <p class="text-center text-muted small mb-4">نان و نان | پنل مدیریت هوشمند</p>
+        <% if (typeof error !== 'undefined' && error) { %>
+            <div class="col-12">
+                <div class="login-error" role="alert">
+                    <i class="bi bi-exclamation-circle-fill"></i>
+                    <span><%= error %></span>
+                </div>
+            </div>
+        <% } %>
     <form action="/log" method="POST" class="row g-3" id="loginForm">
         <div class="col-12">
             <label class="form-label small fw-medium text-muted">نام کاربری</label>
-            <input type="text" name="username" class="form-control glass-input" placeholder="نام کاربری خود را وارد کنید" required autocomplete="username">
-        </div>
+            <input type="text" name="username" class="form-control glass-input"
+                placeholder="نام کاربری خود را وارد کنید" required autocomplete="username"
+                value="<%= typeof username !== 'undefined' ? username : '' %>">        </div>
         <div class="col-12">
             <label class="form-label small fw-medium text-muted">رمز عبور</label>
             <div class="input-password-wrap">
