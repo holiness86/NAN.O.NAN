@@ -622,7 +622,7 @@ app.use((err, req, res, next) => {
 
 app.get('/privacy', (req, res) => {
   res.render('privacy', {
-    contactEmail: 'your@email.com',
+    contactEmail: 'arshyarezadost@gmail.com',
     policyUpdatedAt: '۱۴۰۵/۰۷/۲۴'
   });
 });
@@ -630,7 +630,7 @@ app.get('/privacy', (req, res) => {
 
 app.get('/terms', (req, res) => {
   res.render('terms', {
-    contactEmail: 'your@email.com',
+    contactEmail: 'arshyarezadost@gmail.com',
     policyUpdatedAt: '۱۴۰۵/۰۷/۲۴'
   });
 });
