@@ -621,3 +621,10 @@ app.use((err, req, res, next) => {
 app.use((req, res) => {
   res.status(404).render('404', { requestedPath: req.originalUrl });
 });
+
+app.get('/privacy', (req, res) => {
+  res.render('privacy', {
+    contactEmail: 'your@email.com',
+    policyUpdatedAt: '۱۴۰۵/۰۷/۲۴'
+  });
+});
