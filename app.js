@@ -618,9 +618,7 @@ app.use((err, req, res, next) => {
     next(err);
 });
 
-app.use((req, res) => {
-  res.status(404).render('404', { requestedPath: req.originalUrl });
-});
+
 
 app.get('/privacy', (req, res) => {
   res.render('privacy', {
@@ -635,4 +633,9 @@ app.get('/terms', (req, res) => {
     contactEmail: 'your@email.com',
     policyUpdatedAt: '۱۴۰۵/۰۷/۲۴'
   });
+});
+
+
+app.use((req, res) => {
+  res.status(404).render('404', { requestedPath: req.originalUrl });
 });
