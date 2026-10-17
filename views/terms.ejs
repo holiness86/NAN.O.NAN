@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl" data-bs-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="قوانین و شرایط استفاده از منوی آنلاین کافه و بیکری نان و نان">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#F6ECE5">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%A5%90%3C/text%3E%3C/svg%3E">
+  <title>قوانین و شرایط استفاده — نان و نان</title>
+
+  <script>
+    (function () {
+      var d = document.documentElement;
+      try {
+        var t = localStorage.getItem('nanonan-theme');
+        if (t !== 'dark' && t !== 'light') t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        d.setAttribute('data-bs-theme', t);
+        var m = document.querySelector('meta[name="theme-color"]');
+        if (m) m.setAttribute('content', t === 'dark' ? '#1B120C' : '#F6ECE5');
+      } catch (e) {}
+    })();
+  </script>
+
+  <link rel="preload" href="/Fonts/YekanBakh-VF.woff2" as="font" type="font/woff2" crossorigin>
+
+  <link href="/css/bootstrap.rtl.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/icons-1.13.1/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+
+  <style>
+    .brand-mini { text-decoration: none; }
+    html { scroll-behavior: smooth; scroll-padding-top: 16px; }
+
+    .pp-page { display: flex; flex-direction: column; min-height: 100vh; min-height: 100dvh; }
+
+    .pp-main {
+      flex: 1;
+      width: 100%;
+      max-width: 820px;
+      margin: 0 auto;
+      padding: .5rem var(--page-pad) 3.5rem;
+    }
+
+    .pp-hero { position: relative; padding: clamp(1.4rem, 6vw, 2.6rem) 0 clamp(1.2rem, 4vw, 2rem); text-align: center; isolation: isolate; }
+
+    .pp-ghost {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      z-index: -1;
+      direction: ltr;
+      font-family: Arial, sans-serif;
+      font-size: clamp(4.2rem, 22vw, 11.5rem);
+      font-weight: 900;
+      line-height: 1;
+      letter-spacing: -.03em;
+      color: transparent;
+      background: linear-gradient(180deg, rgba(var(--brand-rgb), .18) 0%, rgba(var(--brand-rgb), 0) 90%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-stroke: 2px rgba(var(--brand-rgb), .28);
+      -webkit-mask-image: linear-gradient(180deg, #000 50%, transparent 100%);
+      mask-image: linear-gradient(180deg, #000 50%, transparent 100%);
+      transform: translate3d(-50%, -50%, 0);
+      white-space: nowrap;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .pp-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: .45rem;
+      margin-bottom: .9rem;
+      padding: .3rem .85rem .3rem .7rem;
+      border: 1px solid var(--border-warm);
+      border-radius: 50rem;
+      background: var(--surface);
+      color: var(--brand);
+      font-size: .78rem;
+      font-weight: 800;
+    }
+
+    .pp-title { margin: 0 0 .6rem; font-size: clamp(1.6rem, 6.5vw, 2.4rem); font-weight: 800; line-height: 1.3; letter-spacing: -.02em; color: var(--ink); }
+    .pp-title span { color: var(--brand); }
+    .pp-lead { max-width: 52ch; margin: 0 auto; font-size: .95rem; line-height: 1.95; color: var(--ink-muted); }
+    .pp-updated { margin: .9rem 0 0; font-size: .78rem; color: var(--ink-muted); }
+
+    .pp-toc {
+      display: flex;
+      gap: 8px;
+      margin: 0 calc(var(--page-pad) * -1) 1.2rem;
+      padding: 4px var(--page-pad);
+      overflow-x: auto;
+      overscroll-behavior-x: contain;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+    }
+    .pp-toc::-webkit-scrollbar { display: none; }
+    .pp-toc a {
+      flex: none;
+      padding: .45rem .95rem;
+      border: 1.5px solid var(--border-warm);
+      border-radius: 50rem;
+      background: var(--surface);
+      color: var(--ink-muted);
+      font-size: .78rem;
+      font-weight: 700;
+      text-decoration: none;
+      white-space: nowrap;
+      transition: transform var(--dur-press) var(--ease-out), border-color var(--dur-fast) linear, color var(--dur-fast) linear;
+    }
+    .pp-toc a:active { transform: scale(.95); }
+    @media (hover: hover) and (pointer: fine) {
+      .pp-toc a:hover { border-color: var(--brand); color: var(--brand); }
+    }
+
+    .pp-card {
+      border: 1px solid var(--border-warm);
+      border-radius: var(--r-xl);
+      background: var(--surface);
+      box-shadow: var(--shadow-card);
+      padding: clamp(1.2rem, 4vw, 2.2rem);
+      animation: card-in 420ms var(--ease-out) both;
+    }
+    @supports (corner-shape: squircle) {
+      .pp-card, .pp-badge, .pp-icon, .pp-contact-btn, .pp-back { corner-shape: squircle; }
+    }
+
+    .pp-sec { scroll-margin-top: 16px; }
+    .pp-sec + .pp-sec { margin-top: clamp(1.3rem, 4vw, 2rem); padding-top: clamp(1.3rem, 4vw, 2rem); border-top: 1px solid var(--border-warm); }
+
+    .pp-h { display: flex; align-items: center; gap: .75rem; margin: 0 0 .7rem; font-size: clamp(1.05rem, 4vw, 1.2rem); font-weight: 800; line-height: 1.4; letter-spacing: -.01em; color: var(--ink); }
+
+    .pp-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex: none;
+      width: 38px;
+      height: 38px;
+      border: 1px solid var(--border-warm);
+      border-radius: var(--r-sm);
+      background: var(--brand-soft);
+      color: var(--brand);
+      font-size: 1.05rem;
+    }
+
+    .pp-p { margin: 0 0 .7rem; font-size: .92rem; line-height: 2; color: var(--ink-muted); }
+    .pp-p:last-child { margin-bottom: 0; }
+
+    .pp-list { margin: 0 0 .7rem; padding: 0; list-style: none; }
+    .pp-list:last-child { margin-bottom: 0; }
+    .pp-list li { position: relative; margin-bottom: .4rem; padding-inline-start: 1.1rem; font-size: .92rem; line-height: 2; color: var(--ink-muted); }
+    .pp-list li::before { content: ''; position: absolute; inset-inline-start: 0; top: .95rem; width: 6px; height: 6px; border-radius: 50%; background: var(--brand); }
+
+    .pp-link { color: var(--brand); font-weight: 700; text-underline-offset: 4px; }
+    .pp-code {
+      display: inline-block;
+      padding: 0 .5rem;
+      border: 1px solid var(--border-warm);
+      border-radius: 8px;
+      background: var(--surface-raised);
+      direction: ltr;
+      unicode-bidi: isolate;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: .8rem;
+      line-height: 1.7;
+      color: var(--ink);
+    }
+
+    .pp-contact { display: flex; flex-wrap: wrap; gap: 10px; margin-top: .9rem; }
+    .pp-contact-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      min-height: 46px;
+      padding: .3rem 1.1rem;
+      border: 1.5px solid var(--border-warm);
+      border-radius: var(--r-md);
+      background: var(--surface);
+      color: var(--ink);
+      font-size: .85rem;
+      font-weight: 700;
+      text-decoration: none;
+      transition: transform var(--dur-press) var(--ease-out), border-color var(--dur-fast) linear, color var(--dur-fast) linear;
+    }
+    .pp-contact-btn i { color: var(--brand); }
+    .pp-contact-btn:active { transform: scale(.96); }
+    @media (hover: hover) and (pointer: fine) {
+      .pp-contact-btn:hover { border-color: var(--brand); color: var(--brand); }
+    }
+
+    .pp-back-row { display: flex; justify-content: center; margin-top: 1.6rem; }
+    .pp-back {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: .55rem;
+      min-height: 50px;
+      padding: .4rem 1.8rem;
+      border-radius: var(--r-md);
+      background: var(--brand);
+      box-shadow: var(--shadow-brand);
+      color: #fff;
+      font-size: .95rem;
+      font-weight: 800;
+      text-decoration: none;
+      transition: transform var(--dur-press) var(--ease-out), background-color var(--dur-fast) linear;
+    }
+    .pp-back:active { transform: scale(.97); }
+    [data-bs-theme="dark"] .pp-back { color: var(--cream); }
+    @media (hover: hover) and (pointer: fine) {
+      .pp-back:hover { background: var(--brand-dark); color: #fff; }
+      [data-bs-theme="dark"] .pp-back:hover { background: var(--brand-light); color: var(--cream); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+    }
+  </style>
+</head>
+<body class="pp-page">
+
+  <header class="top-bar">
+    <a class="brand-mini" href="/" aria-label="نان و نان — بازگشت به منو">
+      <div class="brand-mini-logo"><img src="/images/logo/Nan.O.Nan-brand.png" width="60" height="60" alt="" decoding="async"></div>
+      <div class="brand-mini-text">
+        <p class="brand-mini-name">نان <span>و نان</span></p>
+        <p class="brand-mini-tagline">Café &amp; Bakery</p>
+      </div>
+    </a>
+    <button type="button" class="theme-btn" id="themeBtn" aria-label="تغییر تم روشن/تاریک">
+      <i class="bi bi-moon-stars-fill" id="themeIcon" aria-hidden="true"></i>
+    </button>
+  </header>
+
+  <main class="pp-main">
+    <section class="pp-hero">
+      <div class="pp-ghost" aria-hidden="true">Terms</div>
+      <span class="pp-badge"><i class="bi bi-file-earmark-check" aria-hidden="true"></i>شرایط استفاده</span>
+      <h1 class="pp-title">قوانین و <span>شرایط استفاده</span></h1>
+      <p class="pp-lead">استفاده از منوی نان و نان ساده و رایگان است. این صفحه قاعده‌های کوتاه و روشن استفاده از سایت را توضیح می‌دهد.</p>
+      <% if (typeof policyUpdatedAt !== 'undefined' && policyUpdatedAt) { %>
+      <p class="pp-updated">آخرین به‌روزرسانی: <%= policyUpdatedAt %></p>
+      <% } %>
+    </section>
+
+    <nav class="pp-toc" aria-label="فهرست بخش‌ها">
+      <a href="#purpose">هدف سایت</a>
+      <a href="#prices">قیمت‌ها و محصولات</a>
+      <a href="#use">استفادهٔ مجاز</a>
+      <a href="#ip">مالکیت</a>
+      <a href="#disclaimer">سلب مسئولیت</a>
+      <a href="#changes">تغییرات</a>
+      <a href="#contact">تماس</a>
+    </nav>
+
+    <article class="pp-card">
+      <section class="pp-sec" id="scope">
+        <h2 class="pp-h"><span class="pp-icon" aria-hidden="true"><i class="bi bi-info-circle"></i></span>پذیرش شرایط</h2>
+        <p class="pp-p">با باز کردن و استفاده از وب‌سایت منوی آنلاین نان و نان، این شرایط را می‌پذیرید. اگر با آن‌ها موافق نیستید، لطفاً از سایت استفاده نکنید.</p>
+        <p class="pp-p">نحوهٔ برخورد ما با اطلاعات شما هم در <a class="pp-link" href="/privacy">سیاست حفظ حریم خصوصی</a> توضیح داده شده است.</p>
+      </section>
+      <section class="pp-sec" id="purpose">
+        <h2 class="pp-h"><span class="pp-icon" aria-hidden="true"><i class="bi bi-journal-text"></i></span>هدف سایت</h2>
+        <p class="pp-p">این سایت یک منوی دیجیتال برای معرفی دسته‌بندی‌ها، محصولات و قیمت‌های کافه و بیکری نان و نان است. در حال حاضر سفارش آنلاین و پرداخت از طریق سایت انجام نمی‌شود.</p>
+      </section>
+      <section class="pp-sec" id="prices">
+        <h2 class="pp-h"><span class="pp-icon" aria-hidden="true"><i class="bi bi-tags"></i></span>قیمت‌ها و محصولات</h2>
+        <ul class="pp-list">
+          <li>قیمت‌ها به تومان نمایش داده می‌شوند و ممکن است بدون اطلاع قبلی تغییر کنند.</li>
+          <li>موجودی و جزئیات محصولات ممکن است با آنچه در منو دیده می‌شود تفاوت داشته باشد.</li>
+          <li>تصاویر فقط برای معرفی محصول هستند و ظاهر نهایی ممکن است کمی فرق کند.</li>
+          <li>اگر بین منوی آنلاین و قیمت یا اطلاعات داخل کافه تفاوتی بود، مبنا همان است که کارکنان کافه اعلام می‌کنند.</li>
+          <li>اگر به ماده‌ای حساسیت دارید، پیش از سفارش از کارکنان بپرسید. توضیحات منو جای اطلاع‌رسانی دقیق را نمی‌گیرد.</li>
+        </ul>
+      </section>
+      <section class="pp-sec" id="use">
+        <h2 class="pp-h"><span class="pp-icon" aria-hidden="true"><i class="bi bi-check2-circle"></i></span>استفادهٔ مجاز</h2>
+        <p class="pp-p">از سایت برای مشاهدهٔ منو و استفادهٔ شخصی آزاد هستید. در عوض از شما می‌خواهیم:</p>
+        <ul class="pp-list">
+          <li>به عملکرد سایت یا سرور آسیب نزنید و آن را دچار اختلال نکنید.</li>
+          <li>تلاش نکنید به بخش‌های غیرعمومی مثل پنل مدیریت دسترسی غیرمجاز پیدا کنید.</li>
+          <li>از ابزارهای خودکار برای دریافت حجیم محتوای سایت استفاده نکنید.</li>
+          <li>از سایت برای کار غیرقانونی یا آسیب‌زدن به دیگران استفاده نکنید.</li>
+        </ul>
+      </section>
+      <section class="pp-sec" id="ip">
+        <h2 class="pp-h"><span class="pp-icon" aria-hidden="true"><i class="bi bi-c-circle"></i></span>مالکیت و حقوق محتوا</h2>
+        <p class="pp-p">نام و لوگوی نان و نان، تصاویر محصولات، متن‌ها و طراحی ظاهری سایت متعلق به نان و نان و سازندگان آن‌ها است. مشاهده و اشتراک‌گذاری شخصی منو، مثلاً فرستادن لینک سایت برای دوستان، مشکلی ندارد.</p>
+        <p class="pp-p">کپی، بازنشر یا استفادهٔ تجاری از محتوا و طراحی سایت بدون اجازهٔ مکتوب مجاز نیست.</p>
+      </section>
+      <section class="pp-sec" id="links">
+        <h2 class="pp-h"><span class="pp-icon" aria-hidden="true"><i class="bi bi-box-arrow-up-right"></i></span>لینک‌های خارجی</h2>
+        <p class="pp-p">سایت ممکن است به صفحه‌هایی بیرون از خودش لینک بدهد، مثل اینستاگرام کافه یا سایت سازندهٔ سایت. محتوا و سیاست‌های آن سرویس‌ها در کنترل ما نیست.</p>
+      </section>
+      <section class="pp-sec" id="disclaimer">
+        <h2 class="pp-h"><span class="pp-icon" aria-hidden="true"><i class="bi bi-exclamation-triangle"></i></span>سلب مسئولیت</h2>
+        <ul class="pp-list">
+          <li>سایت «به همین شکلی که هست» ارائه می‌شود و نمی‌توانیم دسترسی بدون وقفه یا بدون خطا را تضمین کنیم.</li>
+          <li>ممکن است برای نگهداری، به‌روزرسانی یا مشکلات فنی سایت موقتاً در دسترس نباشد.</li>
+          <li>تا حدی که قانون اجازه می‌دهد، نان و نان مسئول خسارت ناشی از اختلال سایت یا اشتباه احتمالی در نمایش اطلاعات منو نیست.</li>
+        </ul>
+      </section>
+      <section class="pp-sec" id="changes">
+        <h2 class="pp-h"><span class="pp-icon" aria-hidden="true"><i class="bi bi-arrow-repeat"></i></span>تغییرات این شرایط</h2>
+        <p class="pp-p">ممکن است این شرایط را در آینده به‌روز کنیم. نسخهٔ جدید همین‌جا منتشر می‌شود و ادامهٔ استفاده از سایت بعد از آن، به معنی پذیرش آن است.</p>
+      </section>
+      <section class="pp-sec" id="law">
+        <h2 class="pp-h"><span class="pp-icon" aria-hidden="true"><i class="bi bi-bank"></i></span>قانون حاکم</h2>
+        <p class="pp-p">این شرایط تابع قوانین جاری ایران است.</p>
+      </section>
+
+      <section class="pp-sec" id="contact">
+        <h2 class="pp-h"><span class="pp-icon" aria-hidden="true"><i class="bi bi-chat-dots"></i></span>تماس با ما</h2>
+        <p class="pp-p">برای هر سؤال دربارهٔ این شرایط از این راه‌ها پیام بدهید:</p>
+        <div class="pp-contact">
+          <a class="pp-contact-btn" href="https://www.instagram.com/nanonan_bakery" target="_blank" rel="noopener noreferrer"><i class="bi bi-instagram" aria-hidden="true"></i>اینستاگرام</a>
+          <% if (typeof contactEmail !== 'undefined' && contactEmail) { %>
+          <a class="pp-contact-btn" href="mailto:<%= contactEmail %>"><i class="bi bi-envelope" aria-hidden="true"></i><span dir="ltr"><%= contactEmail %></span></a>
+          <% } %>
+        </div>
+      </section>
+    </article>
+
+    <div class="pp-back-row">
+      <a class="pp-back" href="/"><i class="bi bi-arrow-right" aria-hidden="true"></i>بازگشت به منو</a>
+    </div>
+  </main>
+
+  <footer class="menu-footer">
+    <div class="footer-brand">نان و نان</div>
+    <p class="footer-text footer-fine">© 2026 نان و نان</p>
+  </footer>
+
+  <script>
+    (function () {
+      var root = document.documentElement;
+      var btn = document.getElementById('themeBtn');
+      var icon = document.getElementById('themeIcon');
+
+      function sync() {
+        var dark = root.getAttribute('data-bs-theme') === 'dark';
+        icon.className = 'bi ' + (dark ? 'bi-sun-fill' : 'bi-moon-stars-fill');
+        var m = document.querySelector('meta[name="theme-color"]');
+        if (m) m.setAttribute('content', dark ? '#1B120C' : '#F6ECE5');
+      }
+
+      btn.addEventListener('click', function () {
+        var next = root.getAttribute('data-bs-theme') === 'dark' ? 'light' : 'dark';
+        root.setAttribute('data-bs-theme', next);
+        try { localStorage.setItem('nanonan-theme', next); } catch (e) {}
+        sync();
+      });
+
+      sync();
+    })();
+  </script>
+</body>
+</html>

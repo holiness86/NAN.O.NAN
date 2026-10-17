@@ -628,3 +628,11 @@ app.get('/privacy', (req, res) => {
     policyUpdatedAt: '۱۴۰۵/۰۷/۲۴'
   });
 });
+
+
+app.get('/terms', (req, res) => {
+  res.render('terms', {
+    contactEmail: 'your@email.com',
+    policyUpdatedAt: '۱۴۰۵/۰۷/۲۴'
+  });
+});
