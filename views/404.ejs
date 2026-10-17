@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl" data-bs-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#f5ecdc">
+<title>صفحه‌ای پیدا نشد | نان و نان</title>
+<link rel="icon" href="/images/favicon.png">
+<link rel="preload" href="/fonts/YekanBakh-VF.ttf" as="font" type="font/ttf" crossorigin>
+<script>
+(function () {
+  var t = null;
+  try { t = localStorage.getItem('nanonan-theme'); } catch (e) {}
+  if (t !== 'light' && t !== 'dark') {
+    t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  }
+  document.documentElement.setAttribute('data-bs-theme', t);
+  var m = document.querySelector('meta[name="theme-color"]');
+  if (m) m.setAttribute('content', t === 'dark' ? '#1a100b' : '#f5ecdc');
+})();
+</script>
+<style>
+@font-face {
+  font-family: 'YekanBakh';
+  src: url('/fonts/YekanBakh-VF.ttf') format('truetype');
+  font-weight: 100 1000;
+  font-display: swap;
+}
+
+:root,
+[data-bs-theme="light"] {
+  --nn-bg: #f5ecdc;
+  --nn-bg-deep: #ead9bd;
+  --nn-ink: #3a2218;
+  --nn-ink-soft: rgba(58, 34, 24, 0.68);
+  --nn-accent: #a8662f;
+  --nn-accent-ink: #fff8ec;
+  --nn-glass: rgba(255, 250, 241, 0.62);
+  --nn-glass-line: rgba(58, 34, 24, 0.12);
+  --nn-ghost-fill: rgba(168, 102, 47, 0.2);
+  --nn-ghost-stroke: rgba(58, 34, 24, 0.34);
+  --nn-bubble: rgba(168, 102, 47, 0.22);
+  --nn-ring-track: rgba(255, 248, 236, 0.28);
+  --nn-shadow: 0 24px 60px -24px rgba(58, 34, 24, 0.45);
+}
+
+[data-bs-theme="dark"] {
+  --nn-bg: #1a100b;
+  --nn-bg-deep: #26170f;
+  --nn-ink: #f3e6d0;
+  --nn-ink-soft: rgba(243, 230, 208, 0.68);
+  --nn-accent: #d49256;
+  --nn-accent-ink: #24150d;
+  --nn-glass: rgba(46, 29, 20, 0.55);
+  --nn-glass-line: rgba(243, 230, 208, 0.12);
+  --nn-ghost-fill: rgba(212, 146, 86, 0.16);
+  --nn-ghost-stroke: rgba(243, 230, 208, 0.3);
+  --nn-bubble: rgba(212, 146, 86, 0.16);
+  --nn-ring-track: rgba(36, 21, 13, 0.25);
+  --nn-shadow: 0 24px 60px -24px rgba(0, 0, 0, 0.7);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body { height: 100%; margin: 0; }
+
+body {
+  font-family: 'YekanBakh', 'Vazirmatn', system-ui, -apple-system, 'Segoe UI', Tahoma, sans-serif;
+  color: var(--nn-ink);
+  background: radial-gradient(120% 90% at 50% 0%, var(--nn-bg) 0%, var(--nn-bg-deep) 100%);
+  background-color: var(--nn-bg);
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: max(24px, env(safe-area-inset-top)) max(20px, env(safe-area-inset-right)) max(24px, env(safe-area-inset-bottom)) max(20px, env(safe-area-inset-left));
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+.nf-stage {
+  position: relative;
+  width: 100%;
+  max-width: 640px;
+  display: grid;
+  place-items: center;
+  isolation: isolate;
+}
+
+.nf-bubble {
+  position: fixed;
+  border-radius: 50%;
+  background: var(--nn-bubble);
+  filter: blur(48px);
+  pointer-events: none;
+  z-index: -1;
+  will-change: transform;
+  contain: strict;
+}
+
+.nf-bubble.b1 { width: 38vmax; height: 38vmax; top: -12vmax; right: -10vmax; animation: nf-drift-a 18s ease-in-out infinite alternate; }
+.nf-bubble.b2 { width: 30vmax; height: 30vmax; bottom: -10vmax; left: -8vmax; animation: nf-drift-b 22s ease-in-out infinite alternate; }
+
+@keyframes nf-drift-a { to { transform: translate3d(-6vmax, 8vmax, 0) scale(1.08); } }
+@keyframes nf-drift-b { to { transform: translate3d(7vmax, -6vmax, 0) scale(1.12); } }
+
+.nf-ghost {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -54%);
+  direction: ltr;
+  font-size: clamp(9.5rem, 46vw, 26rem);
+  font-weight: 900;
+  line-height: 0.8;
+  letter-spacing: -0.04em;
+  color: transparent;
+  background: linear-gradient(180deg, var(--nn-ghost-fill) 0%, transparent 92%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-stroke: 2px var(--nn-ghost-stroke);
+  -webkit-mask-image: linear-gradient(180deg, #000 55%, transparent 100%);
+  mask-image: linear-gradient(180deg, #000 55%, transparent 100%);
+  user-select: none;
+  pointer-events: none;
+  z-index: -1;
+  white-space: nowrap;
+}
+
+.nf-card {
+  position: relative;
+  width: min(100%, 440px);
+  margin-block: clamp(2.5rem, 12vh, 5.5rem);
+  padding: 2rem 1.75rem 1.75rem;
+  text-align: center;
+  background: var(--nn-glass);
+  border: 1px solid var(--nn-glass-line);
+  border-radius: 32px;
+  -webkit-backdrop-filter: blur(18px) saturate(1.2);
+  backdrop-filter: blur(18px) saturate(1.2);
+  box-shadow: var(--nn-shadow);
+  animation: nf-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@supports (corner-shape: squircle) {
+  .nf-card { border-radius: 56px; corner-shape: squircle; }
+  .nf-btn { border-radius: 40px; corner-shape: squircle; }
+}
+
+@keyframes nf-in {
+  from { opacity: 0; transform: translate3d(0, 18px, 0) scale(0.98); }
+  to { opacity: 1; transform: none; }
+}
+
+.nf-logo { display: block; height: 44px; width: auto; margin: 0 auto 1.25rem; object-fit: contain; }
+.nf-logo.on-dark { display: none; }
+[data-bs-theme="dark"] .nf-logo.on-light { display: none; }
+[data-bs-theme="dark"] .nf-logo.on-dark { display: block; }
+
+.nf-title {
+  margin: 0 0 0.5rem;
+  font-size: clamp(1.6rem, 6vw, 2.1rem);
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+.nf-text {
+  margin: 0 0 1.5rem;
+  font-size: 1rem;
+  line-height: 1.9;
+  color: var(--nn-ink-soft);
+}
+
+.nf-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.85rem;
+  min-height: 52px;
+  padding: 0.35rem 1.4rem 0.35rem 0.5rem;
+  font: inherit;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--nn-accent-ink);
+  background: var(--nn-accent);
+  border: 0;
+  border-radius: 26px;
+  text-decoration: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.18s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.18s ease;
+  will-change: transform;
+}
+
+.nf-btn:hover { opacity: 0.94; }
+.nf-btn:active { transform: scale(0.96); }
+.nf-btn:focus-visible { outline: 3px solid var(--nn-ink); outline-offset: 3px; }
+
+.nf-timer {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  flex: none;
+  display: grid;
+  place-items: center;
+}
+
+.nf-timer svg { position: absolute; inset: 0; width: 100%; height: 100%; transform: rotate(-90deg); }
+
+.nf-timer circle { fill: none; stroke-width: 3; }
+.nf-timer .track { stroke: var(--nn-ring-track); }
+.nf-timer .bar {
+  stroke: var(--nn-accent-ink);
+  stroke-linecap: round;
+  stroke-dasharray: 100.53;
+  stroke-dashoffset: 0;
+}
+
+.nf-timer.run .bar { animation: nf-ring var(--nf-dur, 10s) linear forwards; }
+
+@keyframes nf-ring { to { stroke-dashoffset: 100.53; } }
+
+.nf-count { position: relative; font-size: 0.95rem; font-weight: 800; font-variant-numeric: tabular-nums; }
+
+.nf-note { margin: 1rem 0 0; font-size: 0.875rem; color: var(--nn-ink-soft); }
+
+@media (max-width: 420px) {
+  .nf-card { padding: 1.75rem 1.25rem 1.5rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nf-bubble, .nf-card { animation: none; }
+  .nf-btn { transition: none; }
+}
+</style>
+</head>
+<body>
+<div class="nf-bubble b1" aria-hidden="true"></div>
+<div class="nf-bubble b2" aria-hidden="true"></div>
+
+<main class="nf-stage">
+  <div class="nf-ghost" aria-hidden="true">404</div>
+
+  <section class="nf-card" role="alert" aria-live="polite">
+    <img class="nf-logo on-light" src="/images/Nan.O.Nan-black.png" alt="نان و نان" width="132" height="44" decoding="async">
+    <img class="nf-logo on-dark" src="/images/Nan.O.Nan-white.png" alt="" width="132" height="44" decoding="async">
+
+    <h1 class="nf-title">صفحه‌ای پیدا نشد</h1>
+    <p class="nf-text">این آدرس وجود نداره یا جابه‌جا شده. برگرد به منو و از اونجا ادامه بده.</p>
+
+    <a class="nf-btn" id="nfBack" href="/">
+      <span class="nf-timer" id="nfTimer" aria-hidden="true">
+        <svg viewBox="0 0 40 40">
+          <circle class="track" cx="20" cy="20" r="16"></circle>
+          <circle class="bar" cx="20" cy="20" r="16"></circle>
+        </svg>
+        <span class="nf-count" id="nfCount">۱۰</span>
+      </span>
+      <span>بازگشت به منو</span>
+    </a>
+
+    <p class="nf-note" id="nfNote">تا <span id="nfSec">۱۰</span> ثانیه دیگه خودکار برمی‌گردی.</p>
+  </section>
+</main>
+
+<script>
+(function () {
+  var SECONDS = 10;
+  var TARGET = '/';
+  var fa = new Intl.NumberFormat('fa-IR');
+  var timer = document.getElementById('nfTimer');
+  var count = document.getElementById('nfCount');
+  var sec = document.getElementById('nfSec');
+  var back = document.getElementById('nfBack');
+  var deadline = Date.now() + SECONDS * 1000;
+  var tick = null;
+  var done = false;
+
+  timer.style.setProperty('--nf-dur', SECONDS + 's');
+
+  function go() {
+    if (done) return;
+    done = true;
+    clearInterval(tick);
+    window.location.replace(TARGET);
+  }
+
+  function render() {
+    var left = Math.max(0, Math.ceil((deadline - Date.now()) / 1000));
+    var text = fa.format(left);
+    count.textContent = text;
+    sec.textContent = text;
+    if (left <= 0) go();
+  }
+
+  back.addEventListener('click', function () { done = true; clearInterval(tick); });
+
+  render();
+  requestAnimationFrame(function () {
+    requestAnimationFrame(function () { timer.classList.add('run'); });
+  });
+  tick = setInterval(render, 250);
+
+  document.addEventListener('visibilitychange', function () {
+    if (!document.hidden) render();
+  });
+})();
+</script>
+</body>
+</html>
