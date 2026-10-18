@@ -1,0 +1,20 @@
+{
+  "id": "/",
+  "name": "نان و نان",
+  "short_name": "نان و نان",
+  "description": "منوی آنلاین کافه و بیکری نان و نان",
+  "lang": "fa",
+  "dir": "rtl",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F6ECE5",
+  "theme_color": "#F6ECE5",
+  "categories": ["food", "lifestyle"],
+  "icons": [
+    { "src": "/images/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/images/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/images/icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
