@@ -2,7 +2,14 @@
 <html lang="fa" dir="rtl" data-bs-theme="dark">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="description" content="پنل مدیریت کافه و بیکری نان و نان">
+    <meta name="color-scheme" content="light dark">
+    <meta name="theme-color" content="#F6ECE5">
+    <link rel="icon" type="image/png" href="/images/logo/Nan.O.Nan-brand.png">
+    <link rel="apple-touch-icon" href="/images/icons/apple-touch-icon.png">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="apple-mobile-web-app-title" content="نان و نان">
     <title>پنل مدیریت | نان و نان</title>
 
     <script>
@@ -440,6 +447,13 @@
         @keyframes barShimmer { 0% { transform: translateX(-100%); } 60%, 100% { transform: translateX(100%); } }
         @media (prefers-reduced-motion: reduce) { .cat-bar-fill::after { animation: none; } }
 
+        :root {
+            --sw-0: #7A4A2B; --sw-1: #C98B3D; --sw-2: #3E8A5B; --sw-3: #B5543F;
+            --sw-4: #5B6FB0; --sw-5: #8E5BA8; --sw-6: #2F8C8C; --sw-7: #D0a33A;
+            --sw-8: #A8556B; --sw-9: #6B7A3A;
+        }
+        .cat-bar-track { display: block; width: 100%; }
+        .cat-bar-fill { display: block; min-width: 0; max-width: 100%; }
         .icon-swatch-0 { background: var(--sw-0); } .icon-swatch-1 { background: var(--sw-1); }
         .icon-swatch-2 { background: var(--sw-2); } .icon-swatch-3 { background: var(--sw-3); }
         .icon-swatch-4 { background: var(--sw-4); } .icon-swatch-5 { background: var(--sw-5); }
@@ -789,7 +803,7 @@
                    <img width="75px" height="75px" src="/images/logo/Nan.O.Nan-brand.png" style="width: 75px; height: 75px; object-fit: contain;" alt="نان و نان">
                     <div>
                         پنل مدیریت نان و نان
-                        <span class="topbar-sub">خوش اومدی، امروز روز خوبی برای یه لیوان بابل تیله خنکه 🧋✨</span>
+                        <span class="topbar-sub">«به نان و نان خوش اومدید؛ جایی که روزتون با طعم نان ترد، عطر قهوه تازه و حس خوب شروع میشه. ☕️✨»</span>
                     </div>
                 </div>
             </div>
@@ -844,10 +858,13 @@
             %>
 
             <section id="dashboardSection" class="content-section active-section">
-                <h5 class="fw-bold mb-4 d-flex align-items-center gap-2">
-                    <i class="bi bi-pie-chart-fill text-accent"></i>
-                    آمار و وضعیت کلی نان و نان
-                </h5>
+                <div class="mb-4">
+                    <h5 class="fw-bold mb-1 d-flex align-items-center gap-2">
+                        <i class="bi bi-pie-chart-fill text-accent"></i>
+                        آمار و وضعیت کلی نان و نان
+                    </h5>
+                    <p class="text-muted-custom mb-0" style="font-size:0.88rem;">«به نان و نان خوش اومدید؛ جایی که روزتون با طعم نان ترد، عطر قهوه تازه و حس خوب شروع میشه. ☕️✨»</p>
+                </div>
 
                 <div class="row row-cols-1 row-cols-sm-2 row-cols-xl-5 g-3 mb-4">
                     <div class="col">
