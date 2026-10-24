@@ -189,7 +189,7 @@ img { display: block; max-width: 100%; }
   inset: 0;
   background:
     linear-gradient(180deg, rgba(var(--brand-dark-rgb), .46) 0%, rgba(var(--brand-dark-rgb), .38) 45%, rgba(var(--ink-rgb), .66) 100%),
-    url('../images/backgrounds/cafe-loading.PNG') center / cover no-repeat;
+    url('../images/backgrounds/cafe-loading.webp') center / cover no-repeat;
 }
 
 .preloader-core {
